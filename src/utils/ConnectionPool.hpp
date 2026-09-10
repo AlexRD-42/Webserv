@@ -15,13 +15,11 @@
 	TODO: Create a bitmap array that takes a dynamic amount of connections
 */
 
-class ConnectionPool {
-public:
+struct ConnectionPool {
 	static const usize blockSize = sizeof(Connection) * 64;
 	static const usize blockCount = 64;
 	static const usize elementCount = 4096;
 
-public:
 	Connection connections[elementCount];
 	struct {
 		Bitmap block;

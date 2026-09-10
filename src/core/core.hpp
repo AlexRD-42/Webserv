@@ -7,7 +7,7 @@
 // New Keywords
 #define restrict __restrict__
 #define inl inline __attribute__((always_inline))
-#define sinl static inline
+#define stinl static inline
 
 // Types
 typedef char				i8;

@@ -11,9 +11,9 @@
 struct Clock {
 	Clock() = delete;
 
-	sinl std::time_t timeBegin = 0;
-	sinl std::time_t timeNow = 0;
-	sinl u32 timeElapsed = 0;
+	stinl std::time_t timeBegin = 0;
+	stinl std::time_t timeNow = 0;
+	stinl u32 timeElapsed = 0;
 
 	static void init() {
 		timeBegin = std::time(NULL);

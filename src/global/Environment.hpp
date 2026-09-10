@@ -8,9 +8,9 @@ struct Environment {
 	static const usize envSize = 1024;
 	static const usize minElements = 64;
 
-	sinl char* envp[envSize] = {};
-	sinl char** optr = envp;
-	sinl char** writePtr = envp;
+	stinl char* envp[envSize] = {};
+	stinl char** optr = envp;
+	stinl char** writePtr = envp;
 
 	static void append(char* ptr) {
 		ASSERT(writePtr < envp + envSize - 1, "Environment buffer overflow");

@@ -4,19 +4,18 @@
 // TODO: Create 32, 16 and 8 bit specializations
 // TODO: bitmap array & 1000 for example through overloading
 
-class Bitmap {
-public:
+struct Bitmap {
 	usize value;
 
-	sinl usize mask_start(usize bitStart) {
+	stinl usize mask_start(usize bitStart) {
 		return SIZE_MAX << bitStart % WORD_BITS;
 	}
 
-	sinl usize mask_end(usize bitEnd) {
+	stinl usize mask_end(usize bitEnd) {
 		return SIZE_MAX >> ((usize)(0 - bitEnd) % WORD_BITS);
 	}
 
-	sinl usize mask_range(usize bitStart, usize bitEnd) {
+	stinl usize mask_range(usize bitStart, usize bitEnd) {
 		return mask_start(bitStart) & mask_end(bitEnd);
 	}
 

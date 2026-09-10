@@ -12,7 +12,7 @@
 */
 struct Status {
 	static const usize errorPageCount = 32 + 12;
-	sinl char strings[] = HTTP_STATUS_STRINGS;
+	stinl char strings[] = HTTP_STATUS_STRINGS;
 	u16 index;
 
 	#pragma push_macro("SUBS")

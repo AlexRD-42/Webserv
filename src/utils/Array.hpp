@@ -3,8 +3,7 @@
 #include "Span.hpp"
 
 template <typename Type>
-class ArrayView {
-public:
+struct ArrayView {
 	Type* ptr;
 	usize count;
 
@@ -28,8 +27,7 @@ public:
 };
 
 template <typename Type, usize count>
-class Array {
-public:
+struct Array {
 	Type ptr[count];
 
 	Type& operator[] (usize index) {

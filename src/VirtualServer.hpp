@@ -39,8 +39,7 @@ struct Location {
 	Span get_redirect_target()	{ return extract(redirectTarget); }
 };
 
-class VirtualServer {
-public:
+struct VirtualServer {
 	Span serverRoot;
 	Span errorPages[Status::errorPageCount];
 	Span host;

@@ -34,8 +34,7 @@ void init(int argc, char** argv, char** envp) {
 
 #define SERVER_INL(ret_type) ret_type inline Server::
 
-class Server {
-public:
+struct Server {
 	ConnectionPool connections;
 	u8 storage[CONFIG_POOL_SIZE];
 	Arena alpha, beta;

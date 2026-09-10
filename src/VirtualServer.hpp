@@ -48,14 +48,11 @@ struct VirtualServer {
 	usize maxBodySize;
 	int listenFd;
 
-	VirtualServer()
-		: serverRoot(Span::create("")), host(), locations(), port(SIZE_MAX),
-		maxBodySize(SIZE_MAX), listenFd(-1) {
-		MEMSET_INLINE(errorPages, 0, sizeof(errorPages));
-	}
-
-	~VirtualServer() {
-		clear();
+	void reset() {
+		MEMSET_INLINE(this, 0, sizeof(*this));
+		port = SIZE_MAX;
+		maxBodySize = SIZE_MAX;
+		listenFd = -1;
 	}
 
 	int clear() {

@@ -97,11 +97,6 @@ CONNECTION_INL
 
 CONNECTION_INL
 (void) clear() {
-	if (mode == Mode::AUTOINDEX && directory != NULL) {
-		closedir(directory);
-		directory = NULL;
-		readFd = -1;
-	}
 	if (readFd >= 0)
 		close(readFd);
 	if (writeFd >= 0)

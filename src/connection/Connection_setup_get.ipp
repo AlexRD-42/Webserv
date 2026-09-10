@@ -57,8 +57,8 @@ CONNECTION_INL
 	const usize headerSize = fixedSize + targetSize * 2;
 	if (headerSize > sizeof(sendBuffer.data))
 		return flush_setup_close(epoll, Status::i414);
-	directory = opendir(pathBuffer);
-	if (directory == NULL) 
+	readFd = open(pathBuffer, O_RDONLY | O_DIRECTORY | O_CLOEXEC);
+	if (readFd == -1)
 		return flush_setup_close(epoll, s_get_status());
 	contentType = Mime::HTML;
 	options &= ~(u16)Options::KEEP_ALIVE;
@@ -67,6 +67,7 @@ CONNECTION_INL
 	usize targetCleanSize = (usize)(pathBuffer.wptr() - targetClean);
 
 	activate_streaming(Mode::AUTOINDEX);
+	recvBuffer.clear();	// Reuse receive storage for directory records; this response closes the connection
 	sendBuffer.append(HTTP_INDEX_HEADER);
 	sendBuffer.append(targetClean, targetCleanSize);
 	sendBuffer.append(HTTP_INDEX_MIDDLE);

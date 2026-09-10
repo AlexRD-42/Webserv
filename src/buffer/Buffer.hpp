@@ -77,6 +77,7 @@ struct Buffer {
 	isize read(int fd, usize bytes);
 	isize write(int fd, usize bytes);
 	isize write_all(int fd, usize bytes);
+	char* readdir(int fd);
 
 	// HTTP
 	Status::Code dechunk(Buffer& tmp, usize &chunkSize, usize &bodySize);
@@ -109,7 +110,7 @@ struct Buffer {
 	char* append_digit16(usize number);
 	char* append_url_component(const char* ptr, usize length);
 	char* append_html(char* ptr, usize length);
-	usize append_entry(DIR* directory, struct dirent *dirEntry);
+	usize append_entry(int directoryFd, char* name);
 	char* memset(u8 byte, usize length);
 	template <usize N> char* memset_inline(u8 byte, usize length);
 

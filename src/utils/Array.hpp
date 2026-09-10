@@ -7,21 +7,12 @@ struct ArrayView {
 	Type* ptr;
 	usize count;
 
-	ArrayView() : ptr(NULL), count(0) {}
-	ArrayView(Type* srcPtr, usize srcCount) : ptr(srcPtr), count(srcCount) {}
-
 	Type& operator[] (usize index) {
 		return ptr[index];
 	}
 
 	const Type& operator[] (usize index) const {
 		return ptr[index];
-	}
-
-	ArrayView& operator=(const ArrayView& other) {
-		ptr = other.ptr;
-		count = other.count;
-		return *this;
 	}
 
 };

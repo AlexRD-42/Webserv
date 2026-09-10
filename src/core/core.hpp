@@ -32,7 +32,7 @@ typedef unsigned int		uint;
 typedef unsigned long		ulong;
 
 // Defines
-#define ALIGN_SIZE	__alignof__(long double)
+#define ALIGN_SIZE	alignof(long double)
 #define WORD_SIZE	sizeof(size_t)
 #define WORD_BITS	(WORD_SIZE * CHAR_BIT)
 
@@ -46,7 +46,7 @@ typedef unsigned long		ulong;
 
 #ifdef DEBUG_MODE
 	#define ON_DEBUG(x) (x)
-	#define ASSERT(x, str) ((x) != 0 ? (void)0 : PRINT_LN(2, str))
+	#define ASSERT(x, str) ((x) != 0 ? (void)0 : (PRINT_LN(2, str), __builtin_trap()))
 #else
 	#define ON_DEBUG(x) ((void)0)
 	#define ASSERT(x, str) ((void)0)

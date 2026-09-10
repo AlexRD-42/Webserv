@@ -37,8 +37,7 @@ Example:
 		host 127.0.0.1;
 		client_max_body_size 10M;				## Can define K, M or G for KB, MB or GB respectively
 		root /path_to_root;
-		error_page 400 errors/400.html;
-		error_page 403 404 errors/403.html;		## Can define multiple error pages at once
+		error_pages /path_to_error_folder;
 
 		location /custom_index/ {
 			root /path_to_root;

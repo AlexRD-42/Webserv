@@ -2,6 +2,27 @@
 #include "Buffer.hpp"
 
 BUFFER_INL
+(char*) readdir(int fd) {
+	if (readPos == writePos) {
+		isize bytesRead = ::getdents64(fd, data, sizeof(data));
+		while (bytesRead == -1 && errno == EINTR)
+			bytesRead = ::getdents64(fd, data, sizeof(data));
+		if (bytesRead <= 0) {
+			errno = bytesRead == 0 ? 0 : errno;
+			return NULL;
+		}
+		readPos = 0;
+		writePos = (usize)bytesRead;
+	}
+	u16 recordLength;
+	char* recordLengthPtr = data + readPos + OFFSETOF(dirent64, d_reclen);
+	MEMCPY_INLINE(&recordLength, recordLengthPtr, 2);
+	char* name = (char*)data + readPos + OFFSETOF(dirent64, d_name);
+	readPos += recordLength;
+	return name;
+}
+
+BUFFER_INL
 (usize) compact() {
 	const usize bytesUsed = writePos - readPos;
 	const usize scanOffset = scanPos - readPos;

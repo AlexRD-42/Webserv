@@ -50,7 +50,7 @@ struct Connection {
 			i32 clientFd, readFd;
 			pid_t processId;
 			i32 writeFd;
-			union { usize chunkSize; DIR* directory; };
+			usize chunkSize;
 		};
 	};
 /* =================================================================== */

@@ -17,8 +17,6 @@ struct Arena {
 	u8* ptr;
 	usize size, capacity;
 
-	Arena(u8* srcPtr, usize srcLength) : ptr(srcPtr), size(0), capacity(srcLength) {}
-
 	usize free_space()					const { return capacity - size; }
 	u8* mptr(usize fileOffset)			const { return ptr + fileOffset; }
 	const u8* kptr(usize fileOffset)	const { return ptr + fileOffset; }
@@ -47,8 +45,8 @@ struct Arena {
 		alignSize = MAX(alignSize, __alignof__(Type));
 		const u32 index = alloc(bytes, 0, alignSize);
 		if (index == UINT32_MAX)
-			return ArrayView<Type>();
-		return ArrayView<Type>((Type*)mptr(index), numElements);
+			return {};
+		return {(Type*)mptr(index), numElements};
 	}
 
 	Span alloc_span(usize length) {

@@ -12,15 +12,14 @@ CONNECTION_INL
 	const usize bytesMax = MIN(ATOMIC_IOSIZE, bytesFree - HTTP_DIRENT_MAX_SIZE);
 	usize bytesTotal = 0;
 	while (bytesTotal < bytesMax) {
-		errno = 0;
-		struct dirent* entry = readdir(directory);
+		char* entry = recvBuffer.readdir(readFd);
 		if (entry == NULL) {
 			if (errno != 0)
 				return -1;
 			sendBuffer.append("</pre></body></html>");
 			return flush_setup(epoll);
 		}
-		bytesTotal += sendBuffer.append_entry(directory, entry);
+		bytesTotal += sendBuffer.append_entry(readFd, entry);
 	}
 	return write_to_client(epoll);
 }

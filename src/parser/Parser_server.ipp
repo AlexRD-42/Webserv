@@ -2,23 +2,6 @@
 #include "Parser.hpp"
 
 static inline
-void s_directive_error_page(Parser::Directive &dir, VirtualServer &server) {
-	if (dir.args.count < 2)
-		PERR_EXIT(1, "Error: Invalid error page");
-	Span path = dir.args[dir.args.count - 1];
-	if (path.size >= MAX_PATH_SIZE)
-		PERR_EXIT(1, "Error: Invalid error page");
-	for (usize index = 0; index + 1 < dir.args.count; index++) {
-		Status status = {(u16)Status::s_str_to_code(dir.args[index].ptr)};
-		if (dir.args[index].size != 3 || !status.is_error())
-			PERR_EXIT(1, "Error: Invalid error number");
-		if (server.errorPages[status.get_page_index()].size != 0)
-			PERR_EXIT(1, "Error: Duplicate error page");
-		server.errorPages[status.get_page_index()] = path;
-	}
-}
-
-static inline
 void s_directive_listen(Arena &arena, const Span &value, VirtualServer &server) {
 	if (server.port != SIZE_MAX)
 		PERR_EXIT(1, "Error: Invalid port definition");
@@ -68,28 +51,30 @@ void s_directive_body_size(const Span &value, usize &bodySize) {
 }
 
 PARSER_INL
-(void) parse_server_directive(VirtualServer &server, Directive &dir) {
+(void) parse_server_directive(VirtualServer &server, Directive &dir, Span &errorPageFolder) {
 	const Span &name = dir.name;
 
-	if (name == "error_page")
-		return s_directive_error_page(dir, server);
-	
 	if (dir.args.count != 1 || dir.args[0].size >= MAX_PATH_SIZE)
 		PERR_EXIT(1, "Error: Invalid server directive");
 	const Span &value = dir.args[0];
 	if (name == "listen")
-		return s_directive_listen(beta, value, server);
+		return s_directive_listen(*beta, value, server);
+	else if (name == "error_pages") {
+		if (errorPageFolder.ptr != NULL)
+			PERR_EXIT(1, "Error: Duplicate error pages folder");
+		errorPageFolder = value;
+	}
 	else if (name == "host") {
 		if (server.host.size != 0)
 			PERR_EXIT(1, "Error: Duplicate host definition");
-		server.host = beta.copy_span(value);
+		server.host = beta->copy_span(value);
 	}
 	else if (name == "client_max_body_size")
 		s_directive_body_size(value, server.maxBodySize);
 	else if (name == "root") {
 		if (server.serverRoot.size != 0)
 			PERR_EXIT(1, "Error: Duplicate root definition");
-		server.serverRoot = beta.copy_span(value);
+		server.serverRoot = beta->copy_span(value);
 	}
 	else
 		PERR_EXIT(1, "Error: Invalid server directive");
@@ -131,9 +116,11 @@ usize s_count_locations(ArrayView<Parser::Token> tokArray) {
 
 PARSER_INL
 (void) parse_server(ArrayView<Token> &tokArray, VirtualServer &server) {
+	server.reset();
+	Span errorPageFolder = {};
 	tokArray.ptr++;
 	usize locationCount = s_count_locations(tokArray);
-	ArrayView<ParsedLocation> parsedLocations = alpha.alloc_array<ParsedLocation>(locationCount);
+	ArrayView<ParsedLocation> parsedLocations = alpha->alloc_array<ParsedLocation>(locationCount);
 	if (parsedLocations.ptr == NULL)
 		_exit(1);
 
@@ -151,8 +138,8 @@ PARSER_INL
 			locationIndex++;
 		}
 		else {
-			Directive dir = s_build_directive(alpha, tokArray);
-			parse_server_directive(server, dir);
+			Directive dir = s_build_directive(*alpha, tokArray);
+			parse_server_directive(server, dir, errorPageFolder);
 		}
 	}
 	tokArray.ptr++;
@@ -161,4 +148,5 @@ PARSER_INL
 	if (server.maxBodySize == SIZE_MAX)
 		server.maxBodySize = LONG_MAX;
 	server.locations = process_locations(parsedLocations, server);
+	cache_error_pages(server, errorPageFolder);
 }

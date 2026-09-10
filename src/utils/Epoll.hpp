@@ -12,7 +12,8 @@ struct Epoll {
 	usize index;
 	struct epoll_event eventList[maxEvents];
 
-	Epoll () : fd(-1), index(0) {
+	void init() {
+		index = 0;
 		fd = epoll_create(1);
 		if (fd == -1)
 			return ;

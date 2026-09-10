@@ -69,10 +69,10 @@ PARSER_INL
 	usize allocationSize = ploc.count * sizeof(Location);
 	for (usize index = 0; index < ploc.count; index++)
 		allocationSize += s_location_size(ploc[index]);
-	const u32 allocation = beta.alloc(allocationSize, 0, __alignof__(Location));
+	const u32 allocation = beta->alloc(allocationSize, 0, alignof(Location));
 	if (allocation == UINT32_MAX)
 		_exit(1);
-	ArrayView<Location> locations((Location*)beta.mptr(allocation), ploc.count);
+	ArrayView<Location> locations = {(Location*)beta->mptr(allocation), ploc.count};
 	char* wptr = (char*)(locations.ptr + locations.count);
 	for (usize locationIndex = 0; locationIndex < locations.count; locationIndex++)
 		s_store_location(wptr, ploc[locationIndex], locations[locationIndex]);
@@ -84,14 +84,14 @@ PARSER_INL
 	Span &serverRoot = server.serverRoot;
 
 	if (server.host.size == 0)
-		server.host = beta.copy_span(Span::create("localhost"));
+		server.host = beta->copy_span(Span::create("localhost"));
 	if (serverRoot.size == 0)
-		serverRoot = beta.copy_span(Span::create(""));
+		serverRoot = beta->copy_span(Span::create(""));
 	while (serverRoot.size != 0 && serverRoot.ptr[serverRoot.size - 1] == '/')
 		serverRoot.size--;
 	serverRoot.ptr[serverRoot.size] = '\0';
 	
-	Span defaultIndex = beta.copy_span(Span::create("/index.html"));
+	Span defaultIndex = beta->copy_span(Span::create("/index.html"));
 	for (usize index = 0; index < ploc.count; index++) {
 		ParsedLocation &src = ploc[index];
 		if (src.root.size == 0)
@@ -116,9 +116,9 @@ static inline
 void s_build_error_page_path(char* out, const Span &root, const Span &path) {
 	ASSERT(path.size != 0, "Error page path is empty");
 	ASSERT(root.size == 0 || root.ptr[root.size - 1] != '/', "Root has a trailing slash");
-	usize length = root.size;
+	usize length = path.ptr[0] == '/' ? 0 : root.size;
 	MEMCPY(out, root.ptr, length);
-	if (length != 0 && path.ptr[0] != '/')
+	if (length != 0)
 		out[length++] = '/';
 	MEMCPY(out + length, path.ptr, path.size);
 	length += path.size;
@@ -126,33 +126,38 @@ void s_build_error_page_path(char* out, const Span &root, const Span &path) {
 }
 
 PARSER_INL
-(void) cache_error_pages(VirtualServer &server) {
+(void) cache_error_pages(VirtualServer &server, const Span &folder) {
 	char pathBuffer[4 * MAX_PATH_SIZE];
-	Span configuredPaths[Status::errorPageCount];
+	Buffer64 entries = {};
+	Bitmap configured = {};
 
 	for (usize index = 0; index < Status::errorPageCount; index++)
-		configuredPaths[index] = server.errorPages[index];
+		server.errorPages[index] = Status::s_error_page(index);
+	if (folder.ptr == NULL)
+		return;
+	s_build_error_page_path(pathBuffer, server.serverRoot, folder);
+	const int directoryFd = open(pathBuffer, O_RDONLY | O_DIRECTORY | O_CLOEXEC);
+	if (directoryFd == -1)
+		PERR_EXIT(1, "Error: Failed to open error pages folder");
+	usize folderLength = STRLEN(pathBuffer);
+	if (pathBuffer[folderLength - 1] != '/')
+		pathBuffer[folderLength++] = '/';
 
-	for (usize index = 0; index < Status::errorPageCount; index++) {
-		Span &page = server.errorPages[index];
-		const Span &path = configuredPaths[index];
-		if (path.size == 0) {
-			page = Status::s_error_page(index);
+	char* name;
+	while ((name = entries.readdir(directoryFd)) != NULL) {
+		const Status status = {(u16)Status::s_str_to_code(name)};
+		if (!status.is_error())
 			continue;
-		}
-
-		usize duplicate = 0;
-		for (; duplicate < index; duplicate++) {
-			const Span &previousPath = configuredPaths[duplicate];
-			if (path.size == previousPath.size && MEMCMP(path.ptr, previousPath.ptr, path.size) == 0)
-				break;
-		}
-		if (duplicate != index) {
-			page = server.errorPages[duplicate];
-			continue;
-		}
-		s_build_error_page_path(pathBuffer, server.serverRoot, path);
-		if (fn::read_whole_file(beta, pathBuffer, page, 0, 0, MAX_ERROR_PAGE_SIZE))
-			_exit(1);
+		const usize index = status.get_page_index();
+		if (configured.bitread(index))
+			close(directoryFd), PERR_EXIT(1, "Error: Duplicate error page");
+		configured.bitset(index);
+		MEMCPY(pathBuffer + folderLength, name, STRLEN(name) + 1);
+		if (fn::read_whole_file(*beta, pathBuffer, server.errorPages[index], 0, 0, MAX_ERROR_PAGE_SIZE))
+			close(directoryFd), PERR_EXIT(1, "Error: Failed to read error pages folder");
 	}
+	const int error = errno;
+	close(directoryFd);
+	if (error != 0)
+		PERR_EXIT(1, "Error: Failed to read error pages folder");
 }

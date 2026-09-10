@@ -134,7 +134,7 @@ PARSER_INL
 		PERR_EXIT(1, "Error: Invalid config");
 
 	const usize tokenCount = s_count_tokens(ptr);
-	tokArray = alpha.alloc_array<Token>(tokenCount);
+	tokArray = alpha->alloc_array<Token>(tokenCount);
 	if (tokArray.ptr == NULL)
 		_exit(1);
 

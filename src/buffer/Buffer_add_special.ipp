@@ -73,13 +73,13 @@ BUFFER_INL
 // <a href="filename[256]">filename[64]</a>    02-Dec-2004 18:46    241476
 
 BUFFER_INL
-(usize) append_entry(DIR* directory, struct dirent *dirEntry) {
-	Span entry = {dirEntry->d_name, STRLEN(dirEntry->d_name)};
+(usize) append_entry(int directoryFd, char* name) {
+	Span entry = {name, STRLEN(name)};
 
 	struct stat st;
 	if (LITCMP(entry.ptr, ".\0") == 0 || LITCMP(entry.ptr, "..\0") == 0)
 		return 0;
-	if (fstatat(dirfd(directory), dirEntry->d_name, &st, 0)) {
+	if (fstatat(directoryFd, name, &st, 0)) {
 		append(HTTP_INDEX_PERMISSION);
 		return sizeof(HTTP_INDEX_PERMISSION) - 1;
 	}

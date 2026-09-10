@@ -13,7 +13,8 @@ int	main(int argc, char** argv, char** envp)
 	if (argc != 2)
 		PERR_RETURN(1, "Error: Usage -> ./webserv <config_file>");
 
-	static Server server(argv[1]);
+	static Server server = {};
+	server.init(argv[1]);
 	server.run();
 	return 0;
 }

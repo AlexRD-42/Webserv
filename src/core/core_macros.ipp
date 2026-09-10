@@ -58,7 +58,7 @@
 #define ARRAY_SIZE(arr)		(sizeof(arr) / sizeof((arr)[0]))
 #define ARRAY_END(arr)		(&(arr)[ARRAY_SIZE(arr)])
 #define SWAP(a, b) 			({__typeof__(a) _swap_tmp_ = (a); (a) = (b); (b) = _swap_tmp_; (void)0;})
-
+#define OFFSETOF(t, d)		__builtin_offsetof(t, d)
 #define STRINGIFY_(x)		#x
 #define STRINGIFY(x)		STRINGIFY_(x)
 #define ALIGN_UP(x, a)		(((x) + ((a) - 1)) & ~((a) - 1))

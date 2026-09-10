@@ -43,9 +43,12 @@ struct Server {
 	Parser parser;
 	Epoll epoll;
 
-	Server(const char* filePath) : alpha((u8*)&connections, sizeof(connections)), 
-		beta(storage, sizeof(storage)), parser(filePath, servers, alpha, beta), epoll() {
+	void init(const char* filePath) {
+		alpha = {(u8*)&connections, 0, sizeof(connections)};
+		beta = {storage, 0, sizeof(storage)};
+		parser.init(filePath, servers, alpha, beta);
 		connections.reset();
+		epoll.init();
 		if (epoll.fd == -1)
 			PERR_EXIT(clear(), "Error: Failed to create epoll");
 
@@ -134,8 +137,6 @@ struct Server {
 		beta.clear();
 		return 1;
 	}
-
-	~Server() { clear(); }
 
 	// Handling
 	void server_event(u64 key);

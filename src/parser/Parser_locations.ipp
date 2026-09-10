@@ -107,7 +107,7 @@ PARSER_INL
 		cgi.size += sizeof(u16) * 2 + extension.size + interpreter.size;
 	}
 
-	cgi.definitions = ArrayView<Token>(definitionStart, (usize)(tokArray.ptr - definitionStart));
+	cgi.definitions = {definitionStart, (usize)(tokArray.ptr - definitionStart)};
 	tokArray.ptr++;
 	return cgi;
 }
@@ -134,7 +134,7 @@ PARSER_INL
 			loc.cgiBlock = parse_cgi(tokArray);
 		}
 		else {
-			Directive dir = s_build_directive(alpha, tokArray);
+			Directive dir = s_build_directive(*alpha, tokArray);
 			parse_location_directive(loc, dir);
 		}
 	}

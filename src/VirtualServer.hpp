@@ -1,6 +1,7 @@
 #pragma once
 #include <unistd.h>
 #include <sys/socket.h>
+#include <arpa/inet.h>
 #include <netinet/in.h>
 #include <fcntl.h>
 #include <netdb.h>
@@ -84,34 +85,16 @@ public:
 		if (setsockopt(listenFd, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse)) == -1)
 			PERR_EXIT(clear(), "Error: Failed to configure listening socket");
 
-		sockaddr_in address;
-		if (s_resolve_host_and_port(host, port, address))
+		sockaddr_in address = {};
+		address.sin_family = AF_INET;
+		address.sin_port = htons((u16) port);
+		if (LITCMP(host.ptr, "localhost") == 0)
+			address.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
+		else if (inet_pton(AF_INET, host.ptr, &address.sin_addr) != 1)
 			PERR_EXIT(clear(), "Error: Failed to resolve virtual server host");
 		if (bind(listenFd, (sockaddr*) &address, sizeof(address)) == -1)
 			PERR_EXIT(clear(), "Error: Failed to bind listening socket");
 		if (listen(listenFd, SOMAXCONN) == -1)
 			PERR_EXIT(clear(), "Error: Failed to listen on socket");
-	}
-
-	static bool s_resolve_host_and_port(const Span& host, usize port, sockaddr_in& address) {
-		addrinfo hints;
-		MEMSET_INLINE(&hints, 0, sizeof(hints));
-		hints.ai_family = AF_INET;
-		hints.ai_socktype = SOCK_STREAM;
-		hints.ai_flags = 0;
-
-		addrinfo* result = NULL;
-		int status = getaddrinfo(host.ptr, NULL, &hints, &result);
-		if (status != 0 || result == NULL)
-			return true;
-
-		bool invalid = result->ai_addrlen < sizeof(sockaddr_in);
-		if (!invalid) {
-			MEMSET_INLINE(&address, 0, sizeof(address));
-			MEMCPY_INLINE(&address, result->ai_addr, sizeof(address));
-			address.sin_port = htons((u16) port);
-		}
-		freeaddrinfo(result);
-		return invalid;
 	}
 };

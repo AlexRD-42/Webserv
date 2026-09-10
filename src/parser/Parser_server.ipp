@@ -9,7 +9,7 @@ void s_directive_error_page(Parser::Directive &dir, VirtualServer &server) {
 	if (path.size >= MAX_PATH_SIZE)
 		PERR_EXIT(1, "Error: Invalid error page");
 	for (usize index = 0; index + 1 < dir.args.count; index++) {
-		Status status = {Status::s_str_to_code(dir.args[index].ptr)};
+		Status status = {(u16)Status::s_str_to_code(dir.args[index].ptr)};
 		if (dir.args[index].size != 3 || !status.is_error())
 			PERR_EXIT(1, "Error: Invalid error number");
 		if (server.errorPages[status.get_page_index()].size != 0)

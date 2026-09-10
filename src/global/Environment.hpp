@@ -3,16 +3,14 @@
 #include "core.hpp"
 
 // Needed for cookies and queries
-class Environment {
-private:
+struct Environment {
+	Environment() = delete;
 	static const usize envSize = 1024;
 	static const usize minElements = 64;
-	Environment();
 
-public:
-	static char* envp[envSize];
-	static char** optr;
-	static char** writePtr;
+	sinl char* envp[envSize] = {};
+	sinl char** optr = envp;
+	sinl char** writePtr = envp;
 
 	static void append(char* ptr) {
 		ASSERT(writePtr < envp + envSize - 1, "Environment buffer overflow");
@@ -34,9 +32,3 @@ public:
 		writePtr = optr;
 	}
 };
-
-#ifdef MAIN_FILE
-	char* Environment::envp[Environment::envSize];
-	char** Environment::optr = Environment::envp;
-	char** Environment::writePtr = Environment::envp;
-#endif

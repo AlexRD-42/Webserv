@@ -8,13 +8,12 @@
 // 	"August", "September", "October", "November","December"
 // };
 
-class Clock {
-private:
-	Clock();
+struct Clock {
+	Clock() = delete;
 
-public:
-	static std::time_t timeBegin, timeNow;
-	static u32 timeElapsed;
+	sinl std::time_t timeBegin = 0;
+	sinl std::time_t timeNow = 0;
+	sinl u32 timeElapsed = 0;
 
 	static void init() {
 		timeBegin = std::time(NULL);
@@ -80,9 +79,3 @@ public:
 		buffer[16] += (u8)(minute % 10U);
 	}
 };
-
-#ifdef MAIN_FILE
-	std::time_t Clock::timeBegin = 0;
-	std::time_t Clock::timeNow = 0;
-	u32 Clock::timeElapsed = 0;
-#endif

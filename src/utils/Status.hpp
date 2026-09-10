@@ -10,48 +10,43 @@
 
 	Index 1 is unset and index 2 is invalid.  Both resolve to empty strings.
 */
-class Status {
-public:
+struct Status {
 	static const usize errorPageCount = 32 + 12;
-	static char strings[];
-
+	sinl char strings[] = HTTP_STATUS_STRINGS;
 	u16 index;
 
-#pragma push_macro("SUBS")
-#pragma push_macro("SUBP")
-#undef SUBS
-#undef SUBP
+	#pragma push_macro("SUBS")
+	#pragma push_macro("SUBP")
+	#undef SUBS
+	#undef SUBP
 
-#define SUBS(code, next) (i##next - sizeof(HTTP_STATUS(code)) - 1)
+	#define SUBS(code, next) (i##next - sizeof(HTTP_STATUS(code)) - 1)
+	#define SUBP(code, next) (i##next - sizeof(HTTP_STATUS(code)) \
+		- sizeof(HTTP_STATUS_DEFAULT_PAGE(code)) - 2)
 
-#define SUBP(code, next) (i##next - sizeof(HTTP_STATUS(code)) \
-	- sizeof(HTTP_STATUS_DEFAULT_PAGE(code)) - 2)
+	enum Code {
+		ok = 0, unset = 1, ixxx = 2, i511 = sizeof(HTTP_STATUS_STRINGS) - sizeof(HTTP_STATUS(511))
+			- sizeof(HTTP_STATUS_DEFAULT_PAGE(511)) - 2,
+		i510 = SUBP(510, 511), i508 = SUBP(508, 510), i507 = SUBP(507, 508), i506 = SUBP(506, 507),
+		i505 = SUBP(505, 506), i504 = SUBP(504, 505), i503 = SUBP(503, 504), i502 = SUBP(502, 503),
+		i501 = SUBP(501, 502), i500 = SUBP(500, 501), i431 = SUBP(431, 500), i429 = SUBP(429, 431),
+		i428 = SUBP(428, 429), i426 = SUBP(426, 428), i425 = SUBP(425, 426), i424 = SUBP(424, 425),
+		i423 = SUBP(423, 424), i422 = SUBP(422, 423), i421 = SUBP(421, 422), i418 = SUBP(418, 421),
+		i417 = SUBP(417, 418), i416 = SUBP(416, 417), i415 = SUBP(415, 416), i414 = SUBP(414, 415),
+		i413 = SUBP(413, 414), i412 = SUBP(412, 413), i411 = SUBP(411, 412), i410 = SUBP(410, 411),
+		i409 = SUBP(409, 410), i408 = SUBP(408, 409), i407 = SUBP(407, 408), i406 = SUBP(406, 407),
+		i405 = SUBP(405, 406), i404 = SUBP(404, 405), i403 = SUBP(403, 404), i402 = SUBP(402, 403),
+		i401 = SUBP(401, 402), i400 = SUBP(400, 401), i308 = SUBS(308, 400), i307 = SUBS(307, 308),
+		i306 = SUBS(306, 307), i305 = SUBS(305, 306), i304 = SUBS(304, 305), i303 = SUBS(303, 304),
+		i302 = SUBS(302, 303), i301 = SUBS(301, 302), i300 = SUBS(300, 301), i226 = SUBS(226, 300),
+		i208 = SUBS(208, 226), i207 = SUBS(207, 208), i206 = SUBS(206, 207), i205 = SUBS(205, 206),
+		i204 = SUBS(204, 205), i203 = SUBS(203, 204), i202 = SUBS(202, 203), i201 = SUBS(201, 202),
+		i200 = SUBS(200, 201), i104 = SUBS(104, 200), i103 = SUBS(103, 104), i102 = SUBS(102, 103),
+		i101 = SUBS(101, 102), i100 = SUBS(100, 101)
+	};
 
-enum Code {
-	ok = 0, unset = 1, ixxx = 2, i511 = sizeof(HTTP_STATUS_STRINGS) - sizeof(HTTP_STATUS(511))
-		- sizeof(HTTP_STATUS_DEFAULT_PAGE(511)) - 2,
-	i510 = SUBP(510, 511), i508 = SUBP(508, 510), i507 = SUBP(507, 508), i506 = SUBP(506, 507),
-	i505 = SUBP(505, 506), i504 = SUBP(504, 505), i503 = SUBP(503, 504), i502 = SUBP(502, 503),
-	i501 = SUBP(501, 502), i500 = SUBP(500, 501), i431 = SUBP(431, 500), i429 = SUBP(429, 431),
-	i428 = SUBP(428, 429), i426 = SUBP(426, 428), i425 = SUBP(425, 426), i424 = SUBP(424, 425),
-	i423 = SUBP(423, 424), i422 = SUBP(422, 423), i421 = SUBP(421, 422), i418 = SUBP(418, 421),
-	i417 = SUBP(417, 418), i416 = SUBP(416, 417), i415 = SUBP(415, 416), i414 = SUBP(414, 415),
-	i413 = SUBP(413, 414), i412 = SUBP(412, 413), i411 = SUBP(411, 412), i410 = SUBP(410, 411),
-	i409 = SUBP(409, 410), i408 = SUBP(408, 409), i407 = SUBP(407, 408), i406 = SUBP(406, 407),
-	i405 = SUBP(405, 406), i404 = SUBP(404, 405), i403 = SUBP(403, 404), i402 = SUBP(402, 403),
-	i401 = SUBP(401, 402), i400 = SUBP(400, 401), i308 = SUBS(308, 400), i307 = SUBS(307, 308),
-	i306 = SUBS(306, 307), i305 = SUBS(305, 306), i304 = SUBS(304, 305), i303 = SUBS(303, 304),
-	i302 = SUBS(302, 303), i301 = SUBS(301, 302), i300 = SUBS(300, 301), i226 = SUBS(226, 300),
-	i208 = SUBS(208, 226), i207 = SUBS(207, 208), i206 = SUBS(206, 207), i205 = SUBS(205, 206),
-	i204 = SUBS(204, 205), i203 = SUBS(203, 204), i202 = SUBS(202, 203), i201 = SUBS(201, 202),
-	i200 = SUBS(200, 201), i104 = SUBS(104, 200), i103 = SUBS(103, 104), i102 = SUBS(102, 103),
-	i101 = SUBS(101, 102), i100 = SUBS(100, 101)
-};
-
-#pragma pop_macro("SUBP")
-#pragma pop_macro("SUBS")
-
-STATIC_ASSERT(i100 == 9);
+	#pragma pop_macro("SUBP")
+	#pragma pop_macro("SUBS")
 
 	inl static u16 s_index(usize div, usize rem) {
 		static const u16 s_offsets[160] = {
@@ -223,42 +218,5 @@ STATIC_ASSERT(i100 == 9);
 	}
 };
 
-#ifdef MAIN_FILE
-	char Status::strings[] = HTTP_STATUS_STRINGS;
-#endif
-
 STATIC_ASSERT(sizeof(HTTP_STATUS_STRINGS) <= UINT16_MAX);
 STATIC_ASSERT(sizeof(Status) == sizeof(u16));
-
-/*
-	Old version, not weird subtraction but doesn't show info on hover
-	#pragma push_macro("ADDS")
-	#pragma push_macro("ADDP")
-	#undef ADDS
-	#undef ADDP
-	#define ADDS(code) (i##code + sizeof(HTTP_STATUS(code)) + 1)
-	#define ADDP(code) \
-		(i##code + sizeof(HTTP_STATUS(code)) \
-		+ sizeof(HTTP_STATUS_DEFAULT_PAGE(code)) + 2)
-	enum Code
-	{
-		i000 = 1, ixxx = 2, i100 = 9,       i101 = ADDS(100), i102 = ADDS(101),
-		i103 = ADDS(102), i104 = ADDS(103), i200 = ADDS(104), i201 = ADDS(200),
-		i202 = ADDS(201), i203 = ADDS(202), i204 = ADDS(203), i205 = ADDS(204),
-		i206 = ADDS(205), i207 = ADDS(206), i208 = ADDS(207), i226 = ADDS(208),
-		i300 = ADDS(226), i301 = ADDS(300), i302 = ADDS(301), i303 = ADDS(302),
-		i304 = ADDS(303), i305 = ADDS(304), i306 = ADDS(305), i307 = ADDS(306),
-		i308 = ADDS(307), i400 = ADDS(308), i401 = ADDP(400), i402 = ADDP(401),
-		i403 = ADDP(402), i404 = ADDP(403), i405 = ADDP(404), i406 = ADDP(405),
-		i407 = ADDP(406), i408 = ADDP(407), i409 = ADDP(408), i410 = ADDP(409),
-		i411 = ADDP(410), i412 = ADDP(411), i413 = ADDP(412), i414 = ADDP(413),
-		i415 = ADDP(414), i416 = ADDP(415), i417 = ADDP(416), i418 = ADDP(417),
-		i421 = ADDP(418), i422 = ADDP(421), i423 = ADDP(422), i424 = ADDP(423),
-		i425 = ADDP(424), i426 = ADDP(425), i428 = ADDP(426), i429 = ADDP(428),
-		i431 = ADDP(429), i500 = ADDP(431), i501 = ADDP(500), i502 = ADDP(501),
-		i503 = ADDP(502), i504 = ADDP(503), i505 = ADDP(504), i506 = ADDP(505),
-		i507 = ADDP(506), i508 = ADDP(507), i510 = ADDP(508), i511 = ADDP(510)
-	};
-	#pragma pop_macro("ADDP")
-	#pragma pop_macro("ADDS")
-*/

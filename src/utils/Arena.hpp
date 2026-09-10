@@ -54,7 +54,7 @@ struct Arena {
 	Span alloc_span(usize length) {
 		const u32 offset = alloc(length, 1);
 		if (offset == UINT32_MAX)
-			std::exit(1);
+			_exit(1);
 		Span result = {(char*)mptr(offset), length};
 		result.ptr[result.size] = '\0';
 		return result;
@@ -71,7 +71,7 @@ struct Arena {
 	// Span32 compress_span(const Array<Type> &array, usize length) {
 	// 	const u32 offset = alloc(length, 1);
 	// 	if (offset == UINT32_MAX)
-	// 		std::exit(1);
+	// 		_exit(1);
 	// 	Span32 result = {(u32)((char*)mptr(offset) - (char*)array.ptr), (u32)length};
 	// 	array.extract(result).ptr[length] = '\0';
 	// 	return result;

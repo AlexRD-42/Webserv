@@ -135,7 +135,7 @@ PARSER_INL
 	usize locationCount = s_count_locations(tokArray);
 	ArrayView<ParsedLocation> parsedLocations = alpha.alloc_array<ParsedLocation>(locationCount);
 	if (parsedLocations.ptr == NULL)
-		std::exit(1);
+		_exit(1);
 
 	usize locationIndex = 0;
 	while (tokArray[0].type != Token::CLOSE_BRACKET) {

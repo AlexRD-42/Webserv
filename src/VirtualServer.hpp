@@ -41,18 +41,17 @@ struct Location {
 
 class VirtualServer {
 public:
-	Span			serverRoot;
-	Span			errorPages[Status::errorPageCount];
-	Span			host;
+	Span serverRoot;
+	Span errorPages[Status::errorPageCount];
+	Span host;
 	ArrayView<Location>	locations;
-	usize			port;
-	usize			maxBodySize;
-	void*			gameState;
-	int 			listenFd;
+	usize port;
+	usize maxBodySize;
+	int listenFd;
 
 	VirtualServer()
 		: serverRoot(Span::create("")), host(), locations(), port(SIZE_MAX),
-		maxBodySize(SIZE_MAX), gameState(NULL), listenFd(-1) {
+		maxBodySize(SIZE_MAX), listenFd(-1) {
 		MEMSET_INLINE(errorPages, 0, sizeof(errorPages));
 	}
 
@@ -65,14 +64,12 @@ public:
 			close(listenFd);
 			listenFd = -1;
 		}
-		gameState = NULL;
 		return 1;
 	}
 
 	void init() {
 		if (listenFd != -1)
 			clear();
-
 		ASSERT(port >= 1 && port <= 65535, "Invalid virtual server port");
 
 		listenFd = socket(AF_INET, SOCK_STREAM, 0);

@@ -82,7 +82,7 @@ public:
 		}
 		clear();
 		PRINT_LN(1, "\nWebserv process has been terminated");
-		std::exit(0);
+		_exit(0);
 	}
 
 	void reap_children() {

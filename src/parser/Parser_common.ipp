@@ -17,7 +17,7 @@ PARSER_INL
 	const usize argumentCount = (usize)(tokArray.ptr - argumentStart);
 	dir.args = arena.alloc_array<Span>(argumentCount);
 	if (dir.args.ptr == NULL)
-		std::exit(1);
+		_exit(1);
 	for (usize index = 0; index < dir.args.count; index++)
 		dir.args[index] = argumentStart[index].value;
 	tokArray.ptr++;

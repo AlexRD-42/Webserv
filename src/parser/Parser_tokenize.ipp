@@ -136,7 +136,7 @@ PARSER_INL
 	const usize tokenCount = s_count_tokens(ptr);
 	tokArray = alpha.alloc_array<Token>(tokenCount);
 	if (tokArray.ptr == NULL)
-		std::exit(1);
+		_exit(1);
 
 	while (true) {
 		while (IS_SPACE(*ptr))

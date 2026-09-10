@@ -3,7 +3,7 @@ NAME = webserv
 VPATH := $(shell find src -type d)
 SRC = main.cpp
 LDLIBS =
-ARG = config/default.conf
+ARG = assets/config/default.conf
 
 # Defaults ------------------------------------ #
 .DEFAULT_GOAL := re # This is intentional. Project is small, compilation is fast
@@ -16,7 +16,7 @@ OBJ = $(addprefix $(OBJ_PATH)/, $(SRC:.cpp=.o))
 # Flags --------------------------------------- #
 CXX = clang++
 CPPFLAGS = $(addprefix -I,$(VPATH))
-CXXFLAGS = -Wall -Wextra -O2 -std=c++23
+CXXFLAGS = -Wall -Wextra -O2 -std=c++23 -fno-exceptions
 LDFLAGS =
 DEBUG = -g -DDEBUG_MODE -O0 -Wpedantic -Wcast-qual -Wfloat-equal -Wswitch-default -Wsign-conversion
 ASAN = -fsanitize=address,undefined,leak -fno-omit-frame-pointer

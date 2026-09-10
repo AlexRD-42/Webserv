@@ -71,7 +71,7 @@ PARSER_INL
 		allocationSize += s_location_size(ploc[index]);
 	const u32 allocation = beta.alloc(allocationSize, 0, __alignof__(Location));
 	if (allocation == UINT32_MAX)
-		std::exit(1);
+		_exit(1);
 	ArrayView<Location> locations((Location*)beta.mptr(allocation), ploc.count);
 	char* wptr = (char*)(locations.ptr + locations.count);
 	for (usize locationIndex = 0; locationIndex < locations.count; locationIndex++)
@@ -153,6 +153,6 @@ PARSER_INL
 		}
 		s_build_error_page_path(pathBuffer, server.serverRoot, path);
 		if (fn::read_whole_file(beta, pathBuffer, page, 0, 0, MAX_ERROR_PAGE_SIZE))
-			std::exit(1);
+			_exit(1);
 	}
 }

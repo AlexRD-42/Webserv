@@ -22,7 +22,7 @@ static Type sizeof_max(const Type&) {
 
 template <typename Type>
 static Type sizeof_min(const Type&) {
-	return std::numeric_limits<Type>::min();
+	return std::numeric_limits<Type>::lowest();
 }
 
 template <typename Type, usize Count>

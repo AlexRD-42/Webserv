@@ -23,39 +23,39 @@ struct Buffer {
 	u64 clobberPost;
 	usize writePos, readPos, scanPos;
 
-	inl u8* get_end() {	// rename to mptr
+	ATTR(inl) u8* get_end() {	// rename to mptr
 		return data + sizeof(data);
 	}
 
-	inl Span get_span() {
+	ATTR(inl) Span get_span() {
 		Span result = {(char*)data + readPos, writePos - readPos};
 		return result;
 	}
 
-	inl const u8* get_end() const {
+	ATTR(inl) const u8* get_end() const {
 		return data + sizeof(data);
 	}
 
-	inl usize size() const {
+	ATTR(inl) usize size() const {
 		return writePos - readPos;
 	}
 
-	inl usize capacity() const {
+	ATTR(inl) usize capacity() const {
 		return sizeof(data);
 	}
 
-	inl usize bytes_free() const {
+	ATTR(inl) usize bytes_free() const {
 		return sizeof(data) - writePos;
 	}
 
-	inl usize reserve(usize bytes) {
+	ATTR(inl) usize reserve(usize bytes) {
 		usize bytesFree = bytes_free();
 		if (bytes >= bytesFree)
 			bytesFree = compact();
 		return bytesFree;
 	}
 
-	inl bool is_full() {
+	ATTR(inl) bool is_full() {
 		return writePos >= sizeof(data);
 	}
 
@@ -65,7 +65,7 @@ struct Buffer {
 		scanPos = 0;
 	}
 
-	inl void init(usize newWritePos, usize newReadPos, usize newScanPos) {
+	ATTR(inl) void init(usize newWritePos, usize newReadPos, usize newScanPos) {
 		writePos = newWritePos;
 		readPos = newReadPos;
 		scanPos = newScanPos;
@@ -122,14 +122,14 @@ struct Buffer {
 		MEMCPY(data, other.data + other.readPos, bytesUsed);
 	}
 
-	inl operator char*() { return (char*)(data + readPos); }
-	inl char* rptr() { return (char*)(data + readPos); }
-	inl u8& rptr(usize index) { return *(data + readPos + index); }
-	inl char* wptr() { return (char*)(data + writePos); }
-	inl u8& wptr(usize index) { return *(data + writePos + index); }
-	inl char* sptr() { return (char*)(data + scanPos); }
-	inl u8& sptr(usize index) { return *(data + scanPos + index); }
-	inl u8& operator*() { return data[writePos]; }
+	ATTR(inl) operator char*() { return (char*)(data + readPos); }
+	ATTR(inl) char* rptr() { return (char*)(data + readPos); }
+	ATTR(inl) u8& rptr(usize index) { return *(data + readPos + index); }
+	ATTR(inl) char* wptr() { return (char*)(data + writePos); }
+	ATTR(inl) u8& wptr(usize index) { return *(data + writePos + index); }
+	ATTR(inl) char* sptr() { return (char*)(data + scanPos); }
+	ATTR(inl) u8& sptr(usize index) { return *(data + scanPos + index); }
+	ATTR(inl) u8& operator*() { return data[writePos]; }
 };
 
 typedef Buffer<8 * 1024> Buffer8;

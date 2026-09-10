@@ -13,14 +13,14 @@
 
 namespace fn {
 
-FN_ATTR(always_inline, flatten) static inline
+ATTR(static_inl, flatten)
 bool set_stream_mode(int fd) {
 	bool result = fcntl(fd, F_SETFL, fcntl(fd, F_GETFL, 0) | O_NONBLOCK);
 	result = result || fcntl(fd, F_SETFD, fcntl(fd, F_GETFD, 0) | FD_CLOEXEC);
 	return result;
 }
 
-// FN_ATTR(always_inline) static inline
+// ATTR(always_inline)
 // Span alloc_whole_file(Arena &arena, const char* filePath, int &fd, usize padSize = 32, usize minSize = 0, usize maxSize = UINT32_MAX) {
 // 	struct stat st;
 // 	Span result = {};
@@ -43,7 +43,7 @@ bool set_stream_mode(int fd) {
 // 	return result;
 // }
 
-// FN_ATTR(always_inline, flatten) static inline
+// ATTR(static_inl, flatten)
 // struct stat open_with_info(int &fd, char* filePath, int flags, int accessFlags = 0) {
 // 	struct stat st;
 // 	flags |= O_CLOEXEC | O_NONBLOCK;
@@ -58,7 +58,7 @@ bool set_stream_mode(int fd) {
 // 	return st;
 // }
 
-FN_ATTR(always_inline, flatten) static inline
+ATTR(static_inl, flatten)
 bool read_whole_file(Arena &arena, const char* filePath, Span &file, usize padSize = 32, usize minSize = 0, usize maxSize = UINT32_MAX) {
 	int fd = open(filePath, O_RDONLY | O_CLOEXEC | O_NONBLOCK);
 	if (fd == -1)

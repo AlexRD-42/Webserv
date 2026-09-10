@@ -17,7 +17,7 @@ TODO:	Finding can be two operations, Setting or can be one operation
 
 namespace fn {
 // 
-FN_ATTR(pure) static inline
+ATTR(static_inl, pure)
 Span find_dot(Span span) {
 	char* const end = span.ptr + span.size;
 	Span ext = {end, 0};
@@ -36,7 +36,7 @@ Span find_dot(Span span) {
 }
 
 template <usize count, usize size>
-FN_ATTR(pure, always_inline) static inline
+ATTR(static_inl, pure)
 isize s_match(const u8* ptr, usize length, const u8 (&ltable)[count][size]) {
 	u8 buffer[size * 2];
 
@@ -53,14 +53,14 @@ isize s_match(const u8* ptr, usize length, const u8 (&ltable)[count][size]) {
 	return 0;
 }
 
-FN_ATTR(pure, flatten) static inline
+ATTR(static_inl, pure, flatten)
 isize match_field(Span field) {
 	static const u8 ltable[][24] = FIELD_TABLE;
 
 	return s_match((u8*)field.ptr, field.size, ltable);
 }
 
-FN_ATTR(pure, flatten) static inline
+ATTR(static_inl, pure, flatten)
 isize match_mime(Span target) {
 	static const u8 ltable[][8] = MIME_TABLE;
 	Span ext = find_dot(target);

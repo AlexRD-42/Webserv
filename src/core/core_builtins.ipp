@@ -1,50 +1,12 @@
 #pragma once
 #include "core.hpp"
 
-#define FN_ATTR(...) __attribute__((__VA_ARGS__))
-
-#define ALWAYS_INLINE	inline __attribute__((always_inline))
-#define NOINLINE		__attribute__((noinline))
-#define KPURE			__attribute__((const))			// Function depends only on its arguments (doesn't read from memory)
-#define PURE			__attribute__((pure))			// Function produces no observable side effects (may read from memory)
-#define PACKED			__attribute__((packed))			// Struct has no padding
-#define ALIGNED(n)		__attribute__((aligned(n)))
-#define FLATTEN			__attribute__((flatten))		// Function calls inside this function are aggressively inlined
-#define COLD			__attribute__((cold))
-#define HOT				__attribute__((hot))
-#define UNREACHABLE()	__builtin_unreachable()
-#define LIKELY(x)		__builtin_expect(!!(x), 1)
-#define UNLIKELY(x)		__builtin_expect(!!(x), 0)
-
-#if defined(__clang__)
-	#define ASSUME(x)	__builtin_assume(x)
-#elif defined(__GNUC__)
-	#define ASSUME(x) ((x) ? (void)0 : __builtin_unreachable())
-#endif
-
-#if defined(__cplusplus) && defined(__GNUC__) && !defined(__clang__)
-	#define COMPTIME_SELECT(cond, a, b) ((cond) ? (a) : (b))
-#else
-	#define COMPTIME_SELECT(check, comptime, runtime) __builtin_choose_expr(!!(check), (comptime), (runtime))
-#endif
-
-#define IS_COMPTIME(value) __builtin_constant_p(value)
-
 #define MEMCPY(dst, src, n)		__builtin_memcpy(dst, src, n)
 #define MEMMOVE(dst, src, n)	__builtin_memmove(dst, src, n)
 #define MEMSET(dst, val, n)		__builtin_memset(dst, val, n)
 #define MEMCHR(src, val, n)		__builtin_memchr(src, val, n)
 #define MEMCMP(s1, s2, n)		__builtin_memcmp(s1, s2, n)
-
 #define STRLEN(str) 			__builtin_strlen(str)
-#define LITCMP(s1, s2)			__builtin_memcmp(s1, s2, sizeof(s2) - 1)
-#define STRCPY(dst, src)		__builtin_memcpy(dst, src, sizeof(src) - 1)
-
-// TODO: find better names
-#define MEMPREP(s1, s2, n)	(__builtin_memcpy(s1 - n, s2, n))
-#define STRPREP(s1, s2)		((char*)__builtin_memcpy(s1 - (sizeof(s2) - 1), s2, (sizeof(s2) - 1)))
-#define MEMAPP(s1, s2, n)	((n) + __builtin_memcpy(s1, s2, n))
-#define STRAPP(s1, s2)		((char*)((sizeof(s2) - 1) + __builtin_memcpy(s1, s2, (sizeof(s2) - 1))))
 
 #if defined(__clang__) && __clang_major__ >= 15 && __has_builtin(__builtin_memcpy_inline)
 	#define MEMCPY_INLINE(dst, src, n)	__builtin_memcpy_inline(dst, src, n)
@@ -67,3 +29,33 @@
 #define BSWAP32(x)		__builtin_bswap32(x)
 #define BSWAP64(x)		__builtin_bswap64(x)
 #define BITREVERSE(x)	__builtin_bitreverse64(x)	// This is clang specific
+
+// To add:
+// TODO: find better names, Bitcasts
+// === Builtin extensions =====================================
+#define LITCMP(s1, s2)		__builtin_memcmp(s1, s2, sizeof(s2) - 1)
+#define LITCPY(dst, src)	__builtin_memcpy(dst, src, sizeof(src) - 1)
+#define LITPREP(s1, s2)		((char*)__builtin_memcpy(s1 - (sizeof(s2) - 1), s2, (sizeof(s2) - 1)))
+#define LITAPP(s1, s2)		((char*)((sizeof(s2) - 1) + __builtin_memcpy(s1, s2, (sizeof(s2) - 1))))
+
+#define MEMFIND(dst, str, dstSize) \
+({ \
+	const u8* mf_dst = (const u8*)(dst); \
+	const usize mf_dstSize = (usize)(dstSize); \
+	const usize mf_strSize = sizeof(str) - 1; \
+	usize mf_result = SIZE_MAX; \
+	for (usize mf_i = 0; mf_i <= mf_dstSize - mf_strSize; mf_i++) { \
+		if (MEMCMP(mf_dst + mf_i, (str), mf_strSize) == 0) { \
+			mf_result = mf_i; \
+			break; \
+		} \
+	}\
+	mf_result; \
+})
+
+#define MEMCHR_INDEX(src, val, n)\
+({\
+	const unsigned char* _memchr_src = (const unsigned char*)(src);\
+	const unsigned char* _memchr_result = (const unsigned char*) MEMCHR(_memchr_src, val, n);\
+	_memchr_result ? (size_t)(_memchr_result - _memchr_src) : SIZE_MAX;\
+})

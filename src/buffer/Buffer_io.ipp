@@ -15,9 +15,9 @@ BUFFER_INL
 		writePos = (usize)bytesRead;
 	}
 	u16 recordLength;
-	char* recordLengthPtr = data + readPos + OFFSETOF(dirent64, d_reclen);
+	char* recordLengthPtr = (char*)data + readPos + offsetof(dirent64, d_reclen);
 	MEMCPY_INLINE(&recordLength, recordLengthPtr, 2);
-	char* name = (char*)data + readPos + OFFSETOF(dirent64, d_name);
+	char* name = (char*)data + readPos + offsetof(dirent64, d_name);
 	readPos += recordLength;
 	return name;
 }

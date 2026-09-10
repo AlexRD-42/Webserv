@@ -70,7 +70,7 @@ CONNECTION_INL
 	argv[2] = NULL;
 	Environment::append(buffer.append("HTTP_HOST="));
 	buffer.append(req.host.ptr, req.host.size + 1);
-	Environment::append(STRPREP(req.query.ptr, "QUERY_STRING="));
+	Environment::append(LITPREP(req.query.ptr, "QUERY_STRING="));
 	if (req.contentTypeHeader.size != 0) {
 		char* contentTypeHeader = buffer.append("CONTENT_TYPE=");
 		buffer.append(req.contentTypeHeader);
@@ -78,7 +78,7 @@ CONNECTION_INL
 		Environment::append(contentTypeHeader);
 	}
 	if (req.cookies.size != 0)
-		Environment::append(STRPREP(req.cookies.ptr, "HTTP_COOKIE="));
+		Environment::append(LITPREP(req.cookies.ptr, "HTTP_COOKIE="));
 
 	if (options & Options::FIXED_LENGTH) {
 		char* lengthStr = buffer.append("CONTENT_LENGTH=");

@@ -12,7 +12,7 @@
 */
 struct Status {
 	static const usize errorPageCount = 32 + 12;
-	stinl char strings[] = HTTP_STATUS_STRINGS;
+	static inline char strings[] = HTTP_STATUS_STRINGS;
 	u16 index;
 
 	#pragma push_macro("SUBS")
@@ -48,7 +48,7 @@ struct Status {
 	#pragma pop_macro("SUBP")
 	#pragma pop_macro("SUBS")
 
-	inl static u16 s_index(usize div, usize rem) {
+	ATTR(static_inl) u16 s_index(usize div, usize rem) {
 		static const u16 s_offsets[160] = {
 			i100, i101, i102, i103, i104, ixxx, ixxx, ixxx,
 			ixxx, ixxx, ixxx, ixxx, ixxx, ixxx, ixxx, ixxx,
@@ -76,14 +76,14 @@ struct Status {
 		return s_offsets[div * 32 + rem];
 	}
 
-	inl static u16 s_num_to_code(usize number) {
+	ATTR(static_inl) u16 s_num_to_code(usize number) {
 		if (number - 100 >= 500)
 			return ixxx;
 		const usize div = number / 100;
 		return s_index(div - 1, number - div * 100);
 	}
 
-	inl static Code s_str_to_code(const char* str) {
+	ATTR(static_inl) Code s_str_to_code(const char* str) {
 		if (str[0] < '1' || str[0] > '5' ||
 			str[1] < '0' || str[1] > '9' ||
 			str[2] < '0' || str[2] > '9')
@@ -94,7 +94,7 @@ struct Status {
 		return (Code)s_index(div, rem);
 	}
 
-	inl static usize s_code_to_index(Code code) {
+	ATTR(static_inl) usize s_code_to_index(Code code) {
 		char* ptr = strings + (usize) code;
 		usize first = (u8)(ptr[0] - '0');
 		usize second = (u8)(ptr[1] - '0');
@@ -102,33 +102,33 @@ struct Status {
 		return first * 32 + second * 10 + third;
 	}
 
-	inl usize get_page_index() const {
+	ATTR(inl) usize get_page_index() const {
 		if (index < Status::i400)
 			return SIZE_MAX;
 		return s_code_to_index((Code)index) - (32ul * 4);
 	}
 
-	inl static usize s_get_page_index(Code code) {
+	ATTR(static_inl) usize s_get_page_index(Code code) {
 		if (code < Status::i400)
 			return SIZE_MAX;
 		return s_code_to_index(code) - (32ul * 4);
 	}
 
-	inl Span status_str() const {
+	ATTR(inl) Span status_str() const {
 		Span result;
 		result.ptr = strings + (usize)index;
 		result.size = (u8) result.ptr[-1];
 		return result;
 	}
 
-	inl static Span s_status_str(Status::Code code) {
+	ATTR(static_inl) Span s_status_str(Status::Code code) {
 		Span result;
 		result.ptr = strings + (u16) code;
 		result.size = (u8) result.ptr[-1];
 		return result;
 	}
 
-	inl Span error_page() const {
+	ATTR(inl) Span error_page() const {
 		Span result;
 		result.ptr = strings + (usize)index;
 		result.size = (u8) result.ptr[-1];
@@ -138,7 +138,7 @@ struct Status {
 		return result;
 	}
 
-	inl static Span s_error_page(usize number) {
+	ATTR(static_inl) Span s_error_page(usize number) {
 		const usize offset = s_index(3 + (number >= 32), number - (number >= 32 ? 32 : 0));
 
 		Span tmp;
@@ -149,7 +149,7 @@ struct Status {
 		return tmp;
 	}
 
-	inl static Span s_error_page(Status::Code code) {
+	ATTR(static_inl) Span s_error_page(Status::Code code) {
 		Span result;
 		result.ptr = strings + (u16) code;
 		result.size = (u8) result.ptr[-1];
@@ -159,12 +159,12 @@ struct Status {
 		return result;
 	}
 
-	inl void clear() {
+	ATTR(inl) void clear() {
 		index = unset;
 	}
 
 	// Utilities
-	inl usize number() const {
+	ATTR(inl) usize number() const {
 		const char* str = status_str().ptr;
 		usize number = 100 * (usize)(str[0] - '0');
 		number += 10 * (usize)(str[1] - '0');
@@ -172,48 +172,48 @@ struct Status {
 		return number;
 	}
 
-	inl bool is_valid() const {
+	ATTR(inl) bool is_valid() const {
 		return index > ixxx;
 	}
 
-	inl bool is_informational() const {
+	ATTR(inl) bool is_informational() const {
 		return index >= i100 && index < i200;
 	}
 
-	inl bool is_success() const {
+	ATTR(inl) bool is_success() const {
 		return index >= i200 && index < i300;
 	}
 
-	inl bool is_redirect() const {
+	ATTR(inl) bool is_redirect() const {
 		return index >= i300 && index < i400;
 	}
 
-	inl bool is_client_error() const {
+	ATTR(inl) bool is_client_error() const {
 		return index >= i400 && index < i500;
 	}
 
-	inl bool is_server_error() const {
+	ATTR(inl) bool is_server_error() const {
 		return index >= i500;
 	}
 
-	inl bool is_error() const {
+	ATTR(inl) bool is_error() const {
 		return index >= i400;
 	}
 
-	inl bool is_set() const {
+	ATTR(inl) bool is_set() const {
 		return index != unset;
 	}
 
-	inl Status& operator=(Code code) {
+	ATTR(inl) Status& operator=(Code code) {
 		index = (u16)code;
 		return *this;
 	}
 
-	inl bool operator==(Code code) const {
+	ATTR(inl) bool operator==(Code code) const {
 		return index == (u16)code;
 	}
 
-	inl bool operator!=(Code code) const {
+	ATTR(inl) bool operator!=(Code code) const {
 		return index != (u16)code;
 	}
 };

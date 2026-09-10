@@ -6,7 +6,7 @@
 namespace fn {
 // 
 
-FN_ATTR(pure) static inline
+ATTR(static_inl, pure)
 usize html_encoded_size(const char* src, usize length) {
 	static const u8 growthLut[6] = {4, 4, 5, 3, 3, 0};
 	usize result = length;
@@ -19,7 +19,7 @@ usize html_encoded_size(const char* src, usize length) {
 	return result;
 }
 
-FN_ATTR(always_inline) static inline
+ATTR(inl)
 Span itoa10(usize number, char* buffer, usize bufferSize) {
 	ASSERT(bufferSize >= 20, "Buffer isn't big enough for itoa");
 	char* ptr = buffer + bufferSize;
@@ -33,7 +33,7 @@ Span itoa10(usize number, char* buffer, usize bufferSize) {
 	return result;
 }
 
-FN_ATTR(always_inline) static inline
+ATTR(inl)
 Span itoa16(usize number, char* buffer, usize bufferSize) {
 	static const char digits[16] = {
 		'0', '1', '2', '3', '4', '5', '6', '7',
@@ -57,7 +57,7 @@ Span itoa16(usize number, char* buffer, usize bufferSize) {
 	for base10 and 16 respectively. If exact length strtol is required,
 	just use minlength = maxlength
 */
-FN_ATTR(always_inline, pure) static inline
+ATTR(static_inl, pure)
 usize strtol10(const char* src, usize minLength = 1, usize maxLength = 19) {
 	char buffer[32] = {};
 	MEMCPY_INLINE(buffer, src, 24);
@@ -84,7 +84,7 @@ usize strtol10(const char* src, usize minLength = 1, usize maxLength = 19) {
 // 	return MEMCMP(bufPtr, ref, 16) == 0;
 // }
 
-FN_ATTR(always_inline, pure) static inline
+ATTR(static_inl, pure)
 usize strtol16(const char* src, usize minLength = 1, usize maxLength = 15) {
 	char buffer[32] = {};
 	MEMCPY_INLINE(buffer, src, 24);

@@ -7,7 +7,7 @@
 namespace fn {
 
 // Important: Assumes padding of at least 4 bytes
-FN_ATTR(always_inline) static inline
+ATTR(static_inl, pure)
 usize s_normalize_target(u8* str, usize length) {
 	u8* end = str + length;
 	u8* readPtr = str;
@@ -34,7 +34,7 @@ usize s_normalize_target(u8* str, usize length) {
 }
 
 // /path/to/something/../this
-FN_ATTR(always_inline) static inline
+ATTR(static_inl, pure)
 usize canonicalize_target_inplace(u8* str, usize length) {
 	usize newLength = s_normalize_target(str, length);
 	if (newLength == SIZE_MAX)

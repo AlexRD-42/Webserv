@@ -29,34 +29,3 @@ struct Pair {
     m64 first;
     m64 second;
 };
-
-// Insane shit
-
-// #define JOIN_MACROS_(a, b) a##b
-// #define JOIN_MACROS(a, b) JOIN_MACROS_(a, b)
-// #define PROBE() ~, 1
-// #define SECOND(a, b, ...) b
-// #define IS_PROBE(...) SECOND(__VA_ARGS__, 0)
-
-// #define IS_INL(x) IS_PROBE(JOIN_MACROS(IS_INL_, x))
-// #define IS_INL_inl PROBE()
-
-// #define FIRST(a, ...) a
-
-// #define IF_0(t, f) f
-// #define IF_1(t, f) t
-// #define IF(x) JOIN_MACROS(IF_, x)
-
-// #define FN_INL(_inl, ...) \
-//     inline __attribute__((always_inline __VA_OPT__(,) __VA_ARGS__))
-
-// #define FN_ATTR(...) \
-//     __attribute__((__VA_ARGS__))
-
-// #define FN(...) \
-// 	IF(IS_INL(FIRST(__VA_ARGS__)))( \
-// 		FN_INL(__VA_ARGS__), \
-// 		FN_ATTR(__VA_ARGS__) \
-// 	)
-
-// 	FN(inl, pure)

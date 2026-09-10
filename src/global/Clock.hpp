@@ -11,9 +11,9 @@
 struct Clock {
 	Clock() = delete;
 
-	stinl std::time_t timeBegin = 0;
-	stinl std::time_t timeNow = 0;
-	stinl u32 timeElapsed = 0;
+	static inline std::time_t timeBegin = 0;
+	static inline std::time_t timeNow = 0;
+	static inline u32 timeElapsed = 0;
 
 	static void init() {
 		timeBegin = std::time(NULL);
@@ -28,7 +28,7 @@ struct Clock {
 	}
 
 	// Does not call update time
-	inl static u32 time_elapsed() {
+	ATTR(static_inl) u32 time_elapsed() {
 		return (u32)timeElapsed;
 	}
 

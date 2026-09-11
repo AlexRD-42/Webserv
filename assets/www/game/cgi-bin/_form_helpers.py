@@ -23,6 +23,6 @@ def page(title, messages):
                      "<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\">"
                      "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">"
                      "<title>%s</title></head><body>%s"
-                     "<p><a href=\"/cgis.html\">Back to CGIs</a> · <a href=\"/login.html\">Login</a></p>"
+                     "<p><a href=\"/cgis.html\">Back to CGIs</a> · <a href=\"/cgi-bin/index.py\">Login</a></p>"
                      "</body></html>" % (html.escape(title), headings))
     sys.stdout.flush()

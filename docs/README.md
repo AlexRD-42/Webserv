@@ -7,12 +7,12 @@ I might gradually update and modernize, but if you encounter something weird, it
 
 ## Usage
 I have included a run bash script for easy testing
-./run game, ./run siege or ./run valgrind will build and run the server under those configs
+./run, or ./run valgrind will build and run the server under those configs
 ./run test executes the pre-built siege stress test
 
 Examples:
-	./run game, then open a browser and go to 127.0.0.1:8080
-	./run siege, then in another terminal ./run test
+	./run, then open a browser and go to 127.0.0.1:8080
+	./run valgrind, then in another terminal ./run test
 
 ### Configuration
 * CGI blocks are defined per location.

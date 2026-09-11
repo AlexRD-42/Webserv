@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 set -e
-
 case "$1" in
     game)
         make fast
@@ -11,11 +10,14 @@ case "$1" in
         exec ./build/webserv assets/configs/siege.conf
         ;;
     valgrind)
-        make re
+        make debug
         exec valgrind ./build/webserv assets/configs/siege.conf
         ;;
+	test)
+        siege -f assets/configs/siege_urls.txt
+		;;
     *)
-        echo "Usage: $0 {game|siege|valgrind}" >&2
+        echo "Usage: $0 {game|siege|valgrind|test}" >&2
         exit 1
         ;;
 esac

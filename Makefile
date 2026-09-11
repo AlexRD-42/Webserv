@@ -21,7 +21,7 @@ LDFLAGS =
 DEBUG = -g -DDEBUG_MODE -O0 -Wpedantic -Wcast-qual -Wfloat-equal -Wswitch-default -Wsign-conversion
 ASAN = -fsanitize=address,undefined,leak -fno-omit-frame-pointer
 TSAN = -fsanitize=thread -fno-omit-frame-pointer
-FAST = -march=native -Ofast -ffast-math -fstrict-aliasing
+FAST = -march=native -O3 -ffast-math -fstrict-aliasing
 
 # Pattern Rules: Compilation ------------------ #
 $(OBJ_PATH)/%.o: %.cpp | $(OBJ_PATH)

@@ -63,7 +63,7 @@ struct Server {
 			if (epoll.add(servers[serverIndex].listenFd, EPOLLIN, UINT32_MAX, serverIndex))
 				PERR_EXIT(clear(), "Error: Failed to add listening socket event");
 		}
-		PRINT_LN(1, "Webserv configuration parsed, server is now running");
+		PRINT_LN(1, "Webserv configuration parsed, server is now running (CTRL-C to end)");
 		while (g_running == true) {
 			const usize eventCount = epoll.wait(1000);	// REVIEW
 			if (eventCount == SIZE_MAX) {

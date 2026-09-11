@@ -5,6 +5,43 @@ An HTTP/1.1 server written in C++
 Initially, this server was written as part of the 42 curriculum that enforces several constraints, such as the inability of checking errno after reads/writes, C++98 standard and other weird stuff
 I might gradually update and modernize, but if you encounter something weird, it's probably the reason.
 
+## Usage
+I have included a run bash script for easy testing
+./run game, ./run siege or ./run valgrind will build and run the server under those configs
+./run test executes the pre-built siege stress test
+
+Examples:
+	./run game, then open a browser and go to 127.0.0.1:8080
+	./run siege, then in another terminal ./run test
+
+### Configuration
+* CGI blocks are defined per location.
+Example:
+	server {
+		listen 8081;
+		host 127.0.0.1;							## Only localhost is recognized as a loopback
+		client_max_body_size 10M;				## Can define K, M or G for KB, MB or GB respectively
+		root /path_to_root;
+		error_pages /path_to_error_folder;		## All files inside directory are prefix matched against error codes
+
+		location /custom_index/ {
+			root /path_to_root;
+			allowed_methods GET POST;
+			upload_store /path_to_upload_store;
+			index index_file_name;
+			autoindex on;
+			cgi {
+				.extension = /absolute_path_to_interpreter;
+				.py = /bin/python3;
+			}
+		}
+
+		location /old {
+			allowed_methods GET;
+			return 301 /new/;
+		}
+	}
+
 ## Glossary
 SIMD: Single Input Multiple Data
 	Refers to instructions that process multiple data at once. 
@@ -27,35 +64,6 @@ Arenas:
 	1) You can pad per arena instead of per allocation
 	2) You guarantee that the memory region you got is contiguous
 	3) Less memory fragmentation, more predictable runtime, better performance
-
-#### Usage
-
-* CGI blocks are defined per location.
-Example:
-	server {
-		listen 8081;
-		host 127.0.0.1;
-		client_max_body_size 10M;				## Can define K, M or G for KB, MB or GB respectively
-		root /path_to_root;
-		error_pages /path_to_error_folder;
-
-		location /custom_index/ {
-			root /path_to_root;
-			allowed_methods GET POST;
-			upload_store /path_to_upload_store;
-			index index_file_name;
-			autoindex on;
-			cgi {
-				.extension = /absolute_path_to_interpreter;
-				.py = /bin/python3;
-			}
-		}
-
-		location /old {
-			allowed_methods GET;
-			return 301 /new/;
-		}
-	}
 
 ### Padding
 POST/PRE refer to the location of the padding. [PRE] [DATA] [POST]

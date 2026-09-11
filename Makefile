@@ -72,7 +72,7 @@ tsan: LDFLAGS += $(TSAN)
 tsan: clean $(BIN)
 
 fast: CXXFLAGS += $(FAST)
-fast: LDFLAGS += -flto
+#fast: LDFLAGS += -flto
 fast: clean $(BIN)
 
 .PHONY: all run vrun compdb clean fclean re debug asan tsan fast

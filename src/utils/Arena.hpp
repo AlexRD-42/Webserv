@@ -42,7 +42,7 @@ struct Arena {
 	ArrayView<Type> alloc_array(usize numElements, usize alignSize = 16) {
 		ASSERT(numElements <= LONG_MAX / sizeof(Type), "Array size exceeds LONG_MAX");
 		const usize bytes = numElements * sizeof(Type);
-		alignSize = MAX(alignSize, __alignof__(Type));
+		alignSize = MAX(alignSize, alignof(Type));
 		const u32 index = alloc(bytes, 0, alignSize);
 		if (index == UINT32_MAX)
 			return {};

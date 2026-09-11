@@ -40,7 +40,7 @@ function savedPosition() {
 				return {
 					x: Math.min(MAX_X, Math.max(0, x)),
 					y: Math.min(MAX_Y, Math.max(0, y)),
-					facing: "nsew".includes(f[2]) ? f[2] : "s",
+					facing: /^[nsew]$/.test(f[2]) ? f[2] : "s",
 				};
 			}
 		}
@@ -59,6 +59,8 @@ const me = {
 
 let sendTimer = null;
 let inFlight = false;
+let pollInFlight = false;
+let pollTimer = null;
 
 function makePenguin(username, isMe) {
 	const el = document.createElement("div");
@@ -128,7 +130,15 @@ async function call(method, formBody) {
 		options.headers = { "Content-Type": "application/x-www-form-urlencoded" };
 		options.body = formBody;
 	}
-	const res = await fetch(ENDPOINT, options);
+	const controller = new AbortController();
+    options.signal = controller.signal;
+    const timeout = setTimeout(() => controller.abort(), 10000);
+    let res;
+    try {
+        res = await fetch(ENDPOINT, options);
+    } finally {
+        clearTimeout(timeout);
+    }
 	if (res.status === 401) {
 		window.location.href = "/login.html";
 		throw new Error("unauthorized");
@@ -138,8 +148,11 @@ async function call(method, formBody) {
 }
 
 async function poll() {
+    if (pollInFlight || leftAlready) return;
+    pollInFlight = true;
 	try {
 		const state = await call("GET");
+        if (leftAlready) return;
 		if (!me.synced && state.you) {
 			const mine = state.players.find((p) => p.username === state.you);
 			if (mine) {
@@ -153,11 +166,14 @@ async function poll() {
 		renderState(state);
 	} catch (e) {
 		if (e.message !== "unauthorized") setStatus("reconnecting...");
-	}
+	} finally {
+        pollInFlight = false;
+    }
 }
 
 async function flushMove() {
 	sendTimer = null;
+    if (leftAlready) return;
 	if (inFlight) {
 		scheduleSend();
 		return;
@@ -182,6 +198,9 @@ let leftAlready = false;
 function leave() {
 	if (leftAlready) return;
 	leftAlready = true;
+    clearInterval(pollTimer);
+    clearTimeout(sendTimer);
+    sendTimer = null;
 	const body = "leave=1";
 	if (navigator.sendBeacon) {
 		navigator.sendBeacon(
@@ -206,7 +225,9 @@ const KEYS = {
 };
 
 document.addEventListener("keydown", (event) => {
-	if (event.ctrlKey || event.metaKey || event.altKey) return;
+	if (event.ctrlKey || event.metaKey || event.altKey || leftAlready || !me.synced) return;
+    if (event.target instanceof HTMLElement &&
+        (event.target.isContentEditable || event.target.matches("input, textarea, select"))) return;
 
 	const move = KEYS[event.key];
 	if (!move) return;
@@ -245,10 +266,28 @@ if (logoutButton) {
 }
 
 window.addEventListener("pagehide", leave);
+window.addEventListener("pageshow", (event) => {
+    if (!event.persisted) return;
+    leftAlready = false;
+    me.synced = false;
+    poll();
+    clearInterval(pollTimer);
+    pollTimer = setInterval(poll, POLL_MS);
+});
+
+// Scale the whole town together so its artwork and server coordinates stay aligned.
+const stage = document.querySelector(".game-stage");
+const canvas = document.getElementById("gameCanvas");
+function fitGame() {
+    if (stage && canvas) canvas.style.transform = `scale(${stage.clientWidth / 808})`;
+}
+if (stage && typeof ResizeObserver !== "undefined") new ResizeObserver(fitGame).observe(stage);
+window.addEventListener("resize", fitGame);
+fitGame();
 
 if (hudRegion) {
 	hudRegion.textContent = REGION_BY_PORT[window.location.port] || "Local";
 }
 
 poll();
-setInterval(poll, POLL_MS);
+pollTimer = setInterval(poll, POLL_MS);

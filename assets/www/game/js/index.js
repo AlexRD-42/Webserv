@@ -27,6 +27,8 @@ if (form) {
 	form.addEventListener("submit", (event) => {
 		const name = (usernameInput ? usernameInput.value : "").trim();
 
+		if (usernameInput) usernameInput.value = name;
+
 		if (!VALID_USERNAME.test(name)) {
 			event.preventDefault();
 			showError(MESSAGES.username);
@@ -39,4 +41,8 @@ if (form) {
 			return;
 		}
 	});
+}
+
+if (usernameInput && notice) {
+    usernameInput.addEventListener("input", () => { notice.hidden = true; });
 }

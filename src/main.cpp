@@ -12,7 +12,7 @@ int	main(int argc, char** argv, char** envp) {
 	(void) argc, (void)argv, (void) envp;
 
 	if (argc < 2)
-		server.init("assets/configs/game.conf");
+		server.init("assets/configs/default.conf");
 	else if (argc == 2)
 		server.init(argv[1]);
 	else

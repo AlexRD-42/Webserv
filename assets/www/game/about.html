@@ -5,18 +5,18 @@
         <title>About Us - Webserv Club Penguin</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="icon" type="image/x_icon" href="/images/favicon_main.ico">
+        <link rel="icon" type="image/png" href="/images/favicon.png">
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Playpen+Sans:wght@100..800&display=swap" rel="stylesheet">
-        <link rel="stylesheet" href="css/styles.css">
+        <link rel="stylesheet" href="/css/styles.css">
 
     </head>
 
     <body>
         <div class="header">
             <img class="logo"
-                src="images/logo.png"
+                src="/images/logo.png"
                 alt="Club Penguin Logo"
                 width="221"
                 height="100"
@@ -26,10 +26,12 @@
                 <p>Nostalgic Tribute</p>
             </div>
         </div>
-        <nav>
-        	<span><a href="./about.html">About Us</a></span>
-			<span><a href="./error-pages/invalid-requests-map.html">Invalid Requests</a></span>
-			<span><a href="./cgis.html">CGI's</a></span>
+        <nav aria-label="Main navigation">
+            <span><a href="/about.html" aria-current="page">About Us</a></span>
+            <span><a href="/error-pages/invalid-requests-map.html">Invalid Requests</a></span>
+            <span><a href="/cgis.html">CGIs</a></span>
+            <span><a href="/stress-test.html">Stress Test</a></span>
+            <span><a href="/login.html">Login</a></span>
         </nav>
 
         <div class="container">
@@ -53,7 +55,7 @@
                     </ul>
                 </div>
                 <div class="img-about-us">
-                    <img src="./images/p-about-us.svg" alt="Penguin image">
+                    <img src="/images/p-about-us.png" alt="Penguin image" width="458" height="568">
                 </div>
             </div>
         </div>

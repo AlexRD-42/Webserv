@@ -1,26 +1,6 @@
-#!/usr/bin/python3
-import cgi, cgitb
+#!/usr/bin/env python3
+from _form_helpers import page, read_form
 
-form = cgi.FieldStorage()
-
-if form.getvalue('maths'):
-	math_flag = "ON"
-else:
-	math_flag = "OFF"
-
-if form.getvalue('physics'):
-	physics_flag = "ON"
-else:
-	physics_flag = "OFF"
-
-print ("Content-type:text/html\r\n\r\n")
-print ('<html>')
-print ('<head')
-print ('<title>Checkbox</title>')
-print ('</head>')
-print ('<body>')
-
-print (f"<h2>CheckBox Maths is: {math_flag}</h2>")
-print (f"<h2>CheckBox Physics is: {physics_flag}</h2>")
-print ('</body>')
-print ('</html>')
+form = read_form()
+page("Checkbox", ["Checkbox Maths is: " + ("ON" if form.get("maths") else "OFF"),
+                  "Checkbox Physics is: " + ("ON" if form.get("physics") else "OFF")])

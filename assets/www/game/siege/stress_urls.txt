@@ -1,0 +1,5 @@
+# Local Club Penguin stress-test targets only.
+http://127.0.0.1:8001/about.html
+http://127.0.0.1:8001/cgis.html
+http://127.0.0.1:8001/error-pages/invalid-requests-map.html
+http://127.0.0.1:8001/images/logo.png

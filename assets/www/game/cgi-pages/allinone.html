@@ -8,20 +8,20 @@
 	</head>
 	<body>
 		<form action="/cgi-bin/hello_get.py" method="post">
-			Username: <input type = "text" name = "username"><br />
-			Password: <input type = "password" name = "password" />
+			First Name: <input type = "text" name = "first_name"><br />
+			Last Name: <input type = "text" name = "last_name" />
 			<input type = "submit" value = "Submit" />
 		</form>
 
 		<form action="/cgi-bin/radiobutton.py" method="POST" target="_blank">
-			<input type = "radio" name = "color" value = "blue" /> Blue
-			<input type = "radio" name = "color" value = "red" /> Red
+			<input type = "radio" name = "subject" value = "maths" /> Maths
+			<input type = "radio" name = "subject" value = "physics" /> Physics
 			<input type = "submit" name = "Select Subject" />
 		</form>
 
 		<form action="/cgi-bin/dropdown.py" method="POST" target="_blank">
 			<select name = "dropdown">
-				<option value = "america" selected>America</option>
+				<option value = "Maths" selected>Maths</option>
 				<option value = "africa" selected>Africa</option>
 				<option value = "europe" selected>Europe</option>
 				<option value = "oceania" selected>Oceania</option>
@@ -29,10 +29,11 @@
 			<input type = "submit" name = "Submit" />
 		</form>
 
-		<form action="/cgi-bin/checkbox.py" method="POST" target="_blank">
-			<input type = "checkbox" name = "terms" value = "on" /> I accept the terms of bla, bla...
-			<input type = "checkbox" name = "optional" value = "on" /> I want to report bugs and sign-in for the newsletter...
+		<form action="/cgi-bin/checkbox.cgi" method="POST" target="_blank">
+			<input type = "checkbox" name = "maths" value = "on" /> Maths
+			<input type = "checkbox" name = "physics" value = "on" /> Physics
 			<input type = "submit" name = "Select Subject" />
 		</form>
+		<p><a href="/cgis.html">Back to CGIs</a> · <a href="/login.html">Login</a></p>
 	</body>
 </html>

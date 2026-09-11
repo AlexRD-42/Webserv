@@ -1,19 +1,6 @@
-#!/usr/bin/python3
-import cgi, cgitb
+#!/usr/bin/env python3
+from _form_helpers import page, read_form
 
-form = cgi.FieldStorage()
-
-first_name = form.getvalue('first_name')
-last_name = form.getvalue('first_name')
-
-print ("Content-type:text/html\r\n\r\n")
-print ()
-print ('<html>')
-print ('<head')
-print ('<title>Hello</title>')
-print ('</head>')
-print ('<body>')
-
-print (f"<h2>Hello {first_name} {last_name}</h2>")
-print ('</body>')
-print ('</html>')
+form = read_form()
+name = " ".join(filter(None, [form.get("first_name", ""), form.get("last_name", "")]))
+page("Hello", ["Hello " + (name or "penguin")])

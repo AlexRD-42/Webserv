@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Stress Test - Webserv Club Penguin</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" type="image/png" href="/images/favicon.png">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Playpen+Sans:wght@100..800&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="/css/styles.css">
+    </head>
+    <body>
+        <div class="header">
+            <img class="logo" src="/images/logo.png" alt="Club Penguin Logo" width="221" height="100">
+            <div class="title">
+                <h1>Club Penguin: Webserv</h1>
+                <p>Nostalgic Tribute</p>
+            </div>
+        </div>
+        <nav aria-label="Main navigation">
+            <span><a href="/about.html">About Us</a></span>
+            <span><a href="/error-pages/invalid-requests-map.html">Invalid Requests</a></span>
+            <span><a href="/cgis.html">CGIs</a></span>
+            <span><a href="/stress-test.html" aria-current="page">Stress Test</a></span>
+            <span><a href="/login.html">Login</a></span>
+        </nav>
+
+        <div class="container">
+            <div class="container-header">
+                <h1>Stress Test</h1>
+            </div>
+            <div class="content">
+                <div class="content-text stress-panel">
+                    <h2>Run Siege</h2>
+                    <p>Runs Siege against the fixed local Club Penguin target list on 127.0.0.1:8001.</p>
+                    <form action="/cgi-bin/stress-test.siege" method="post" class="stress-form">
+                        <label>Concurrent users
+                            <input type="number" name="concurrent" min="1" step="1" required value="20">
+                        </label>
+                        <label>Repetitions per user
+                            <input type="number" name="reps" min="0" step="1" required aria-describedby="reps-help" value="3">
+                        </label>
+                        <button type="submit">Run Stress Test</button>
+                    </form>
+                    <p id="reps-help" class="stress-note">Set repetitions to 0 to run until you press Stop. There is no maximum user count, repetition count, or run duration imposed by this page.</p>
+                    <p class="stress-note">Runs continue when you leave this page. Open the result page to view progress or stop a run.</p>
+                    <p class="stress-note"><a id="last-stress-run" hidden>View last run</a></p>
+                </div>
+            </div>
+        </div>
+        <script src="/js/stress-test.js"></script>
+    </body>
+</html>

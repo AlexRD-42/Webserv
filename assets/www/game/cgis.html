@@ -2,21 +2,21 @@
 
 <html lang="en">
     <head>
-        <title>CGI's - Webserv Club Penguin</title>
+        <title>CGIs - Webserv Club Penguin</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="icon" type="image/x_icon" href="/images/favicon_main.ico">
+        <link rel="icon" type="image/png" href="/images/favicon.png">
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Playpen+Sans:wght@100..800&display=swap" rel="stylesheet">
-        <link rel="stylesheet" href="css/styles.css">
+        <link rel="stylesheet" href="/css/styles.css">
 
     </head>
 
     <body>
         <div class="header">
             <img class="logo"
-                src="images/logo.png"
+                src="/images/logo.png"
                 alt="Club Penguin Logo"
                 width="221"
                 height="100"
@@ -26,15 +26,17 @@
                 <p>Nostalgic Tribute</p>
             </div>
         </div>
-        <nav>
-            <span><a href="./about.html">About Us</a></span>
-            <span><a href="./error-pages/invalid-requests-map.html">Invalid Requests</a></span>
-            <span><a href="./cgis.html">CGI's</a></span>
+        <nav aria-label="Main navigation">
+            <span><a href="/about.html">About Us</a></span>
+            <span><a href="/error-pages/invalid-requests-map.html">Invalid Requests</a></span>
+            <span><a href="/cgis.html" aria-current="page">CGIs</a></span>
+            <span><a href="/stress-test.html">Stress Test</a></span>
+            <span><a href="/login.html">Login</a></span>
         </nav>
 
         <div class="container">
             <div class="container-header">
-                <h1>CGI's</h1>
+                <h1>CGIs</h1>
             </div>
             <div class="content">
                 <div class="content-text">
@@ -45,7 +47,10 @@
                         <li><a href="./cgi-pages/radiobutton.html" target="_blank" rel="noopener noreferrer">Radio Button</a></li>
                         <li><a href="./cgi-pages/textarea.html" target="_blank" rel="noopener noreferrer">Text Area</a></li>
                         <li><a href="./cgi-pages/dropdown.html" target="_blank" rel="noopener noreferrer">Drop Down Box</a></li>
+                        <li><a href="/cgi-pages/allinone.html">All forms</a></li>
+                        <li><a href="/stress-test.html">Siege stress test</a></li>
                     </ul>
+                </div>
             </div>
         </div>
     </body>

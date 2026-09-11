@@ -3,18 +3,18 @@ set -e
 case "$1" in
     game)
         make fast
-        exec ./build/webserv assets/configs/game.conf
+        exec ./build/webserv assets/configs/default.conf
         ;;
     siege)
         make fast
-        exec ./build/webserv assets/configs/siege.conf
+        exec ./build/webserv assets/configs/default.conf
         ;;
     valgrind)
         make debug
-        exec valgrind ./build/webserv assets/configs/siege.conf
+        exec valgrind ./build/webserv assets/configs/default.conf
         ;;
 	test)
-        siege -f assets/configs/siege_urls.txt
+        siege -f assets/www/game/siege/siege_urls.txt
 		;;
     *)
         echo "Usage: $0 {game|siege|valgrind|test}" >&2

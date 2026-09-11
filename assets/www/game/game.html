@@ -5,7 +5,7 @@
 		<title>Webserv Club Penguin</title>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<link rel="icon" type="image/x_icon" href="/images/favicon_main.ico">
+		<link rel="icon" type="image/png" href="/images/favicon.png">
 		<link rel="preconnect" href="https://fonts.googleapis.com">
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 		<link href="https://fonts.googleapis.com/css2?family=Playpen+Sans:wght@100..800&display=swap" rel="stylesheet">
@@ -27,11 +27,13 @@
 			</div>
 			<button id="logoutButton" type="button"><em>Logout</em></button>
 		</div>
-		<nav>
-			<span><a href="/about.html" target="_blank">About Us</a></span>
-			<span><a href="/error-pages/invalid-requests-map.html" target="_blank">Invalid Requests</a></span>
-			<span><a href="/cgis.html" target="_blank">CGI's</a></span>
-		</nav>
+        <nav aria-label="Main navigation">
+            <span><a href="/about.html">About Us</a></span>
+            <span><a href="/error-pages/invalid-requests-map.html">Invalid Requests</a></span>
+            <span><a href="/cgis.html">CGIs</a></span>
+            <span><a href="/stress-test.html">Stress Test</a></span>
+            <span><a href="/login.html">Login</a></span>
+        </nav>
 
 		<div class="game-container">
 			<div id="hud">
@@ -40,9 +42,11 @@
 				<span class="hud-item" id="hud-count">connecting...</span>
 				<span class="hud-item" id="hud-status" style="display:none"></span>
 			</div>
+			<div class="game-stage">
 			<div id="gameCanvas">
 				<div id="arena" class="area">
 				</div>
+			</div>
 			</div>
 		</div>
 

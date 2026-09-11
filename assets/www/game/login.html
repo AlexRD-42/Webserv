@@ -4,17 +4,17 @@
         <title>Webserv Club Penguin</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="icon" type="image/x_icon" href="/images/favicon_main.ico">
+        <link rel="icon" type="image/png" href="/images/favicon.png">
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Playpen+Sans:wght@100..800&display=swap" rel="stylesheet">
-        <link rel="stylesheet" href="./css/login.css">
+        <link rel="stylesheet" href="/css/login.css">
     </head>
 
     <body>
         <div class="header">
             <img class="logo"
-                src="images/logo.png"
+                src="/images/logo.png"
                 alt="Club Penguin Logo"
                 width="221"
                 height="100"
@@ -24,24 +24,33 @@
                 <p>Nostalgic Tribute</p>
             </div>
         </div>
+        <nav aria-label="Main navigation">
+            <span><a href="/about.html">About Us</a></span>
+            <span><a href="/error-pages/invalid-requests-map.html">Invalid Requests</a></span>
+            <span><a href="/cgis.html">CGIs</a></span>
+            <span><a href="/stress-test.html">Stress Test</a></span>
+            <span><a href="/login.html" aria-current="page">Login</a></span>
+        </nav>
         <div class="MyDiv">
-            <p id="login-error" class="login-error" hidden></p>
-            <form action="/cgi-bin/process-login.py" method="post">
-                Username: <input type="text" name="username" required><br />
-
-                <select name="dropdown">
-                    <option value="america" selected>America</option>
-                    <option value="africa">Africa</option>
-                    <option value="europe">Europe</option>
-                    <option value="oceania">Oceania</option>
-                </select><br />
-
-                <input type="checkbox" name="terms" value="on" required /> *I accept the terms of bla, bla... <br />
-                <input type="checkbox" name="optional" value="on" /> I want to report bugs and sign-in for the newsletter... <br />
-
+            <p id="login-error" class="login-error" role="alert" hidden></p>
+            <form action="/cgi-bin/process-login.py" method="post" class="login-form">
+                <label class="login-field">Username
+                    <input type="text" name="username" maxlength="20" pattern="[A-Za-z0-9_\-]{1,20}" autocomplete="username" aria-describedby="username-help" required>
+                </label>
+                <small id="username-help">1–20 letters, digits, hyphens or underscores.</small>
+                <label class="login-field">Server
+                    <select name="dropdown">
+                        <option value="america" selected>America</option>
+                        <option value="africa">Africa</option>
+                        <option value="europe">Europe</option>
+                        <option value="oceania">Oceania</option>
+                    </select>
+                </label>
+                <label class="login-check"><input type="checkbox" name="terms" value="on" required> <span>*I accept the terms of bla, bla...</span></label>
+                <label class="login-check"><input type="checkbox" name="optional" value="on"> <span>I want to report bugs and sign-in for the newsletter...</span></label>
                 <button id="playButton" type="submit"><em>Login</em></button>
             </form>
         </div>
-        <script src="js/index.js"></script>
+        <script src="/js/index.js"></script>
     </body>
 </html>

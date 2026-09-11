@@ -46,7 +46,7 @@ def main():
     server_choice = form.get("dropdown", [""])[0].strip().lower()
     accepted_terms = form.get("terms", [""])[0] == "on"
 
-    if not VALID_USERNAME.match(username):
+    if not VALID_USERNAME.fullmatch(username):
         back_to_login("username")
     if not accepted_terms:
         back_to_login("terms")

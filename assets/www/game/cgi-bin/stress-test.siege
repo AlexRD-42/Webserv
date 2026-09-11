@@ -1,0 +1,291 @@
+#!/usr/bin/env python3
+"""Start, inspect, and stop Siege jobs without tying their lifetime to a CGI request."""
+import hashlib
+import html
+import json
+import os
+from pathlib import Path
+import re
+import shlex
+import shutil
+import signal
+import subprocess
+import sys
+import tempfile
+import time
+from urllib.parse import parse_qs
+import uuid
+
+SCRIPT = Path(__file__).resolve()
+ENDPOINT = "/cgi-bin/stress-test.siege"
+URLS = SCRIPT.parent.parent / "siege" / "stress_urls.txt"
+PROJECT_KEY = hashlib.sha256(str(SCRIPT).encode()).hexdigest()[:16]
+RUNS = Path(tempfile.gettempdir()) / ("webserv-siege-%s-%s" % (os.getuid(), PROJECT_KEY))
+ACTIVE = {"queued", "running", "stopping"}
+
+
+def read_form():
+    try:
+        length = int(os.environ.get("CONTENT_LENGTH", "0") or 0)
+    except ValueError:
+        raise ValueError("Invalid form length.")
+    if length < 0:
+        raise ValueError("Invalid form length.")
+    return parse_qs(sys.stdin.buffer.read(length).decode("utf-8", errors="replace"), keep_blank_values=True)
+
+
+def integer(form, name, default, minimum):
+    value = form.get(name, [str(default)])[0].strip()
+    if not re.fullmatch(r"[0-9]+", value):
+        raise ValueError("%s must be a whole number of at least %s." % (name.capitalize(), minimum))
+    number = int(value)
+    if number < minimum:
+        raise ValueError("%s must be at least %s." % (name.capitalize(), minimum))
+    return number
+
+
+def job_path(token):
+    if not re.fullmatch(r"[0-9a-f]{32}", token):
+        raise ValueError("Invalid run identifier.")
+    return RUNS / token
+
+
+def save_job(folder, data):
+    # Readers always see a complete JSON document, even during a status update.
+    pending = folder / "status.tmp"
+    pending.write_text(json.dumps(data), encoding="utf-8")
+    pending.replace(folder / "status.json")
+
+
+def load_job(folder):
+    return json.loads((folder / "status.json").read_text(encoding="utf-8"))
+
+
+def output_chunk(folder, offset=0):
+    with (folder / "output.log").open("rb") as stream:
+        stream.seek(offset)
+        output = stream.read(65536)
+        next_offset = stream.tell()
+        has_more = bool(stream.read(1))
+    return output.decode("utf-8", errors="replace"), next_offset, has_more
+
+
+def respond(body, status="200 OK", content_type="text/html; charset=utf-8", extra=()):
+    headers = ["Status: " + status, "Content-Type: " + content_type, "Cache-Control: no-store"]
+    sys.stdout.write("\r\n".join(headers + list(extra)) + "\r\n\r\n" + body)
+    sys.stdout.flush()
+
+
+def redirect(token):
+    respond("Redirecting to the run…", "303 See Other", extra=["Location: " + ENDPOINT + "?job=" + token])
+
+
+def page(message="", status="200 OK", data=None, output="", offset=0):
+    refresh = ""
+    content = '<p role="alert">%s</p>' % html.escape(message)
+    if data:
+        token = data["id"]
+        active = data["state"] in ACTIVE
+        if active:
+            refresh = '<noscript><meta http-equiv="refresh" content="2"></noscript>'
+        labels = {"queued": "Starting…", "running": "Running", "stopping": "Stopping…", "completed": "Completed", "stopped": "Stopped", "failed": "Failed"}
+        state = labels.get(data["state"], data["state"])
+        repetitions = str(data["reps"]) if data["reps"] else "Until stopped"
+        hidden = "" if active else " hidden"
+        content = f'''<section id="stress-result" data-job="{token}" data-offset="{offset}">
+            <p>{data['concurrent']} concurrent users · Repetitions per user: {repetitions}</p>
+            <p class="stress-status" id="stress-status" role="status">{state}</p>
+            <p class="stress-command"><strong>Command:</strong> <code>{html.escape(shlex.join(data['command']))}</code></p>
+            <pre class="stress-output" id="stress-output" aria-label="Siege output">{html.escape(output)}</pre>
+            <form class="stress-stop" id="stress-stop" action="{ENDPOINT}" method="post"{hidden}>
+                <input type="hidden" name="action" value="stop">
+                <input type="hidden" name="job" value="{token}">
+                <button type="submit">Stop</button>
+            </form>
+            <p class="stress-note">You can leave this page and return to this run from the Stress Test tab.</p>
+        </section>'''
+    body = f'''<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Siege Result - Webserv Club Penguin</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="/images/favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playpen+Sans:wght@100..800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/styles.css">
+    {refresh}
+</head>
+<body>
+    <div class="header">
+        <img class="logo" src="/images/logo.png" alt="Club Penguin Logo" width="221" height="100">
+        <div class="title"><h1>Club Penguin: Webserv</h1><p>Nostalgic Tribute</p></div>
+    </div>
+    <nav aria-label="Main navigation">
+        <span><a href="/about.html">About Us</a></span>
+        <span><a href="/error-pages/invalid-requests-map.html">Invalid Requests</a></span>
+        <span><a href="/cgis.html">CGIs</a></span>
+        <span><a href="/stress-test.html" aria-current="page">Stress Test</a></span>
+        <span><a href="/login.html">Login</a></span>
+    </nav>
+    <main class="container">
+        <div class="container-header"><h1>Siege Result</h1></div>
+        <div class="content"><div class="content-text stress-panel">
+            {content}
+            <p class="stress-note"><a href="/stress-test.html">Run another stress test</a></p>
+        </div></div>
+    </main>
+    <script src="/js/stress-test.js"></script>
+</body>
+</html>'''
+    extra = ["Allow: GET, POST"] if status.startswith("405") else []
+    respond(body, status, extra=extra)
+
+
+def start_job(form):
+    concurrent = integer(form, "concurrent", 20, 1)
+    reps = integer(form, "reps", 3, 0)
+    siege = shutil.which("siege")
+    if not siege:
+        page("Siege is not installed or is not available in the server's PATH.", "503 Service Unavailable")
+        return
+    if not URLS.is_file():
+        page("The local Siege target list is missing.", "500 Internal Server Error")
+        return
+    RUNS.mkdir(mode=0o700, parents=True, exist_ok=True)
+    token = uuid.uuid4().hex
+    folder = job_path(token)
+    folder.mkdir(mode=0o700)
+    config = folder / "siegerc"
+    # Isolate each run from user defaults, including Siege's own concurrency limit.
+    # Omitting -r uses Siege's continuous mode; no -t or subprocess timeout is set.
+    # The server accepts HTTP/1.1 only. A minimal custom rc must set this
+    # explicitly instead of relying on Siege's built-in HTTP/1.0 default.
+    config.write_text("protocol = HTTP/1.1\nconnection = close\nlimit = %d\nverbose = false\nlogging = false\nparser = false\n" % concurrent, encoding="utf-8")
+    command = [siege, "-R", str(config), "-b", "-c", str(concurrent), "-f", str(URLS)]
+    if reps:
+        command += ["-r", str(reps)]
+    data = {"id": token, "state": "queued", "concurrent": concurrent, "reps": reps, "command": command, "started": time.time()}
+    (folder / "output.log").touch(mode=0o600)
+    save_job(folder, data)
+    try:
+        subprocess.Popen([sys.executable, str(SCRIPT), "--worker", token], cwd=str(SCRIPT.parent),
+                         stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                         start_new_session=True, close_fds=True)
+    except OSError:
+        shutil.rmtree(folder)
+        raise
+    redirect(token)
+
+
+def stop_process(process):
+    # These waits apply only after the user presses Stop, never to run duration.
+    try:
+        process.send_signal(signal.SIGINT)
+        process.wait(timeout=5)
+    except ProcessLookupError:
+        pass
+    except subprocess.TimeoutExpired:
+        process.terminate()
+        try:
+            process.wait(timeout=3)
+        except subprocess.TimeoutExpired:
+            process.kill()
+            process.wait()
+
+
+def worker(token):
+    folder = job_path(token)
+    data = load_job(folder)
+    process = None
+    stopping = False
+
+    def request_stop(signum, frame):
+        nonlocal stopping
+        stopping = True
+
+    signal.signal(signal.SIGTERM, request_stop)
+    signal.signal(signal.SIGINT, request_stop)
+    with (folder / "output.log").open("ab", buffering=0) as log:
+        try:
+            if not (folder / "stop").exists():
+                process = subprocess.Popen(data["command"], cwd=str(folder), stdin=subprocess.DEVNULL,
+                                           stdout=log, stderr=subprocess.STDOUT, close_fds=True)
+                data["state"] = "running"
+                save_job(folder, data)
+                while process.poll() is None:
+                    if stopping or (folder / "stop").exists():
+                        stopping = True
+                        data["state"] = "stopping"
+                        save_job(folder, data)
+                        stop_process(process)
+                        break
+                    time.sleep(0.2)
+                code = process.wait()
+            else:
+                stopping, code = True, 0
+            data["state"] = "stopped" if stopping else ("completed" if code == 0 else "failed")
+            data["exit_code"] = code
+            log.write(("\n\n%s. Exit status: %s\n" % (data["state"].capitalize(), code)).encode())
+        except Exception as exc:
+            if process is not None and process.poll() is None:
+                stop_process(process)
+            data["state"] = "failed"
+            log.write(("\nUnable to run Siege: %s\n" % exc).encode("utf-8", errors="replace"))
+        finally:
+            data["finished"] = time.time()
+            save_job(folder, data)
+
+
+def main():
+    query = parse_qs(os.environ.get("QUERY_STRING", ""), keep_blank_values=True)
+    wants_json = query.get("format") == ["json"]
+    try:
+        method = os.environ.get("REQUEST_METHOD", "GET")
+        if method == "POST":
+            form = read_form()
+            action = form.get("action", ["start"])[0]
+            if action == "start":
+                start_job(form)
+            elif action == "stop":
+                token = form.get("job", [""])[0]
+                folder = job_path(token)
+                if load_job(folder)["state"] in ACTIVE:
+                    (folder / "stop").touch(mode=0o600)
+                redirect(token)
+            else:
+                raise ValueError("Unknown action.")
+        elif method == "GET":
+            token = query.get("job", [""])[0]
+            if not token:
+                page("Use the Stress Test form to start a run.")
+                return
+            folder = job_path(token)
+            data = load_job(folder)
+            offset = integer(query, "offset", 0, 0)
+            output, next_offset, has_more = output_chunk(folder, offset)
+            if wants_json:
+                respond(json.dumps({"state": data["state"], "output": output, "offset": next_offset, "has_more": has_more}), content_type="application/json")
+            else:
+                page(data=data, output=output, offset=next_offset)
+        else:
+            page("Use GET to view runs and POST to start or stop them.", "405 Method Not Allowed")
+    except (ValueError, OSError) as exc:
+        if isinstance(exc, FileNotFoundError):
+            status, message = "404 Not Found", "This run is no longer available. Start a new run from the Stress Test page."
+        elif isinstance(exc, ValueError):
+            status, message = "400 Bad Request", str(exc)
+        else:
+            status, message = "500 Internal Server Error", "Unable to access the Siege run. Check the server's temporary-directory permissions."
+        if wants_json:
+            respond(json.dumps({"error": message}), status, "application/json")
+        else:
+            page(message, status)
+
+
+if __name__ == "__main__":
+    if len(sys.argv) == 3 and sys.argv[1] == "--worker":
+        worker(sys.argv[2])
+    else:
+        main()

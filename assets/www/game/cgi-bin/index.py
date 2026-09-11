@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 import os
+from pathlib import Path
 import re
 import sys
 
-VALID_USERNAME = re.compile(r"^[A-Za-z0-9_%-]{1,32}$")
+VALID_USERNAME = re.compile(r"[A-Za-z0-9_-]{1,20}")
 
 
 def send(headers, body=""):
@@ -14,7 +15,7 @@ def send(headers, body=""):
 def session_name():
     for part in os.environ.get("HTTP_COOKIE", "").split(";"):
         name, _, value = part.strip().partition("=")
-        if name == "cp_session" and VALID_USERNAME.match(value):
+        if name == "cp_session" and VALID_USERNAME.fullmatch(value):
             return value
     return None
 
@@ -29,7 +30,7 @@ def main():
         return
 
     try:
-        with open("../game.html", "r", encoding="utf-8") as f:
+        with (Path(__file__).resolve().parent.parent / "game.html").open(encoding="utf-8") as f:
             page = f.read()
     except OSError:
         send(["Status: 500 Internal Server Error",

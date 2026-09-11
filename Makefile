@@ -3,7 +3,7 @@ NAME = webserv
 VPATH := $(shell find src -type d)
 SRC = main.cpp
 LDLIBS =
-ARG = assets/configs/siege.conf
+ARG = assets/configs/game.conf
 
 # Defaults ------------------------------------ #
 .DEFAULT_GOAL := re # This is intentional. Project is small, compilation is fast

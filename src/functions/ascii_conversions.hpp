@@ -52,6 +52,7 @@ Span itoa16(usize number, char* buffer, usize bufferSize) {
 }
 
 bool strcasecmp16(const char* string, const char* ref, usize length) {
+	(void) length;
 	u128 buffer[2];
 	u8* bufPtr = (u8*) buffer;
 	const u128 tmp = (u128) 0x2020202020202020UL;

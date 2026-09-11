@@ -1,0 +1,38 @@
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Hello</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	</head>
+	<body>
+		<form action="/cgi-bin/hello_get.py" method="post">
+			Username: <input type = "text" name = "username"><br />
+			Password: <input type = "password" name = "password" />
+			<input type = "submit" value = "Submit" />
+		</form>
+
+		<form action="/cgi-bin/radiobutton.py" method="POST" target="_blank">
+			<input type = "radio" name = "color" value = "blue" /> Blue
+			<input type = "radio" name = "color" value = "red" /> Red
+			<input type = "submit" name = "Select Subject" />
+		</form>
+
+		<form action="/cgi-bin/dropdown.py" method="POST" target="_blank">
+			<select name = "dropdown">
+				<option value = "america" selected>America</option>
+				<option value = "africa" selected>Africa</option>
+				<option value = "europe" selected>Europe</option>
+				<option value = "oceania" selected>Oceania</option>
+			</select>
+			<input type = "submit" name = "Submit" />
+		</form>
+
+		<form action="/cgi-bin/checkbox.py" method="POST" target="_blank">
+			<input type = "checkbox" name = "terms" value = "on" /> I accept the terms of bla, bla...
+			<input type = "checkbox" name = "optional" value = "on" /> I want to report bugs and sign-in for the newsletter...
+			<input type = "submit" name = "Select Subject" />
+		</form>
+	</body>
+</html>

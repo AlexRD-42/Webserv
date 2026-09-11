@@ -1,28 +1,30 @@
 #!/usr/bin/python3
 
+import html
 import os
-import cgi
+import sys
 
-print ("Set-Cookie:UserID = XYZ;\r\n")
-print ("Set-Cookie:Password = XYZ123;\r\n")
+sys.stdout.write(
+    "Set-Cookie: UserID=XYZ; Path=/; SameSite=Lax\r\n"
+    "Set-Cookie: Password=XYZ123; Path=/; SameSite=Lax\r\n"
+    "Content-Type: text/html; charset=utf-8\r\n"
+    "\r\n"
+)
 
 user_id = "Not set"
 password = "Not set"
 
-if 'HTTP_COOKIE' in os.environ:
-	cookies = os.environ['HTTP_COOKIE']
-
-	for cookie in cookies.split(';'):
-		cookie = cookie.strip()
-		if '=' in cookie:
-			key, value = cookie.split('=', 1)
-			if key == "UserID":
-				user_id = value
-			elif key == "Password":
-				password = value
-	print ("Content-type:text/html\r\n\r\n")
-	print(f"User ID = {user_id}")
-	print(f"Password = {password}")
+if "HTTP_COOKIE" in os.environ:
+    cookies = os.environ["HTTP_COOKIE"]
+    for cookie in cookies.split(";"):
+        cookie = cookie.strip()
+        if "=" in cookie:
+            key, value = cookie.split("=", 1)
+            if key == "UserID":
+                user_id = value
+            elif key == "Password":
+                password = value
+    print(f"User ID = {html.escape(user_id)}<br>")
+    print(f"Password = {html.escape(password)}")
 else:
-	print ("Content-type:text/html\r\n\r\n")
-	print("No cookies found")
+    print("No cookies found")

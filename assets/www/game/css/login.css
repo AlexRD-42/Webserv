@@ -1,6 +1,7 @@
 @import url('./styles.css');
 body { background: #0053b0; }
-.MyDiv { width: min(300px, calc(100% - 2rem)); margin: auto; padding-block: 2rem; color: white; }
+.login-layout { flex: 1 0 auto; display: flex; flex-direction: column; align-items: center; gap: 1.25rem; width: min(900px, calc(100% - 2rem)); margin: 1.5rem auto 2rem; }
+.MyDiv { flex: 0 0 auto; width: min(100%, 380px); margin: 0; padding-block: .75rem 2rem; color: white; }
 .login-form { display: flex; flex-direction: column; gap: .8rem; }
 .login-field { display: flex; flex-direction: column; gap: .3rem; }
 .login-field input, .login-field select { width: 100%; padding: .3rem .4rem; }
@@ -8,3 +9,32 @@ body { background: #0053b0; }
 .login-check input { flex: 0 0 auto; margin-top: .35rem; }
 #playButton { width: 100%; margin-top: 1rem; padding: .75rem 1rem; font-size: 42px; }
 .login-error { background: #a12; color: white; border-radius: 10px; padding: .5rem .9rem; margin-bottom: .75rem; font-size: 15px; }
+
+.login-banner {
+    position: relative;
+    order: -1;
+    flex: 0 0 auto;
+    width: 100%;
+    min-height: 280px;
+    overflow: hidden;
+    display: flex;
+    align-items: flex-end;
+    border: 5px solid #0053b0;
+    border-radius: 25px;
+    background: url('../images/town.png') center / cover no-repeat;
+    box-shadow: 0 5px 13px 5px rgba(0,0,0,.35);
+}
+.login-banner::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0,83,176,.05) 35%, rgba(1,57,104,.9) 100%);
+}
+.login-banner-copy { position: relative; z-index: 1; padding: 1.5rem; color: white; }
+.login-banner-copy h2 { margin: 0 0 .4rem; font-size: clamp(1.6rem, 3vw, 2.4rem); }
+.login-banner-copy p { font-size: 1rem; }
+@media (max-width: 700px) {
+    .login-layout { margin-block: 1rem; gap: 1rem; }
+    .MyDiv { width: min(100%, 360px); padding-block: .5rem 1rem; }
+    .login-banner { min-height: 210px; }
+}

@@ -25,32 +25,40 @@
             </div>
         </div>
         <nav aria-label="Main navigation">
-            <span><a href="/about.html">About Us</a></span>
+            <span><a href="/login.html" aria-current="page">Login</a></span>
             <span><a href="/error-pages/invalid-requests-map.html">Invalid Requests</a></span>
             <span><a href="/cgis.html">CGIs</a></span>
             <span><a href="/stress-test.html">Stress Test</a></span>
-            <span><a href="/login.html" aria-current="page">Login</a></span>
+            <span><a href="/about.html">About Us</a></span>
         </nav>
-        <div class="MyDiv">
-            <p id="login-error" class="login-error" role="alert" hidden></p>
-            <form action="/cgi-bin/process-login.py" method="post" class="login-form">
-                <label class="login-field">Username
-                    <input type="text" name="username" maxlength="20" pattern="[A-Za-z0-9_\-]{1,20}" autocomplete="username" aria-describedby="username-help" required>
-                </label>
-                <small id="username-help">1–20 letters, digits, hyphens or underscores.</small>
-                <label class="login-field">Server
-                    <select name="dropdown">
-                        <option value="america" selected>America</option>
-                        <option value="africa">Africa</option>
-                        <option value="europe">Europe</option>
-                        <option value="oceania">Oceania</option>
-                    </select>
-                </label>
-                <label class="login-check"><input type="checkbox" name="terms" value="on" required> <span>*I accept the terms of bla, bla...</span></label>
-                <label class="login-check"><input type="checkbox" name="optional" value="on"> <span>I want to report bugs and sign-in for the newsletter...</span></label>
-                <button id="playButton" type="submit"><em>Login</em></button>
-            </form>
-        </div>
+        <main class="login-layout">
+            <div class="MyDiv">
+                <p id="login-error" class="login-error" role="alert" hidden></p>
+                <form action="/cgi-bin/process-login.py" method="post" class="login-form">
+                    <label class="login-field">Username
+                        <input type="text" name="username" maxlength="20" pattern="[A-Za-z0-9_\-]{1,20}" autocomplete="username" aria-describedby="username-help" required>
+                    </label>
+                    <small id="username-help">1–20 letters, digits, hyphens or underscores.</small>
+                    <label class="login-field">Server
+                        <select name="dropdown">
+                            <option value="america" selected>America</option>
+                            <option value="africa">Africa</option>
+                            <option value="europe">Europe</option>
+                            <option value="oceania">Oceania</option>
+                        </select>
+                    </label>
+                    <label class="login-check"><input type="checkbox" name="terms" value="on" required> <span>*I accept the terms of bla, bla...</span></label>
+                    <label class="login-check"><input type="checkbox" name="optional" value="on"> <span>I want to report bugs and sign-in for the newsletter...</span></label>
+                    <button id="playButton" type="submit"><em>Login</em></button>
+                </form>
+            </div>
+            <aside class="login-banner" aria-label="Welcome to Club Penguin Webserv">
+                <div class="login-banner-copy">
+                    <h2>Waddle into Webserv</h2>
+                    <p>Pick a server, meet the other penguins, and explore the town.</p>
+                </div>
+            </aside>
+        </main>
         <script src="/js/index.js"></script>
     </body>
 </html>

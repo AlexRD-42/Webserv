@@ -37,6 +37,20 @@ def back_to_login(reason):
     sys.exit(0)
 
 
+def redirect_host():
+    raw = os.environ.get("HTTP_HOST", "localhost").strip()
+    if raw.startswith("["):
+        end = raw.find("]")
+        host = raw[:end + 1] if end >= 0 else ""
+    elif raw.count(":") == 1:
+        host = raw.rsplit(":", 1)[0]
+    else:
+        host = raw
+    if not re.fullmatch(r"(?:[A-Za-z0-9.-]+|\[[0-9A-Fa-f:.]+\])", host):
+        return "localhost"
+    return host
+
+
 def main():
     if os.environ.get("REQUEST_METHOD", "GET") != "POST":
         back_to_login("method")
@@ -54,7 +68,7 @@ def main():
         server_choice = "america"
 
     port = SERVER_PORTS[server_choice]
-    host = os.environ.get("HTTP_HOST", "localhost").split(":")[0]
+    host = redirect_host()
 
     send([
         "Status: 302 Found",

@@ -90,13 +90,13 @@ nav a[aria-current="page"] { color: #ffb75f; }
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    gap: 2rem;
+    justify-content: flex-start;
+    gap: .75rem;
     width: 100%;
-    padding: 1rem;
+    padding: .65rem 1rem 1rem;
     color: white;
 }
-.game-stage { width: min(100%, 808px); aspect-ratio: 808 / 608; flex: 0 0 auto; }
+.game-stage { width: min(100%, 1000px); aspect-ratio: 808 / 608; flex: 0 0 auto; }
 #gameCanvas {
     display: flex;
     position: relative;
@@ -197,5 +197,5 @@ nav a[aria-current="page"] { color: #ffb75f; }
     .content-text h2 { font-size: 26px; }
     .img-about-us img { max-width: 240px; }
     #hud { gap: .5rem; }
-    .game-container { gap: 1rem; padding: .75rem; }
+    .game-container { gap: .6rem; padding: .5rem .75rem .75rem; }
 }

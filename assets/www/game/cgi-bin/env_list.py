@@ -1,8 +1,11 @@
 #!/usr/bin/python3
 
+import html
 import os
 
-print ("Content-type:text/html\r\n\r\n")
-print ("<font size=+1>Environment</font><\br>")
-for param in os.environ:
-	print (f"<b>{param}</b>: {os.environ[param]}</br>")
+print("Content-Type: text/html; charset=utf-8\r\n\r\n")
+print("<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\"><title>Environment</title></head><body>")
+print("<h1>Environment</h1>")
+for param in sorted(os.environ):
+    print(f"<p><b>{html.escape(param)}</b>: {html.escape(os.environ[param])}</p>")
+print("</body></html>")

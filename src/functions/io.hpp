@@ -13,13 +13,6 @@
 
 namespace fn {
 
-ATTR(static_inl, flatten)
-bool set_stream_mode(int fd) {
-	bool result = fcntl(fd, F_SETFL, fcntl(fd, F_GETFL, 0) | O_NONBLOCK);
-	result = result || fcntl(fd, F_SETFD, fcntl(fd, F_GETFD, 0) | FD_CLOEXEC);
-	return result;
-}
-
 // ATTR(always_inline)
 // Span alloc_whole_file(Arena &arena, const char* filePath, int &fd, usize padSize = 32, usize minSize = 0, usize maxSize = UINT32_MAX) {
 // 	struct stat st;
@@ -57,6 +50,16 @@ bool set_stream_mode(int fd) {
 // 	}
 // 	return st;
 // }
+
+ATTR(static_inl, flatten)
+int close_noerr(int fd) {
+	if (fd < 0)
+		return -1;
+	const int error = errno;
+	close(fd);
+	errno = error;
+	return -1;
+}
 
 ATTR(static_inl, flatten)
 bool read_whole_file(Arena &arena, const char* filePath, Span &file, usize padSize = 32, usize minSize = 0, usize maxSize = UINT32_MAX) {

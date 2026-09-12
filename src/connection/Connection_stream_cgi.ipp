@@ -3,8 +3,7 @@
 
 CONNECTION_INL
 (isize) switch_to_cgi(Epoll &epoll) {
-	close(writeFd);
-	writeFd = -1;
+	writeFd = fn::close_noerr(writeFd);
 	mode = Mode::CGI;
 	if (epoll.modify(clientFd, EPOLLOUT, epollState))
 		return -1;
@@ -44,10 +43,8 @@ CONNECTION_INL
 CONNECTION_INL
 (isize) cgi(Epoll &epoll) {
 	isize bytesRead = sendBuffer.read(readFd, ATOMIC_IOSIZE);
-	if (bytesRead == 0) {
-		close(readFd);
-		readFd = -1;
-	}
+	if (bytesRead == 0)
+		readFd = fn::close_noerr(readFd);
 	Span header = sendBuffer.find_cgi_header_end();
 	if (header.ptr == NULL) {
 		if (sendBuffer.size() > 7500)

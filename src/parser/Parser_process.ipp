@@ -156,8 +156,7 @@ PARSER_INL
 		if (fn::read_whole_file(*beta, pathBuffer, server.errorPages[index], 0, 0, MAX_ERROR_PAGE_SIZE))
 			close(directoryFd), PERR_EXIT(1, "Error: Failed to read error pages folder");
 	}
-	const int error = errno;
-	close(directoryFd);
-	if (error != 0)
+	fn::close_noerr(directoryFd);
+	if (errno != 0)
 		PERR_EXIT(1, "Error: Failed to read error pages folder");
 }

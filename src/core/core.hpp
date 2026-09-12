@@ -3,6 +3,11 @@
 #include <stdint.h>
 #include <climits>
 
+// New Keywords
+#define restrict			__restrict__
+#define static_inl			static inline
+#define offsetof(t, d)		__builtin_offsetof(t, d)
+
 // Types
 typedef char				i8;
 typedef unsigned char		u8;
@@ -25,11 +30,7 @@ typedef unsigned short		ushort;
 typedef unsigned int		uint;
 typedef unsigned long		ulong;
 
-// New Keywords
-#define restrict __restrict__
-#define static_inl static inline
-#define offsetof(t, d)		__builtin_offsetof(t, d)
-
+// Wrapped keywords
 #if defined(__cplusplus) && __cplusplus >= 201103L
 	#define STATIC_ASSERT(expr) static_assert((expr), #expr)
 #elif defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L
@@ -37,7 +38,6 @@ typedef unsigned long		ulong;
 #else
 	#define STATIC_ASSERT(expr) typedef char JOIN_MACROS(static_assert_failed_, __LINE__)[(expr) ? 1 : -1]
 #endif
-
 
 #define ARRAY_SIZE(arr)		(sizeof(arr) / sizeof((arr)[0]))
 #define ARRAY_END(arr)		(&(arr)[ARRAY_SIZE(arr)])

@@ -6,20 +6,16 @@ SERVER_INL
 	VirtualServer *server = &servers[serverIndex];
 	sockaddr_in clientAddress;
 	socklen_t clientLength = sizeof(clientAddress);
-	int clientFd = accept(server->listenFd, (sockaddr*) &clientAddress, &clientLength);
+	int clientFd = accept4(server->listenFd, (sockaddr*) &clientAddress, &clientLength, SOCK_NONBLOCK | SOCK_CLOEXEC);
 	if (clientFd == -1) {
 		if (errno == EAGAIN || errno == EWOULDBLOCK || errno == EINTR)
 			return;
 		PERR_RETURN((void)0, "Error: Failed to accept connection");
 	}
-	if (fn::set_stream_mode(clientFd)) {
-		close(clientFd);
-		PERR_RETURN((void)0, "Error: Failed to make client socket non-blocking");
-	}
 
 	const usize connectionIndex = connections.acquire_slot(clientFd, server);
 	if (connectionIndex == SIZE_MAX) {
-		close(clientFd);
+		clientFd = fn::close_noerr(clientFd);
 		PERR_RETURN((void)0, "Error: Connection capacity reached");
 	}
 	if (epoll.add(clientFd, EPOLLIN, (u32)connectionIndex, serverIndex)) {

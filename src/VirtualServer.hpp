@@ -56,10 +56,7 @@ struct VirtualServer {
 	}
 
 	int clear() {
-		if (listenFd != -1) {
-			close(listenFd);
-			listenFd = -1;
-		}
+		listenFd = fn::close_noerr(listenFd);
 		return 1;
 	}
 
@@ -68,11 +65,9 @@ struct VirtualServer {
 			clear();
 		ASSERT(port >= 1 && port <= 65535, "Invalid virtual server port");
 
-		listenFd = socket(AF_INET, SOCK_STREAM, 0);
+		listenFd = socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK | SOCK_CLOEXEC, 0);
 		if (listenFd == -1)
 			PERR_EXIT(clear(), "Error: Failed to create listening socket");
-		if (fn::set_stream_mode(listenFd))
-			PERR_EXIT(clear(), "Error: Failed to configure listening socket");
 
 		int reuse = 1;
 		if (setsockopt(listenFd, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse)) == -1)

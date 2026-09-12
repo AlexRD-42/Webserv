@@ -44,22 +44,27 @@ Example:
 
 ## Glossary
 SIMD: Single Input Multiple Data
+
 	Refers to instructions that process multiple data at once. 
 	For example, to clear an 8 byte string, instead of setting each byte to 0, you access it as a 64 bit integer and set that to 0 once
 
 OOB: Out of bounds
+
 	Refers to an access that goes beyond the bounds of something
 	For example, I have a 6 byte string, but I access it as an 8 byte integer, and it goes 2 bytes beyond its bounds
 
 Padding:
+
 	Something to protect against OOB, you deliberately allocate more than you need so you can guarantee that a SIMD access is safe
 	For example, instead of allocating a 6 byte string, you allocate 6 + 8, so that way you never spill for an 8 byte access. This sounds wasteful until you get into Arenas
 
 Clobberable Padding:
+
 	Essentially, padding where you don't care that it gets overwritten. Read access padding can essentially be free if you just guarantee that the memory address being spilled to exists within your program.
 	You can even write to it, as long as you save the values being written to and restore them after your execution. Clobberable padding is padding that exists explicitly for padding's sake, so you don't care about overwriting
 
 Arenas:
+
 	In simple terms, a big allocation to contain other smaller allocations inside it. This is amazing for several reasons:
 	1) You can pad per arena instead of per allocation
 	2) You guarantee that the memory region you got is contiguous

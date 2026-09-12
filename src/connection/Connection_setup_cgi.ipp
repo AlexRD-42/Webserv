@@ -104,11 +104,11 @@ CONNECTION_INL
 	chdirPath = append_env(pathBuffer, argv);
 	if (chdirPath == NULL)
 		goto Error;
-	if (pipe(fdIn) == -1)
+	if (pipe2(fdIn, O_CLOEXEC) == -1)
 		goto Error;
-	if (pipe(fdOut) == -1)
+	if (pipe2(fdOut, O_CLOEXEC) == -1)
 		goto ErrorCloseInput;
-	if (fn::set_stream_mode(fdIn[1]) || fn::set_stream_mode(fdOut[0]))
+	if (fcntl(fdIn[1], F_SETFL, O_NONBLOCK) == -1 || fcntl(fdOut[0], F_SETFL, O_NONBLOCK) == -1)
 		goto ErrorCloseOutput;
 	processId = fork();
 	if (processId < 0)

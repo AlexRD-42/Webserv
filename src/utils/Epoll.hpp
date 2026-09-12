@@ -4,6 +4,7 @@
 #include <sys/epoll.h>
 
 #include "core.hpp"
+#include "pure_functions.hpp"
 
 struct Epoll {
 	static const usize maxEvents = 64;
@@ -26,10 +27,7 @@ struct Epoll {
 	}
 
 	void clear() {
-		if (fd != -1) {
-			close(fd);
-			fd = -1;
-		}
+		fd = fn::close_noerr(fd);
 		MEMSET_INLINE(eventList, 0, sizeof(eventList));
 	}
 

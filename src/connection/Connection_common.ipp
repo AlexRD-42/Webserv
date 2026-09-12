@@ -87,9 +87,7 @@ CONNECTION_INL
 CONNECTION_INL
 (isize) end_connection() {
 	clear();
-	if (clientFd >= 0)
-		close(clientFd);
-	clientFd = -1;
+	clientFd = fn::close_noerr(clientFd);
 	if (processId != -1)
 		kill(processId, SIGKILL);
 	return -1;
@@ -97,10 +95,6 @@ CONNECTION_INL
 
 CONNECTION_INL
 (void) clear() {
-	if (readFd >= 0)
-		close(readFd);
-	if (writeFd >= 0)
-		close(writeFd);
-	readFd = -1;
-	writeFd = -1;
+	readFd = fn::close_noerr(readFd);
+	writeFd = fn::close_noerr(writeFd);
 }

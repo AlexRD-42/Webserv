@@ -42,8 +42,8 @@ struct Connection {
 		struct {
 			VirtualServer* cfg;
 			u16 options;
-			u8 contentType;
-			Mode::e_http_mode mode;
+			Mime contentType;
+			Mode mode;
 			u32 startTime;
 			u8 epollState;
 			usize bodySize;
@@ -59,7 +59,7 @@ struct Connection {
 	void clear();
 	isize end_connection();
 	char* append_target_path(Buffer64 &buffer);
-	void activate_streaming(Mode::e_http_mode nextMode);
+	void activate_streaming(Mode nextMode);
 	void activate_parsing();
 
 	// Dispatching

@@ -14,20 +14,24 @@
 // }
 
 enum e_ascii {
-	ASCII_DIGITS      = 9u,   // value <= digits
-	ASCII_HEX         = 15u,  // value <= hex
+	ASCII_DIGITS      = 9u,   // 0-9 map to 0-9
+	ASCII_HEX         = 15u,  // A-F / a-f map to 10-16
 	ASCII_LETTERS     = 35u,  // A-Z / a-z map to 10-35
-	ASCII_IDENT       = 36u,  // _
-	ASCII_URL_VALID   = 39u,  // 
-	ASCII_HTML_VALID  = 53u,	// 53 ~ 57
-	ASCII_RFC_SYMBOLS = 54u,  // RFC 3986 path symbols
-	ASCII_SYMBOLS     = 67u,
+	ASCII_IDENT       = 36u,  // 0-36: (_)
+	ASCII_URL_VALID   = 39u,  // 0-39: (-) (.) (~)
+	ASCII_RFC_SYMBOLS = 54u,  // 0-54: (!) ($) (%) (() ()) (*) (+) (,) (/) (:) (;) (=) (@) (&) (')
+	ASCII_HTML_ESCAPE = 57u,  // 53-57: (&) (') (") (<) (>)
+	ASCII_SYMBOLS     = 67u,  // 36-67  (#) (?) ([) (\) (]) (^) (`) ({) (|) (})
 	ASCII_SPACE       = 98u,
 	ASCII_CONTROL     = 99u,
-	ASCII_INVALID     = 255u
+	ASCII_INVALID     = 255u,
+	ASCII_HTML_ESCAPE_START = 53u	// Used in the HTML_ESCAPE lut
 };
 
-// HTML VALID: 53,54,55,56,57, (&) (') (") (<) (>)
+// 36 (_)  37 (-)  38 (.)  39 (~)  40 (!)  41 ($)  42 (%)  43 (()
+// 44 ())  45 (*)  46 (+)  47 (,)  48 (/)  49 (:)  50 (;)  51 (=)
+// 52 (@)  53 (&)  54 (')  55 (")  56 (<)  57 (>)  58 (#)  59 (?)
+// 60 ([)  61 (\)  62 (])  63 (^)  64 (`)  65 ({)  66 (|)  67 (})
 
 // Tables
 #ifdef MAIN_FILE

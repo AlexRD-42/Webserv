@@ -6,15 +6,26 @@
 
 namespace fn {
 
+ATTR(static_inl, pure)
+usize html_encoded_size(const char* src, usize length) {
+	static const u8 growthLut[6] = {4, 4, 5, 3, 3, 0};
+	usize result = length;
+
+	for (usize index = 0; index < length; index++) {
+		u8 lutIndex = g_asciiLut[(u8)src[index]] - ASCII_HTML_ESCAPE_START;
+		lutIndex = MIN(5, lutIndex);
+		result += growthLut[lutIndex];
+	}
+	return result;
+}
+
 // Important: Assumes padding of at least 4 bytes
 ATTR(static_inl, pure)
-usize s_normalize_target(u8* str, usize length) {
+usize decode_percent_inplace(u8* str, usize length) {
 	u8* end = str + length;
 	u8* readPtr = str;
 	u8* writePtr = str;
 
-	if (*str != '/')
-		return SIZE_MAX;
 	while (readPtr < end) {
 		u8 value = *readPtr++;
 		if (value == '%') {
@@ -36,10 +47,9 @@ usize s_normalize_target(u8* str, usize length) {
 // /path/to/something/../this
 ATTR(static_inl, pure)
 usize canonicalize_target_inplace(u8* str, usize length) {
-	usize newLength = s_normalize_target(str, length);
-	if (newLength == SIZE_MAX)
+	usize newLength = decode_percent_inplace(str, length);
+	if (newLength == SIZE_MAX || *str != '/')
 		return SIZE_MAX;
-
 	u8* end = str + newLength;
 	while (str < end) {
 		if (LITCMP(str, "/../") == 0 || LITCMP(str, "/..\0") == 0)	// Reject .. fuckery

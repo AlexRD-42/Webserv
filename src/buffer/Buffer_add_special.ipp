@@ -2,10 +2,10 @@
 #include "Buffer.hpp"
 
 BUFFER_INL
-(char*) append_mime(u8 mimeIndex) {
+(char*) append_mime(Mime mimeIndex) {
 	static const u8 mimeStrings[][32] = MIME_STRINGS;
 
-	const u8* str = mimeStrings[mimeIndex];
+	const u8* str = mimeStrings[(usize)mimeIndex];
 	const usize length = *str;
 	char* optr = (char*)data + writePos;
 	MEMCPY_INLINE(optr, str + 1, 24);
@@ -62,7 +62,7 @@ BUFFER_INL
 	char* optr = (char*)data + writePos;
 
 	for (usize index = 0; index < length; index++) {
-		u8 asciiLutIndex = g_asciiLut[(u8)ptr[index]] - ASCII_HTML_VALID;
+		u8 asciiLutIndex = g_asciiLut[(u8)ptr[index]] - ASCII_HTML_ESCAPE_START;
 		u8 strLutIndex = MIN(5, asciiLutIndex);
 		strLut[5][0] = ptr[index];
 		append_inline<6>(strLut[strLutIndex], lengthLut[strLutIndex]);	// Up to 8 bytes overflow is safe

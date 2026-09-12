@@ -15,7 +15,7 @@ CONNECTION_INL
 	if (field.ptr == NULL)
 		return Status::ixxx;
 
-	const isize fieldIndex = fn::match_field(field);
+	const Field fieldIndex = fn::match_field(field);
 	if (fieldIndex == Field::CONNECTION)
 		return Status::ok;
 	if (fieldIndex != Field::STATUS) {

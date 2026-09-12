@@ -54,18 +54,18 @@ isize s_match(const u8* ptr, usize length, const u8 (&ltable)[count][size]) {
 }
 
 ATTR(static_inl, pure, flatten)
-isize match_field(Span field) {
+Field match_field(Span field) {
 	static const u8 ltable[][24] = FIELD_TABLE;
 
-	return s_match((u8*)field.ptr, field.size, ltable);
+	return (Field)s_match((u8*)field.ptr, field.size, ltable);
 }
 
 ATTR(static_inl, pure, flatten)
-isize match_mime(Span target) {
+Mime match_mime(Span target) {
 	static const u8 ltable[][8] = MIME_TABLE;
 	Span ext = find_dot(target);
 
-	return s_match((u8*)ext.ptr, ext.size, ltable);
+	return (Mime)s_match((u8*)ext.ptr, ext.size, ltable);
 }
 }
 

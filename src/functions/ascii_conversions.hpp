@@ -6,19 +6,6 @@
 namespace fn {
 // 
 
-ATTR(static_inl, pure)
-usize html_encoded_size(const char* src, usize length) {
-	static const u8 growthLut[6] = {4, 4, 5, 3, 3, 0};
-	usize result = length;
-
-	for (usize index = 0; index < length; index++) {
-		u8 lutIndex = g_asciiLut[(u8)src[index]] - ASCII_HTML_VALID;
-		lutIndex = MIN(5, lutIndex);
-		result += growthLut[lutIndex];
-	}
-	return result;
-}
-
 ATTR(inl)
 Span itoa10(usize number, char* buffer, usize bufferSize) {
 	ASSERT(bufferSize >= 20, "Buffer isn't big enough for itoa");

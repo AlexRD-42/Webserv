@@ -105,7 +105,7 @@ struct Buffer {
 	char* prepend(const Span &span);
 
 	// Append Special
-	char* append_mime(u8 mimeIndex);
+	char* append_mime(Mime mimeIndex);
 	char* append_digit10(usize number);
 	char* append_digit16(usize number);
 	char* append_url_component(const char* ptr, usize length);

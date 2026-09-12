@@ -89,7 +89,7 @@ CONNECTION_INL
 	char* chdirPath;
 	char* argv[3];
 	int fdIn[2], fdOut[2];
-	Mode::e_http_mode nextMode = Mode::CGI;
+	Mode nextMode = Mode::CGI;
 	if (options & Options::POST)
 		nextMode = (options & Options::FIXED_LENGTH) ? Mode::CGI_FIXED : Mode::CGI_CHUNKED;
 

@@ -41,7 +41,7 @@ CONNECTION_INL
 	if (field.ptr == NULL || field.size == 0)
 		return Status::i400;
 
-	isize fieldIndex = fn::match_field(field);
+	Field fieldIndex = fn::match_field(field);
 	Span value = parseBuffer.get_field_value(readEnd);
 	if (value.ptr == NULL)
 		return Status::i400;	// Rejects empty values

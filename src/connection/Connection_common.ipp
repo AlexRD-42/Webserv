@@ -3,7 +3,7 @@
 
 // Can only call this once all the req variables have been used
 CONNECTION_INL
-(void) activate_streaming(Mode::e_http_mode nextMode) {
+(void) activate_streaming(Mode nextMode) {
 	ASSERT(mode <= Mode::PARSE, "Parsing buffer was not active");
 	ASSERT(nextMode > Mode::PARSE, "Invalid streaming mode");
 	ASSERT(parseBuffer.size() <= sizeof(recvBuffer.data), "Buffered request tail exceeded receive buffer");

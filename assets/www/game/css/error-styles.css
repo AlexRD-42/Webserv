@@ -1,8 +1,19 @@
 * { box-sizing: border-box; }
-html { min-height: 100%; }
+html { min-height: 100%; background: #eeeeee; }
 body { min-height: 100vh; margin: 0; padding: 1rem; font-family: "Playpen Sans", cursive; background: #eeeeee; }
 .info { min-height: calc(100vh - 2rem); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
 .message { font-weight: 500; margin-bottom: 60px; }
 .button { border: none; border-radius: 30px; background: #ff6600; color: white; padding: 20px clamp(30px, 15vw, 120px); text-align: center; text-decoration: none; font-size: 24px; font-weight: bold; cursor: pointer; transition: background-color .4s; }
 .button:hover { background: #973800; }
 .button:focus-visible { outline: 3px solid #034f9a; outline-offset: 4px; }
+
+@view-transition { navigation: auto; }
+::view-transition-old(root),
+::view-transition-new(root) {
+    animation-duration: 120ms;
+    animation-timing-function: ease-out;
+}
+@media (prefers-reduced-motion: reduce) {
+    ::view-transition-old(root),
+    ::view-transition-new(root) { animation-duration: 1ms; }
+}

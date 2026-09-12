@@ -1,12 +1,12 @@
 * { box-sizing: border-box; }
-html { min-height: 100%; }
+html { min-height: 100%; background: #0053b0; }
 body {
     min-height: 100vh;
     margin: 0;
     display: flex;
     flex-direction: column;
     font-family: "Playpen Sans", cursive;
-    background: url('../images/background.png') center / cover no-repeat fixed;
+    background: #0053b0 url('../images/background.webp') center / cover no-repeat fixed;
 }
 button, input, select, textarea { font: inherit; }
 [hidden] { display: none !important; }
@@ -105,7 +105,7 @@ nav a[aria-current="page"] { color: #ffb75f; }
     border: 4px solid #1a1a2e;
     border-radius: 12px;
     box-shadow: 0 0 30px rgba(0,0,0,.6);
-    background: #fff url('../images/town.png') center / cover no-repeat;
+    background: #fff url('../images/town.webp') center / cover no-repeat;
     transform-origin: top left;
 }
 .area { position: relative; flex: 0 0 500px; width: 500px; height: 300px; margin: 240px auto 0; }
@@ -198,4 +198,16 @@ nav a[aria-current="page"] { color: #ffb75f; }
     .img-about-us img { max-width: 240px; }
     #hud { gap: .5rem; }
     .game-container { gap: .6rem; padding: .5rem .75rem .75rem; }
+}
+
+/* Smooth same-origin full-page navigation where the browser supports cross-document view transitions. */
+@view-transition { navigation: auto; }
+::view-transition-old(root),
+::view-transition-new(root) {
+    animation-duration: 120ms;
+    animation-timing-function: ease-out;
+}
+@media (prefers-reduced-motion: reduce) {
+    ::view-transition-old(root),
+    ::view-transition-new(root) { animation-duration: 1ms; }
 }

@@ -74,6 +74,8 @@ def main():
         "Status: 302 Found",
         "Location: http://%s:%d/cgi-bin/index.py" % (host, port),
         "Set-Cookie: cp_session=%s; Path=/; Max-Age=3600; SameSite=Lax" % quote(username),
+        "Set-Cookie: cp_server=%s; Path=/; Max-Age=3600; SameSite=Lax" % server_choice,
+        "Cache-Control: no-store",
         "Content-Type: text/html; charset=utf-8",
     ], "<html><body>Logged in. Redirecting...</body></html>")
 

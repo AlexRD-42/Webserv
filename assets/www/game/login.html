@@ -4,10 +4,18 @@
         <title>Webserv Club Penguin</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script>
+            // Avoid rendering the login screen at all when this browser already has a session.
+            if (/(?:^|;\s*)cp_session=[A-Za-z0-9_-]{1,20}(?:;|$)/.test(document.cookie)) {
+                window.location.replace("/cgi-bin/index.py");
+            }
+        </script>
         <link rel="icon" type="image/png" href="/images/favicon.png">
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Playpen+Sans:wght@100..800&display=swap" rel="stylesheet">
+        <link rel="preload" as="image" href="/images/town.webp">
+        <link rel="stylesheet" href="/css/styles.css">
         <link rel="stylesheet" href="/css/login.css">
     </head>
 
@@ -25,7 +33,7 @@
             </div>
         </div>
         <nav aria-label="Main navigation">
-            <span><a href="/cgi-bin/index.py" aria-current="page">Login</a></span>
+            <span><a href="/cgi-bin/index.py" aria-current="page">Home</a></span>
             <span><a href="/error-pages/invalid-requests-map.html">Invalid Requests</a></span>
             <span><a href="/cgis.html">CGIs</a></span>
             <span><a href="/stress-test.html">Stress Test</a></span>

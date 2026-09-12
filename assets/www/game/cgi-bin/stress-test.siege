@@ -123,7 +123,7 @@ def page(message="", status="200 OK", data=None, output="", offset=0):
         <div class="title"><h1>Club Penguin: Webserv</h1><p>Nostalgic Tribute</p></div>
     </div>
     <nav aria-label="Main navigation">
-        <span><a href="/login.html">Login</a></span>
+        <span><a href="/cgi-bin/index.py">Home</a></span>
         <span><a href="/error-pages/invalid-requests-map.html">Invalid Requests</a></span>
         <span><a href="/cgis.html">CGIs</a></span>
         <span><a href="/stress-test.html" aria-current="page">Stress Test</a></span>

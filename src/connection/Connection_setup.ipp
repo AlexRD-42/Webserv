@@ -12,12 +12,6 @@ CONNECTION_INL
 (isize) del_setup(Epoll &epoll) {
 	Buffer64 pathBuffer = {};
 	append_target_path(pathBuffer);
-
-	struct stat st;
-	if (stat(pathBuffer, &st) == -1)
-		return flush_setup_close(epoll, s_get_status());
-	if (S_ISDIR(st.st_mode))
-		return flush_setup_close(epoll, Status::i403);	// Forbids deleting directories
 	if (unlink(pathBuffer) == -1)
 		return flush_setup_close(epoll, s_get_status());
 	activate_streaming(Mode::FLUSH);

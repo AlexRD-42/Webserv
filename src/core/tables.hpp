@@ -66,7 +66,7 @@ enum e_ascii {
 
 #define HTTP_INDEX_HEADER "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nConnection: close\r\n\r\n<html><head><title>Index of "
 #define HTTP_INDEX_MIDDLE "</title></head><body><h1>Index of "
-#define HTTP_INDEX_TAIL "</h1><hr><pre><a href=\"../\">../</a>"
+#define HTTP_INDEX_TAIL "</h1><hr><pre>\n<a href=\"../\">../</a>\n"
 #define HTTP_INDEX_PERMISSION "<a href=\"\">--- Privileged access ---</a>\n"
 
 #define HTTP_STATUS_100 "100 Continue"

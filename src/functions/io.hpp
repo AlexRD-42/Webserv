@@ -37,12 +37,16 @@ namespace fn {
 // }
 
 ATTR(static_inl, flatten)
-int open_with_info(struct stat* st, char* filePath, int flags, int accessFlags = 0) {
+int open_with_info(struct stat* st, char* filePath, int flags, int accessFlags = 0, usize minSize = 0, usize maxSize = MAX_FILE_SIZE) {
 	flags |= O_CLOEXEC | O_NONBLOCK;
 	int fd = open(filePath, flags, accessFlags);
 	if (fd == -1)
 		return -1;
-	if (fstat(fd, st)) {
+	if (fstat(fd, st) == -1) {
+		close(fd);
+		return -1;
+	}
+	if (!S_ISREG(st->st_mode) || (usize)st->st_size < minSize || (usize)st->st_size > maxSize) {
 		close(fd);
 		return -1;
 	}
@@ -57,6 +61,24 @@ int close_noerr(int fd) {
 	close(fd);
 	errno = error;
 	return -1;
+}
+
+ATTR(static_inl, flatten)
+bool read_all(int fd, char* buffer, usize fileSize) {
+	usize curBytes = 0;
+	while (curBytes < fileSize) {
+		usize bytesRemaining = fileSize - curBytes;
+		isize bytesRead = read(fd, buffer + curBytes, bytesRemaining);
+		if (bytesRead <= 0) {
+			if (bytesRead < 0 && errno == EINTR)
+				continue;
+			close(fd);
+			return true;
+		}
+		curBytes += (usize) bytesRead;
+	}
+	close(fd);
+	return false;
 }
 
 ATTR(static_inl, flatten)

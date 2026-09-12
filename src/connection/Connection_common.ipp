@@ -44,25 +44,22 @@ CONNECTION_INL
 
 static inline
 Status::Code s_get_status() {
-	Status::Code code;
 	const int error = errno;
+	errno = 0;
 
 	if (error == ENOENT || error == ENOTDIR)
-		code = Status::i404;
-	else if (error == EACCES || error == EPERM || error == EROFS)
-		code = Status::i403;
-	else if (error == EEXIST || error == ENOTEMPTY || error == EBUSY)
-		code = Status::i409;
-	else if (error == ENAMETOOLONG)
-		code = Status::i414;
-	else if (error == ENOSPC || error == EDQUOT)
-		code = Status::i507;
-	else if (error == EMFILE || error == ENFILE || error == ENOMEM)
-		code = Status::i503;
-	else
-		code = Status::i500;
-	errno = 0;
-	return code;
+		return Status::i404;
+	if (error == EACCES || error == EPERM || error == EROFS || error == EISDIR)
+		return Status::i403;
+	if (error == EEXIST || error == ENOTEMPTY || error == EBUSY)
+		return Status::i409;
+	if (error == ENAMETOOLONG)
+		return Status::i414;
+	if (error == ENOSPC || error == EDQUOT)
+		return Status::i507;
+	if (error == EMFILE || error == ENFILE || error == ENOMEM)
+		return Status::i503;
+	return Status::i500;
 }
 
 CONNECTION_INL

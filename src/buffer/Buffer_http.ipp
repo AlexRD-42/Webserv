@@ -20,7 +20,7 @@ BUFFER_INL
 			}
 			if (find_line_end().ptr == NULL)
 				return Status::unset;
-			chunkSize = fn::strtol16((char*)data + readPos);
+			chunkSize = fn::qstrtol16((char*)data + readPos);
 			if (chunkSize == 0 || chunkSize == SIZE_MAX)
 				return Status::i400;
 			if (chunkSize > bodySize)

@@ -36,20 +36,18 @@ namespace fn {
 // 	return result;
 // }
 
-// ATTR(static_inl, flatten)
-// struct stat open_with_info(int &fd, char* filePath, int flags, int accessFlags = 0) {
-// 	struct stat st;
-// 	flags |= O_CLOEXEC | O_NONBLOCK;
-// 	fd = open(filePath, flags, accessFlags);
-// 	if (fd == -1)
-// 		return st;
-// 	if (fstat(fd, &st)) {
-// 		close(fd);
-// 		fd = -1;
-// 		return st;
-// 	}
-// 	return st;
-// }
+ATTR(static_inl, flatten)
+int open_with_info(struct stat* st, char* filePath, int flags, int accessFlags = 0) {
+	flags |= O_CLOEXEC | O_NONBLOCK;
+	int fd = open(filePath, flags, accessFlags);
+	if (fd == -1)
+		return -1;
+	if (fstat(fd, st)) {
+		close(fd);
+		return -1;
+	}
+	return fd;
+}
 
 ATTR(static_inl, flatten)
 int close_noerr(int fd) {

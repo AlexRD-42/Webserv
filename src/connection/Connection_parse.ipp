@@ -60,7 +60,7 @@ CONNECTION_INL
 			if (options & (Options::CHUNKED_LENGTH | Options::FIXED_LENGTH))
 				return Status::i400; // ERROR: bad request, transfer method had already been set
 			bodySize = fn::strtol10(value.ptr, value.size);
-			if (bodySize > LONG_MAX)		// Review
+			if (bodySize == SIZE_MAX)
 				return Status::i400;
 			if (bodySize > cfg->maxBodySize)
 				return Status::i413;

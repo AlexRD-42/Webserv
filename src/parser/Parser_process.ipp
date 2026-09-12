@@ -153,7 +153,7 @@ PARSER_INL
 			close(directoryFd), PERR_EXIT(1, "Error: Duplicate error page");
 		configured.bitset(index);
 		MEMCPY(pathBuffer + folderLength, name, STRLEN(name) + 1);
-		if (fn::read_whole_file(*beta, pathBuffer, server.errorPages[index], 0, 0, MAX_ERROR_PAGE_SIZE))
+		if (fn::read_whole_file(*beta, pathBuffer, server.errorPages[index], 0, 0, HTTP_MAX_ERROR_PAGE_SIZE))
 			close(directoryFd), PERR_EXIT(1, "Error: Failed to read error pages folder");
 	}
 	fn::close_noerr(directoryFd);

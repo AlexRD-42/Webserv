@@ -38,7 +38,7 @@ CONNECTION_INL
 		struct stat st;
 		if (fstat(readFd, &st) == -1)
 			return flush_setup_close(epoll, s_get_status());
-		if ((usize)st.st_size > MAX_FILE_SIZE || !S_ISREG(st.st_mode))
+		if (!S_ISREG(st.st_mode))
 			return flush_setup_close(epoll, Status::i500);
 		contentType = fn::match_mime(pathBuffer.get_span());
 		bodySize = (usize)st.st_size;

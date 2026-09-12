@@ -57,13 +57,6 @@ CONNECTION_INL
 	char* scriptPath = append_target_path(buffer);		// /home/webserv/www/images/cgi/process.py
 	const usize scriptPathLength = (usize)(buffer.wptr() - scriptPath);
 	buffer.writePos++;
-	struct stat st;
-	if (stat(scriptPath, &st) == -1 || access(scriptPath, R_OK) == -1)
-		return NULL;
-	if (!S_ISREG(st.st_mode)) {
-		errno = EACCES;
-		return NULL;
-	}
 	char* cwdPath = buffer.append(scriptPath, scriptPathLength + 1);			// /home/webserv/www/images/cgi
 	argv[0] = buffer.append(req.interpreter.ptr, req.interpreter.size + 1);		// /bin/python3
 	argv[1] = s_split_filename(cwdPath, scriptPathLength);						// process.py
@@ -79,7 +72,6 @@ CONNECTION_INL
 	}
 	if (req.cookies.size != 0)
 		Environment::append(LITPREP(req.cookies.ptr, "HTTP_COOKIE="));
-
 	if (options & Options::FIXED_LENGTH) {
 		char* lengthStr = buffer.append("CONTENT_LENGTH=");
 		buffer.append_digit10(bodySize);

@@ -45,7 +45,7 @@ void s_directive_body_size(const Span &value, usize &bodySize) {
 	if (digitLength == 0)
 		PERR_EXIT(1, "Error: Invalid max body size");
 	const usize bytes = fn::strtol10(str, digitLength);
-	if (bytes > ((usize)LONG_MAX >> factor))
+	if (bytes > ((usize)MAX_FILE_SIZE >> factor))
 		PERR_EXIT(1, "Error: Invalid max body size");
 	bodySize = bytes << factor;
 }
@@ -146,7 +146,7 @@ PARSER_INL
 	if (server.port == SIZE_MAX)
 		PERR_EXIT(1, "Error: Missing listen directive");
 	if (server.maxBodySize == SIZE_MAX)
-		server.maxBodySize = LONG_MAX;
+		server.maxBodySize = MAX_FILE_SIZE;
 	server.locations = process_locations(parsedLocations, server);
 	cache_error_pages(server, errorPageFolder);
 }

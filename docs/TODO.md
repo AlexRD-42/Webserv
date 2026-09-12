@@ -30,4 +30,3 @@
 	READ_CHUNK_HEADER
 
 11. Change the design of the LUT functions that alter static memory
-

@@ -118,6 +118,17 @@ Buffer has 8 clobberable bytes before data and 8 after it. The three size counte
 This is done to avoid overflows and always have error sentinels.
 LONG_MAX is a ridiculously large number anyhow, any real constraint should realistically be much smaller
 
+2) POD Methods
+init() prepares the class to be used
+reset() resets the class to a starting position, but still reusable
+clear() effectively destroys the class (deallocates, closes all fds, etc), requiring an init again
+
+When reset() and clear() would effectively mean same thing, clear() is used
+
+3) Pointers and References (Style)
+Pointers attach close to their type, references to their variable
+Example: char* str, char &str, char* &str
+
 ## Architecture
 A single connection uses 16kb of space, of which 64 bytes is used by metadata, and the rest by buffers
 A connection pool holds 4096 connections, totalling 64MB + ~1KB of metadata

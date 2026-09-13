@@ -55,8 +55,7 @@ struct Connection {
 /* =================================================================== */
 	// Common
 	isize init(int fd, VirtualServer* serverConfig);
-	void clear();
-	isize end_connection();
+	isize clear();
 	char* append_target_path(Buffer64 &buffer);
 	void activate_streaming(Mode nextMode);
 	void activate_parsing();
@@ -102,7 +101,7 @@ struct Connection {
 	isize get_autoindex_setup(Epoll &epoll, Buffer64 &pathBuffer);
 	isize get_directory_setup(Epoll &epoll, Buffer64 &pathBuffer);
 	isize get_redirect_setup(Epoll &epoll, Buffer64 &pathBuffer);
-	
+
 	isize post_setup(Epoll &epoll);
 	isize cgi_setup(Epoll &epoll);
 	char* append_env(Buffer64 &buffer, char* argv[3]);

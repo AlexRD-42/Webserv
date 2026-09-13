@@ -4,18 +4,18 @@
 #include "Span.hpp"
 
 namespace fn {
-// 
+//
 
 ATTR(inl)
 Span itoa10(usize number, char* buffer, usize bufferSize) {
 	ASSERT(bufferSize >= 20, "Buffer isn't big enough for itoa");
 	char* ptr = buffer + bufferSize;
 	*ptr = 0;
-	char *const optr = ptr;
+	char* const optr = ptr;
 	do {
 		*--ptr = (char)((number % 10) + '0');
 		number /= 10;
-	}	while (number != 0);
+	} while (number != 0);
 	Span result = {ptr, (usize)(optr - ptr)};
 	return result;
 }
@@ -29,11 +29,11 @@ Span itoa16(usize number, char* buffer, usize bufferSize) {
 	ASSERT(bufferSize >= 16, "Buffer isn't big enough for itoa");
 	char* ptr = buffer + bufferSize;
 	*ptr = 0;
-	char *const optr = ptr;
+	char* const optr = ptr;
 	do {
 		*--ptr = digits[(number % 16)];
 		number /= 16;
-	}	while (number != 0);
+	} while (number != 0);
 	Span result = {ptr, (usize)(optr - ptr)};
 	return result;
 }

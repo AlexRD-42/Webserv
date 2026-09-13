@@ -88,7 +88,7 @@ struct Status {
 			str[1] < '0' || str[1] > '9' ||
 			str[2] < '0' || str[2] > '9')
 				return ixxx;
-		
+
 		const usize div = (usize)(str[0] - '1');
 		const usize rem = 10 * (usize)(str[1] - '0') + (usize)(str[2] - '0');
 		return (Code)s_index(div, rem);
@@ -132,7 +132,7 @@ struct Status {
 		Span result;
 		result.ptr = strings + (usize)index;
 		result.size = (u8) result.ptr[-1];
-	
+
 		result.ptr += result.size + 2;
 		result.size = (u8)result.ptr[-1];
 		return result;
@@ -153,7 +153,7 @@ struct Status {
 		Span result;
 		result.ptr = strings + (u16) code;
 		result.size = (u8) result.ptr[-1];
-	
+
 		result.ptr += result.size + 2;
 		result.size = (u8)result.ptr[-1];
 		return result;

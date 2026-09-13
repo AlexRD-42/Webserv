@@ -64,6 +64,9 @@ usize decode_escdot_inplace(u8* str, usize length) {
 	return (usize)(writePtr - str);
 }
 
+// This needs to search and validate for query as well
+// Ideally, should be /path/to/something\0QUERY=this
+// TODO: This needs to guarantee that there is no \r\n in the query
 // /path/to/something/../this
 ATTR(static_inl)
 usize canonicalize_target_inplace(u8* str, usize length) {

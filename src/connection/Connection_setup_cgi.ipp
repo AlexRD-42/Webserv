@@ -47,7 +47,7 @@ char* s_split_filename(char* cwdPath, usize length) {
 // TODO: Review and write what it is supposed to do
 CONNECTION_INL
 (char*) append_env(Buffer64 &buffer, char* argv[3]) {
-	static const char requestMethod[3][24] = 
+	static const char requestMethod[3][24] =
 		{"REQUEST_METHOD=GET", "REQUEST_METHOD=POST", "REQUEST_METHOD=DELETE"};
 	const usize methodIndex = (options & 7) / 2;
 

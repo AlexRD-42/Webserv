@@ -82,16 +82,11 @@ CONNECTION_INL
 }
 
 CONNECTION_INL
-(isize) end_connection() {
-	clear();
+(isize) clear() {
+	readFd = fn::close_noerr(readFd);
+	writeFd = fn::close_noerr(writeFd);
 	clientFd = fn::close_noerr(clientFd);
 	if (processId != -1)
 		kill(processId, SIGKILL);
 	return -1;
-}
-
-CONNECTION_INL
-(void) clear() {
-	readFd = fn::close_noerr(readFd);
-	writeFd = fn::close_noerr(writeFd);
 }

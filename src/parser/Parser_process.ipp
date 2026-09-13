@@ -41,7 +41,7 @@ void s_store_cgi(char* &wptr, const Parser::ParsedCgi &cgiBlock, Location &locat
 		MEMCPY(wptr, interpreter.ptr, interpreter.size);
 		wptr += interpreter.size;
 	}
-	*wptr++ = '\0';	
+	*wptr++ = '\0';
 }
 
 static inline
@@ -92,7 +92,7 @@ PARSER_INL
 	while (serverRoot.size != 0 && serverRoot.ptr[serverRoot.size - 1] == '/')
 		serverRoot.size--;
 	serverRoot.ptr[serverRoot.size] = '\0';
-	
+
 	Span defaultIndex = beta->copy_span(Span::create("index.html"));
 	for (usize index = 0; index < ploc.count; index++) {
 		ParsedLocation &src = ploc[index];

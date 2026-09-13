@@ -94,7 +94,7 @@ struct Bitmap {
 	ATTR(inl) void set() {
 		value = SIZE_MAX;
 	}
-	
+
 	operator usize() {
 		return value;
 	}

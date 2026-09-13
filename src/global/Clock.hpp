@@ -40,13 +40,13 @@ struct Clock {
 
 	static void format_time(struct timespec* tm, char* buffer) {
 		u64 nanoseconds = (u64)tm->tv_nsec + (u64)(tm->tv_sec) * 1000000000ul;
-		return s_format_time(nanoseconds, (u8*)buffer);	
+		return s_format_time(nanoseconds, (u8*)buffer);
 	}
 
 	// Howard Hinnant’s civil_from_days algorithm
 	static void s_format_time(u64 nanoseconds, u8 buffer[32]) {
 		static const u8 months[] = "JanFebMarAprMayJunJulAugSepOctNovDec";
-	
+
 		const u64 totalMinutes = nanoseconds / 60000000000UL;
 		const u64 days = totalMinutes / 1440UL;
 		const u32 minutesInDay = (u32)(totalMinutes % 1440UL);
@@ -62,7 +62,7 @@ struct Clock {
 		const u32 day = dayOfYear - (153U * monthPrime + 2U) / 5U + 1U;
 		const u32 month = monthPrime < 10U ? monthPrime + 3U : monthPrime - 9U;
 		const u32 monthOffset = (month - 1U) * 3U;
-	
+
 		u32 year = yearOfEra + (u32)(era * 400UL);
 		year += month <= 2U ? 1U : 0U;
 		MEMCPY_INLINE(buffer, "00-\0\0\0-0000 00:00\0\0\0\0\0\0", 24);

@@ -59,7 +59,7 @@ CONNECTION_INL
 	ASSERT(sendBuffer.readPos == headerEnd, "CGI header ended at an unexpected offset");
 
 	Span statusStr = Status::s_status_str(code);
-	
+
 	tmpBuffer.append("Connection: close\r\n\r\n");
 	tmpBuffer.append(sendBuffer.rptr(), sendBuffer.size());
 	tmpBuffer.prepend("\r\n");

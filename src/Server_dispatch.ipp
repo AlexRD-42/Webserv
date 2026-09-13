@@ -3,7 +3,7 @@
 
 SERVER_INL
 (void) add_connection(u32 serverIndex) {
-	VirtualServer *server = &servers[serverIndex];
+	VirtualServer* server = &servers[serverIndex];
 	sockaddr_in clientAddress;
 	socklen_t clientLength = sizeof(clientAddress);
 	int clientFd = accept4(server->listenFd, (sockaddr*) &clientAddress, &clientLength, SOCK_NONBLOCK | SOCK_CLOEXEC);
@@ -19,7 +19,7 @@ SERVER_INL
 		PERR_RETURN((void)0, "Error: Connection capacity reached");
 	}
 	if (epoll.add(clientFd, EPOLLIN, (u32)connectionIndex, serverIndex)) {
-		connections[connectionIndex].end_connection();
+		connections[connectionIndex].clear();
 		connections.free_slot(connectionIndex);
 		PERR_RETURN((void)0, "Error: Failed to add client event");
 	}

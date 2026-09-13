@@ -16,7 +16,59 @@ TODO:	Finding can be two operations, Setting or can be one operation
 */
 
 namespace fn {
-// 
+//
+ATTR(static_inl, pure)
+void* qmemrchr(void* vstr, u8 c, usize length) {
+	u8* str = (u8*)vstr;
+	u8* end = (u8*)vstr + length;
+	u8* match = NULL;
+	const u8 tmp = str[length];
+
+	*end = c;
+	while (true) {
+		while (*str != c)
+			str++;
+		if (str >= end)
+			break;
+		match = str++;
+	}
+	*end = tmp;
+	return (void*)match;
+}
+
+// Overreads at most 15 bytes
+ATTR(static_inl, pure)
+void* qmemchr(void* vstr, u8 c, usize length) {
+	u8* str = (u8*)vstr;
+	u8* end = (u8*)vstr + length;
+	const u8 tmp = str[length];
+
+	*end = c;
+	while (*str != c)
+		str++;
+	*end = tmp;
+	return (str >= end) ? NULL : str;
+}
+
+ATTR(static_inl, pure)
+Span find_last_dot(Span span) {
+	char* const end = span.ptr + span.size;
+	Span ext = {end, 0};
+
+	// char* last_slash = MEMRCHR(span.ptr, '/', span.size);
+	for (char* ptr = span.ptr; ptr < end; ptr++) {
+		if (*ptr == '/') {
+			ext.ptr = end;
+			ext.size = 0;
+		}
+		else if (*ptr == '.') {
+			ext.ptr = ptr + 1;
+			ext.size = (usize)(end - ext.ptr);
+		}
+	}
+	return ext;
+}
+
 ATTR(static_inl, pure)
 Span find_dot(Span span) {
 	char* const end = span.ptr + span.size;

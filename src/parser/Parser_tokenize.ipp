@@ -42,7 +42,7 @@ usize s_get_next_word(char* &ostr) {
 	return length;
 }
 
-static inline 
+static inline
 Parser::Token s_match_delimiter(char* ptr, usize delimPos, isize &braces) {
 	Parser::Token token;
 	char delimiter = ptr[delimPos];

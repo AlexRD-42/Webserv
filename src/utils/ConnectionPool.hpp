@@ -10,7 +10,7 @@
 	- blockBitmap indexes entire blocks, so it is only set when all connections within it are used
 	- elementBitmap represents the use state of a connection
 	- delBitmap represents connections marked for deletion
-	
+
 	* It does not have a constructor because it is lazily paged and can be trivially constructed
 	TODO: Create a bitmap array that takes a dynamic amount of connections
 */
@@ -40,7 +40,7 @@ struct ConnectionPool {
 		for (usize blockIndex = 0; blockIndex < blockCount; blockIndex++) {
 			Bitmap active = map.element[blockIndex];
 
-			Connection *base = connections + blockIndex * 64;
+			Connection* base = connections + blockIndex * 64;
 			usize elementIndex;
 			while ((elementIndex = active.find_first_set()) < WORD_BITS) {
 				(base[elementIndex].*Func)();
@@ -55,10 +55,10 @@ struct ConnectionPool {
 			if (elementBlock.value == 0)
 				continue;
 
-			Connection *base = connections + blockIndex * 64;
+			Connection* base = connections + blockIndex * 64;
 			usize elementIndex;
 			while ((elementIndex = elementBlock.find_first_set()) < WORD_BITS) {
-				base[elementIndex].end_connection();
+				base[elementIndex].clear();
 				elementBlock.bitclr(elementIndex);
 			}
 			map.block.bitclr(blockIndex);
@@ -66,7 +66,7 @@ struct ConnectionPool {
 		}
 	}
 
-	usize acquire_slot(int clientFd, VirtualServer *server) {
+	usize acquire_slot(int clientFd, VirtualServer* server) {
 		usize blockIndex = map.block.find_first_clear();
 		if (blockIndex >= blockCount)
 			return SIZE_MAX;
@@ -93,11 +93,11 @@ struct ConnectionPool {
 		usize elementIndex = linearIndex % 64;
 		usize blockIndex = linearIndex / 64;
 
-		connections[linearIndex].end_connection();
+		connections[linearIndex].clear();
 		map.del[blockIndex].bitset(elementIndex);
 	}
 
-	Connection& operator[](usize index) {
+	Connection &operator[](usize index) {
 		return connections[index];
 	}
 };

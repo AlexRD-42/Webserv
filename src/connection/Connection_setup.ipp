@@ -67,7 +67,8 @@ CONNECTION_INL
 
 CONNECTION_INL
 (isize) flush_setup(Epoll &epoll) {
-	clear();
+	readFd = fn::close_noerr(readFd);
+	writeFd = fn::close_noerr(writeFd);
 	mode = Mode::FLUSH;
 	isize bytesWritten = write_to_client(epoll);
 	if (sendBuffer.size() > 0 && epoll.modify(clientFd, EPOLLOUT, epollState))
@@ -78,7 +79,8 @@ CONNECTION_INL
 // Flush_close only needs to know the Status
 CONNECTION_INL
 (isize) flush_setup_close(Epoll &epoll, Status::Code code) {
-	clear();
+	readFd = fn::close_noerr(readFd);
+	writeFd = fn::close_noerr(writeFd);
 	options &= ~(u16)Options::KEEP_ALIVE;
 	mode = Mode::FLUSH;
 	build_error_header(code);	// Already calls sendBuffer.clear()

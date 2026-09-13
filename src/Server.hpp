@@ -15,14 +15,14 @@
 #include "Clock.hpp"
 #include "Environment.hpp"
 
-volatile sig_atomic_t g_running = 1;
+volatile sig_atomic_t gRunning = 1;
 extern "C" void handle_sigint(int) {
-    g_running = 0;
+    gRunning = 0;
 }
 
 __attribute__((constructor))
 void init(int argc, char** argv, char** envp) {
-	(void) argc, (void)argv, (void) envp; 
+	(void) argc, (void)argv, (void) envp;
 
 	if (signal(SIGPIPE, SIG_IGN) == SIG_ERR)
 		PERR_EXIT(1, "Error: Failed to configure SIGPIPE handling");
@@ -64,7 +64,7 @@ struct Server {
 				PERR_EXIT(clear(), "Error: Failed to add listening socket event");
 		}
 		PRINT_LN(1, "Webserv configuration parsed, server is now running (CTRL-C to end)");
-		while (g_running == true) {
+		while (gRunning == true) {
 			const usize eventCount = epoll.wait(1000);	// REVIEW
 			if (eventCount == SIZE_MAX) {
 				if (errno == EINTR)
@@ -113,7 +113,7 @@ struct Server {
 	void check_timeouts() {
 		time_t timeNow = Clock::update();
 		usize elementIndex;
-	
+
 		for (usize i = 0; i < connections.blockCount; i++) {
 			Bitmap bitmap = connections.map.element[i];
 			bitmap.value &= ~connections.map.del[i];

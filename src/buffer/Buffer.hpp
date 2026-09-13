@@ -80,7 +80,7 @@ struct Buffer {
 	char* readdir(int fd);
 
 	// HTTP
-	Status::Code dechunk(Buffer& tmp, usize &chunkSize, usize &bodySize);
+	Status::Code dechunk(Buffer &tmp, usize &chunkSize, usize &bodySize);
 
 	// Search
 	Span find_line_end();
@@ -114,7 +114,7 @@ struct Buffer {
 	char* memset(u8 byte, usize length);
 	template <usize N> char* memset_inline(u8 byte, usize length);
 
-	void bufcpy(const Buffer& other) {
+	void bufcpy(const Buffer &other) {
 		const usize bytesUsed = other.writePos - other.readPos;
 		writePos = bytesUsed;
 		readPos = 0;

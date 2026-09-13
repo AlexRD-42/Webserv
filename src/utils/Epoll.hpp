@@ -44,11 +44,11 @@ struct Epoll {
 		return epoll_ctl(fd, EPOLL_CTL_DEL, targetFd, NULL) == -1;
 	}
 
-	bool modify(i32 targetFd, u8 newState, u8 &curState) {
+	bool modify(i32 targetFd, u8 newState, u8& curState) {
 		if (newState == curState)
 			return false;
 		struct epoll_event newEvent = eventList[index];
-		newEvent.events = (u32) newState;
+		newEvent.events = (u32)newState;
 		if (epoll_ctl(fd, EPOLL_CTL_MOD, targetFd, &newEvent) == -1)
 			return true;
 		curState = newState;

@@ -7,7 +7,7 @@
 	If that fails, routes to get_autoindex_setup (if appropriate/allowed)
 */
 CONNECTION_INL
-(isize) get_setup(Epoll &epoll) {
+(isize) get_setup(Epoll& epoll) {
 	Buffer64 pathBuffer = {};
 	append_target_path(pathBuffer);
 	if (epoll.modify(clientFd, EPOLLOUT, epollState))
@@ -29,7 +29,7 @@ CONNECTION_INL
 
 // TODO: The pathbuffer append can go away once unified buffer for get is working
 CONNECTION_INL
-(isize) get_redirect_setup(Epoll &epoll, Buffer64 &pathBuffer) {
+(isize) get_redirect_setup(Epoll& epoll, Buffer64& pathBuffer) {
 	char* target = pathBuffer.append(req.target);
 	pathBuffer.append("/");
 	if (req.query.size != 0) {
@@ -46,7 +46,7 @@ CONNECTION_INL
 }
 
 CONNECTION_INL
-(isize) get_directory_setup(Epoll &epoll, Buffer64 &pathBuffer) {
+(isize) get_directory_setup(Epoll& epoll, Buffer64& pathBuffer) {
 	if (req.target.ptr[req.target.size - 1] != '/')
 		return get_redirect_setup(epoll, pathBuffer);
 	const Span index = req.location->get_index();	// Index span will either be index.html or the one supplied by the config
@@ -71,7 +71,7 @@ CONNECTION_INL
 }
 
 CONNECTION_INL
-(isize) get_autoindex_setup(Epoll &epoll, Buffer64 &pathBuffer) {
+(isize) get_autoindex_setup(Epoll& epoll, Buffer64& pathBuffer) {
 	contentType = Mime::HTML;
 	options &= ~(u16)Options::KEEP_ALIVE;
 	// Its unfortunate that we have to append then copy again, but compaction might destroy target

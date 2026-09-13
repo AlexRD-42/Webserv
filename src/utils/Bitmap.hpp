@@ -47,7 +47,7 @@ struct Bitmap {
 		return (value & mask_range(bitStart, bitEnd)) >> bitStart;
 	}
 
-	ATTR(inl) static usize s_pop_first_set(usize &bitmap) {
+	ATTR(inl) static usize s_pop_first_set(usize& bitmap) {
 		usize index = bitmap == 0 ? WORD_BITS : (usize)CTZ(bitmap);
 		bitmap &= bitmap - 1;
 		return index;
@@ -76,7 +76,7 @@ struct Bitmap {
 	// 	usize active = bitmap;
 
 	// 	while (active != 0) {
-	// 		usize index = (usize) FFS(active) - 1;
+	// 		usize index = (usize)FFS(active) - 1;
 	// 		Func(index);
 	// 		active &= active - 1;
 	// 	}

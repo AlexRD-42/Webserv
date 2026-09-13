@@ -6,9 +6,9 @@
 namespace fn {
 
 bool strcasecmp16(const char* string, const char* ref, usize length) {
-	(void) length;
+	(void)length;
 	u128 buffer[2];
-	u8* bufPtr = (u8*) buffer;
+	u8* bufPtr = (u8*)buffer;
 	const u128 tmp = (u128) 0x2020202020202020UL;
 	const u128 orMask = (tmp << 64) | (tmp);
 

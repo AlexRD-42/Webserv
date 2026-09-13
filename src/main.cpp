@@ -7,9 +7,9 @@
 #include "core.hpp"
 #include "Server.hpp"
 
-int	main(int argc, char** argv, char** envp) {
+int main(int argc, char** argv, char** envp) {
 	static constinit Server server = {};	// REVIEW: see if initializing like this touches pages
-	(void) argc, (void)argv, (void) envp;
+	(void)argc, (void)argv, (void)envp;
 
 	if (argc < 2)
 		server.init("assets/configs/default.conf");

@@ -53,7 +53,7 @@ struct Parser {
 	Span file;
 	usize serverCount;
 
-	void init(const char* filePath, VirtualServer (&servers)[MAX_VIRTUAL_SERVERS], Arena &srcAlpha, Arena &srcBeta) {
+	void init(const char* filePath, VirtualServer (&servers)[MAX_VIRTUAL_SERVERS], Arena& srcAlpha, Arena& srcBeta) {
 		alpha = &srcAlpha;
 		beta = &srcBeta;
 		file = {};
@@ -69,17 +69,17 @@ struct Parser {
 	}
 
 	ArrayView<Token> tokenize();
-	void cache_error_pages(VirtualServer &server, const Span &folder);
-	ParsedLocation parse_location(ArrayView<Token> &tokArray);
-	void parse_server(ArrayView<Token> &tokArray, VirtualServer &server);
+	void cache_error_pages(VirtualServer& server, const Span& folder);
+	ParsedLocation parse_location(ArrayView<Token>& tokArray);
+	void parse_server(ArrayView<Token>& tokArray, VirtualServer& server);
 
-	ArrayView<Location> store_locations(ArrayView<ParsedLocation> &ploc);
-	ArrayView<Location> process_locations(ArrayView<ParsedLocation> &ploc, VirtualServer &server);
+	ArrayView<Location> store_locations(ArrayView<ParsedLocation>& ploc);
+	ArrayView<Location> process_locations(ArrayView<ParsedLocation>& ploc, VirtualServer& server);
 
-	ParsedCgi parse_cgi(ArrayView<Token> &tokArray);
-	void parse_location_directive(ParsedLocation &location, Directive &dir);
-	void parse_server_directive(VirtualServer &server, Directive &dir, Span &errorPageFolder);
-	static Directive s_build_directive(Arena &arena, ArrayView<Token> &tokArray);
+	ParsedCgi parse_cgi(ArrayView<Token>& tokArray);
+	void parse_location_directive(ParsedLocation& location, Directive& dir);
+	void parse_server_directive(VirtualServer& server, Directive& dir, Span& errorPageFolder);
+	static Directive s_build_directive(Arena& arena, ArrayView<Token>& tokArray);
 };
 
 #include "Parser_common.ipp"

@@ -5,7 +5,7 @@
 	structural checks needed before forwarding the line
 */
 CONNECTION_INL
-(Status::Code) parse_cgi_line(Buffer64 &dst) {
+(Status::Code) parse_cgi_line(Buffer64& dst) {
 	const char* lineEnd = (char*)sendBuffer.sptr() - 1;
 	lineEnd -= lineEnd[-1] == '\r';
 	const usize totalLength = (usize)(lineEnd - (char*)sendBuffer.rptr());

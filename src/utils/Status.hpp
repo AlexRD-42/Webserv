@@ -49,7 +49,7 @@ struct Status {
 	#pragma pop_macro("SUBS")
 
 	ATTR(static_inl) u16 s_index(usize div, usize rem) {
-		static const u16 s_offsets[160] = {
+		static const u16 offsets[160] = {
 			i100, i101, i102, i103, i104, ixxx, ixxx, ixxx,
 			ixxx, ixxx, ixxx, ixxx, ixxx, ixxx, ixxx, ixxx,
 			ixxx, ixxx, ixxx, ixxx, ixxx, ixxx, ixxx, ixxx,
@@ -73,7 +73,7 @@ struct Status {
 		};
 		if (rem >= 32)
 			return (u16)ixxx;
-		return s_offsets[div * 32 + rem];
+		return offsets[div * 32 + rem];
 	}
 
 	ATTR(static_inl) u16 s_num_to_code(usize number) {
@@ -95,7 +95,7 @@ struct Status {
 	}
 
 	ATTR(static_inl) usize s_code_to_index(Code code) {
-		char* ptr = strings + (usize) code;
+		char* ptr = strings + (usize)code;
 		usize first = (u8)(ptr[0] - '0');
 		usize second = (u8)(ptr[1] - '0');
 		usize third = (u8)(ptr[2] - '0');
@@ -117,21 +117,21 @@ struct Status {
 	ATTR(inl) Span status_str() const {
 		Span result;
 		result.ptr = strings + (usize)index;
-		result.size = (u8) result.ptr[-1];
+		result.size = (u8)result.ptr[-1];
 		return result;
 	}
 
 	ATTR(static_inl) Span s_status_str(Status::Code code) {
 		Span result;
-		result.ptr = strings + (u16) code;
-		result.size = (u8) result.ptr[-1];
+		result.ptr = strings + (u16)code;
+		result.size = (u8)result.ptr[-1];
 		return result;
 	}
 
 	ATTR(inl) Span error_page() const {
 		Span result;
 		result.ptr = strings + (usize)index;
-		result.size = (u8) result.ptr[-1];
+		result.size = (u8)result.ptr[-1];
 
 		result.ptr += result.size + 2;
 		result.size = (u8)result.ptr[-1];
@@ -143,7 +143,7 @@ struct Status {
 
 		Span tmp;
 		tmp.ptr = strings + offset;
-		tmp.size = (u8) tmp.ptr[-1];
+		tmp.size = (u8)tmp.ptr[-1];
 		tmp.ptr += tmp.size + 2;
 		tmp.size = (u8)tmp.ptr[-1];
 		return tmp;
@@ -151,8 +151,8 @@ struct Status {
 
 	ATTR(static_inl) Span s_error_page(Status::Code code) {
 		Span result;
-		result.ptr = strings + (u16) code;
-		result.size = (u8) result.ptr[-1];
+		result.ptr = strings + (u16)code;
+		result.size = (u8)result.ptr[-1];
 
 		result.ptr += result.size + 2;
 		result.size = (u8)result.ptr[-1];

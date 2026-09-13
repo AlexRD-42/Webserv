@@ -14,7 +14,7 @@
 namespace fn {
 
 // ATTR(always_inline)
-// Span alloc_whole_file(Arena &arena, const char* filePath, int &fd, usize padSize = 32, usize minSize = 0, usize maxSize = UINT32_MAX) {
+// Span alloc_whole_file(Arena& arena, const char* filePath, int& fd, usize padSize = 32, usize minSize = 0, usize maxSize = UINT32_MAX) {
 // 	struct stat st;
 // 	Span result = {};
 
@@ -31,7 +31,7 @@ namespace fn {
 // 		close(fd);
 // 		PERR_RETURN(result, "Error: Out of memory");
 // 	}
-// 	result.ptr = (char*) arena.mptr(fileOffset);
+// 	result.ptr = (char*)arena.mptr(fileOffset);
 // 	result.size = fileSize;
 // 	return result;
 // }
@@ -75,14 +75,14 @@ bool read_all(int fd, char* buffer, usize fileSize) {
 			close(fd);
 			return true;
 		}
-		curBytes += (usize) bytesRead;
+		curBytes += (usize)bytesRead;
 	}
 	close(fd);
 	return false;
 }
 
 ATTR(static_inl, flatten)
-bool read_whole_file(Arena &arena, const char* filePath, Span &file, usize padSize = 32, usize minSize = 0, usize maxSize = UINT32_MAX) {
+bool read_whole_file(Arena& arena, const char* filePath, Span& file, usize padSize = 32, usize minSize = 0, usize maxSize = UINT32_MAX) {
 	int fd = open(filePath, O_RDONLY | O_CLOEXEC | O_NONBLOCK);
 	if (fd == -1)
 		PERR_RETURN(1, "Error: Failed to open file");
@@ -108,7 +108,7 @@ bool read_whole_file(Arena &arena, const char* filePath, Span &file, usize padSi
 			close(fd);
 			PERR_RETURN(1, "Error: Read failure");
 		}
-		curBytes += (usize) bytesRead;
+		curBytes += (usize)bytesRead;
 	}
 	close(fd);
 	ptr[fileSize] = '\0';

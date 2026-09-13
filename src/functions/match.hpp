@@ -18,7 +18,7 @@ TODO:	Finding can be two operations, Setting or can be one operation
 namespace fn {
 //
 ATTR(static_inl, pure)
-void* qmemrchr(void* vstr, u8 c, usize length) {
+void* q16memrchr(void* vstr, u8 c, usize length) {
 	u8* str = (u8*)vstr;
 	u8* end = (u8*)vstr + length;
 	u8* match = NULL;

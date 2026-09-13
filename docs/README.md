@@ -122,8 +122,8 @@ if {
 	do..whatever
 } else is ugly as shit. Notable exception being do while
 
-* Pointers attach close to their type, references to their variable
-Example: char* str, char &str, char* &str
+* Pointers and references attach close to their type
+Example: char* str, char& str, char*& str
 
 ## Architecture
 A single connection uses 16kb of space, of which 64 bytes is used by metadata, and the rest by buffers

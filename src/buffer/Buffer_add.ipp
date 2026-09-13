@@ -2,37 +2,37 @@
 #include "Buffer.hpp"
 
 BUFFER_INL
-(char*) prepend(const Span &span) {
+(char*) prepend(const Span& span) {
 	readPos -= span.size;
 	MEMCPY(data + readPos, span.ptr, span.size);
-	return (char*) data + readPos;
+	return (char*)data + readPos;
 }
 
 BUFFER_INL
 (char*) prepend(const char* ptr, usize length) {
 	readPos -= length;
 	MEMCPY(data + readPos, ptr, length);
-	return (char*) data + readPos;
+	return (char*)data + readPos;
 }
 
 BUFFER_INL_T
 (usize N, char*) prepend(const char (&string)[N]) {
 	readPos -= (N - 1);
 	MEMCPY_INLINE(data + readPos, string, (N - 1));
-	return (char*) data + readPos;
+	return (char*)data + readPos;
 }
 
 BUFFER_INL_T
 (usize N, char*) prepend_inline(const char* ptr, usize length) {
 	readPos -= length;
 	MEMCPY_INLINE(data + readPos, ptr, N);
-	return (char*) data + readPos;
+	return (char*)data + readPos;
 }
 
 BUFFER_INL
 (char*) append_char(char c) {
 	char* optr = (char*)data + writePos;
-	data[writePos++] = (u8) c;
+	data[writePos++] = (u8)c;
 	return optr;
 }
 
@@ -45,7 +45,7 @@ BUFFER_INL
 }
 
 BUFFER_INL
-(char*) append(const Span &span) {
+(char*) append(const Span& span) {
 	char* optr = (char*)data + writePos;
 	MEMCPY(optr, span.ptr, span.size);
 	writePos += span.size;

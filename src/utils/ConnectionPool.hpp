@@ -51,7 +51,7 @@ struct ConnectionPool {
 
 	void clear() {
 		for (usize blockIndex = 0; blockIndex < blockCount; blockIndex++) {
-			Bitmap &elementBlock = map.element[blockIndex];
+			Bitmap& elementBlock = map.element[blockIndex];
 			if (elementBlock.value == 0)
 				continue;
 
@@ -97,7 +97,7 @@ struct ConnectionPool {
 		map.del[blockIndex].bitset(elementIndex);
 	}
 
-	Connection &operator[](usize index) {
+	Connection& operator[](usize index) {
 		return connections[index];
 	}
 };

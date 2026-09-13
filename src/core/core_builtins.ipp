@@ -56,6 +56,6 @@
 #define MEMCHR_INDEX(src, val, n)\
 ({\
 	const unsigned char* _memchr_src = (const unsigned char*)(src);\
-	const unsigned char* _memchr_result = (const unsigned char*) MEMCHR(_memchr_src, val, n);\
+	const unsigned char* _memchr_result = (const unsigned char*)MEMCHR(_memchr_src, val, n);\
 	_memchr_result ? (size_t)(_memchr_result - _memchr_src) : SIZE_MAX;\
 })

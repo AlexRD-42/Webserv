@@ -17,12 +17,12 @@
 
 volatile sig_atomic_t gRunning = 1;
 extern "C" void handle_sigint(int) {
-    gRunning = 0;
+	gRunning = 0;
 }
 
 __attribute__((constructor))
 void init(int argc, char** argv, char** envp) {
-	(void) argc, (void)argv, (void) envp;
+	(void)argc, (void)argv, (void)envp;
 
 	if (signal(SIGPIPE, SIG_IGN) == SIG_ERR)
 		PERR_EXIT(1, "Error: Failed to configure SIGPIPE handling");

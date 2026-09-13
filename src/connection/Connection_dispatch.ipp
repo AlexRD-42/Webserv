@@ -13,7 +13,7 @@
 */
 
 CONNECTION_INL
-(isize) dispatch(Epoll &epoll) {
+(isize) dispatch(Epoll& epoll) {
 	if (Clock::time_elapsed() - startTime > HTTP_TIMEOUT)
 		return flush_setup_close(epoll, Status::i504);
 
@@ -34,7 +34,7 @@ CONNECTION_INL
 }
 
 CONNECTION_INL
-(isize) parse_first(Epoll &epoll) {
+(isize) parse_first(Epoll& epoll) {
 	if (epoll.request_read() && parseBuffer.read(clientFd, ATOMIC_IOSIZE) <= 0)
 		return -1;	// REVIEW
 
@@ -53,7 +53,7 @@ CONNECTION_INL
 }
 
 CONNECTION_INL
-(isize) parse(Epoll &epoll) {
+(isize) parse(Epoll& epoll) {
 	if (parseBuffer.writePos >= 16000)
 		return flush_setup_close(epoll, Status::i431);
 	if (epoll.request_read() && parseBuffer.read(clientFd, ATOMIC_IOSIZE) <= 0)
@@ -73,7 +73,7 @@ CONNECTION_INL
 }
 
 CONNECTION_INL
-(isize) setup_dispatch(Epoll &epoll) {
+(isize) setup_dispatch(Epoll& epoll) {
 	const bool isBodyMethod = options & Options::POST;
 	const bool encodingSet = options & (Options::CHUNKED_LENGTH | Options::FIXED_LENGTH);
 

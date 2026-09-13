@@ -35,7 +35,7 @@ enum e_ascii {
 
 // Tables
 #ifdef MAIN_FILE
-	const u8 g_asciiLut[256] = {
+	const u8 gAsciiLut[256] = {
 		255, 99, 99, 99, 99, 99, 99, 99, 99, 98, 98, 98, 98, 98, 99, 99, // 0x00-0x0F
 		99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, // 0x10-0x1F
 		//     SP   !   "   #   $   %   &   '   (   )   *   +   ,   -   .   /
@@ -61,7 +61,7 @@ enum e_ascii {
 		255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255
 	};
 #else
-	extern const u8 g_asciiLut[256];
+	extern const u8 gAsciiLut[256];
 #endif
 
 #define HTTP_INDEX_HEADER "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nConnection: close\r\n\r\n<html><head><title>Index of "

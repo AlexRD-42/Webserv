@@ -48,7 +48,7 @@ BUFFER_INL
 	isize bytesRead = ::read(fd, data + writePos, bytesCapped);
 	if (bytesRead < 0)
 		return -1;
-	writePos += (usize) bytesRead;
+	writePos += (usize)bytesRead;
 	return bytesRead;
 }
 
@@ -61,7 +61,7 @@ BUFFER_INL
 		return -1;
 	isize bytesRead = ::read(fd, data + writePos, bytesCapped);
 	if (bytesRead > 0)
-		writePos += (usize) bytesRead;
+		writePos += (usize)bytesRead;
 	return bytesRead;
 }
 
@@ -71,7 +71,7 @@ BUFFER_INL
 	isize bytesWritten = ::write(fd, data + readPos, bytesCapped);
 
 	if (bytesWritten > 0) {
-		readPos += (usize) bytesWritten;
+		readPos += (usize)bytesWritten;
 		scanPos = (scanPos >= readPos) ? scanPos : readPos;
 	}
 	return bytesWritten;
@@ -93,7 +93,7 @@ BUFFER_INL
 			continue;
 		}
 		bytesToWrite -= (usize)bytesWritten;
-		readPos += (usize) bytesWritten;
+		readPos += (usize)bytesWritten;
 		scanPos = (scanPos >= readPos) ? scanPos : readPos;
 	}
 	return bytesTotal;

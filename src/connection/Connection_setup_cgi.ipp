@@ -46,7 +46,7 @@ char* s_split_filename(char* cwdPath, usize length) {
 */
 // TODO: Review and write what it is supposed to do
 CONNECTION_INL
-(char*) append_env(Buffer64 &buffer, char* argv[3]) {
+(char*) append_env(Buffer64& buffer, char* argv[3]) {
 	static const char requestMethod[3][24] =
 		{"REQUEST_METHOD=GET", "REQUEST_METHOD=POST", "REQUEST_METHOD=DELETE"};
 	const usize methodIndex = (options & 7) / 2;
@@ -78,13 +78,13 @@ CONNECTION_INL
 		buffer.append("\0");
 		Environment::append(lengthStr);
 	}
-	Environment::append((char*) requestMethod[methodIndex]);
+	Environment::append((char*)requestMethod[methodIndex]);
 	Environment::append(scriptName);
 	return cwdPath;
 }
 
 CONNECTION_INL
-(isize) cgi_setup(Epoll &epoll) {
+(isize) cgi_setup(Epoll& epoll) {
 	Buffer64 pathBuffer = {};
 	char* chdirPath;
 	char* argv[3];

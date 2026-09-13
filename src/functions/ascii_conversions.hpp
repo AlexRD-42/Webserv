@@ -68,7 +68,7 @@ usize qstrtol16(const char* src, usize minLength = 1, usize maxLength = 15) {
 	usize digit;
 
 	char* ptr = buffer;
-	while ((digit = (usize) g_asciiLut[(u8)*ptr]) <= ASCII_HEX) {
+	while ((digit = (usize)gAsciiLut[(u8)*ptr]) <= ASCII_HEX) {
 		value = value * 16 + digit;
 		ptr++;
 	}

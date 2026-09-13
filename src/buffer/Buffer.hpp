@@ -80,7 +80,7 @@ struct Buffer {
 	char* readdir(int fd);
 
 	// HTTP
-	Status::Code dechunk(Buffer &tmp, usize &chunkSize, usize &bodySize);
+	Status::Code dechunk(Buffer& tmp, usize& chunkSize, usize& bodySize);
 
 	// Search
 	Span find_line_end();
@@ -97,12 +97,12 @@ struct Buffer {
 	template <usize N> char* append(const char (&string)[N]);				// Implicit
 	template <usize N> char* append_inline(const char* ptr, usize length);	// Explicit
 	char* append(const char* ptr, usize length);
-	char* append(const Span &span);	// TODO: Is it better to have const ref or normal
+	char* append(const Span& span);	// TODO: Is it better to have const ref or normal
 
 	template <usize N> char* prepend(const char (&string)[N]);
 	template <usize N> char* prepend_inline(const char* ptr, usize length);
 	char* prepend(const char* ptr, usize length);
-	char* prepend(const Span &span);
+	char* prepend(const Span& span);
 
 	// Append Special
 	char* append_mime(Mime mimeIndex);
@@ -114,7 +114,7 @@ struct Buffer {
 	char* memset(u8 byte, usize length);
 	template <usize N> char* memset_inline(u8 byte, usize length);
 
-	void bufcpy(const Buffer &other) {
+	void bufcpy(const Buffer& other) {
 		const usize bytesUsed = other.writePos - other.readPos;
 		writePos = bytesUsed;
 		readPos = 0;

@@ -7,11 +7,11 @@ struct ArrayView {
 	Type* ptr;
 	usize count;
 
-	Type& operator[] (usize index) {
+	Type& operator[](usize index) {
 		return ptr[index];
 	}
 
-	const Type& operator[] (usize index) const {
+	const Type& operator[](usize index) const {
 		return ptr[index];
 	}
 
@@ -21,16 +21,16 @@ template <typename Type, usize count>
 struct Array {
 	Type ptr[count];
 
-	Type& operator[] (usize index) {
+	Type& operator[](usize index) {
 		return ptr[index];
 	}
 
-	const Type& operator[] (usize index) const {
+	const Type& operator[](usize index) const {
 		return ptr[index];
 	}
 };
 
-// Span extract(const Span32 &span) const {
+// Span extract(const Span32& span) const {
 // 	Span result;
 // 	result.ptr = (char*)ptr + span.index;
 // 	result.size = span.size;
@@ -43,10 +43,10 @@ struct Array {
 	access. But given that the array contains elements with varying lengths, there is no
 	scheme that gives you direct access without wasting memory
 
-	Compressed array format could be: 
+	Compressed array format could be:
 	metadata index[0] index[1] index[2] index[3]
-	
-	* Metadata would contain information on how many indices exist, the total length 
+
+	* Metadata would contain information on how many indices exist, the total length
 	of the block, and size of each index
 	* Each index contains a 16 byte alignment offset length relative to the beginning
 	So a u8 could index up to 4KB of memory, a u16 1MB
@@ -69,11 +69,11 @@ template <typename Type, usize rows, usize cols>
 struct Matrix {
 	Type array[rows][cols];
 
-	Type (&operator[] (usize index))[cols] {
+	Type (&operator[](usize index))[cols] {
 		return array[index];
 	}
 
-	const Type (&operator[] (usize index) const)[cols] {
+	const Type (&operator[](usize index) const)[cols] {
 		return array[index];
 	}
 };

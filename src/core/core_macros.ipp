@@ -42,7 +42,7 @@
 #define IS_LOWER(c) ((c) >= 'a' && (c) <= 'z')
 #define IS_ALPHA(c) (IS_LOWER(c | 32))
 // #define IS_SPACE(c) (((c) == ' ') || ((unsigned char)(c) - (unsigned char)'\t' < 5u))	// LUTLESS version
-#define IS_SPACE(c)	(g_asciiLut[((unsigned char)(c))] == ASCII_SPACE)
-#define IS_HEX(c)	(g_asciiLut[((unsigned char)(c))] <= ASCII_HEX)
-#define IS_ALNUM(c) (g_asciiLut[((unsigned char)(c))] <= ASCII_LETTERS)
-#define IS_IDENT(c)	(g_asciiLut[((unsigned char)(c))] <= ASCII_IDENT)
+#define IS_SPACE(c)	(gAsciiLut[((unsigned char)(c))] == ASCII_SPACE)
+#define IS_HEX(c)	(gAsciiLut[((unsigned char)(c))] <= ASCII_HEX)
+#define IS_ALNUM(c) (gAsciiLut[((unsigned char)(c))] <= ASCII_LETTERS)
+#define IS_IDENT(c)	(gAsciiLut[((unsigned char)(c))] <= ASCII_IDENT)

@@ -15,14 +15,14 @@ usize decode_percent_inplace(u8* str, usize length) {
 	while (readPtr < end) {
 		u8 value = *readPtr++;
 		if (value == '%') {
-			if (g_asciiLut[readPtr[0]] > ASCII_HEX)
+			if (gAsciiLut[readPtr[0]] > ASCII_HEX)
 				return SIZE_MAX;
-			if (g_asciiLut[readPtr[1]] > ASCII_HEX)
+			if (gAsciiLut[readPtr[1]] > ASCII_HEX)
 				return SIZE_MAX;
-			value = (g_asciiLut[readPtr[0]] * 16 + g_asciiLut[readPtr[1]]);
+			value = (gAsciiLut[readPtr[0]] * 16 + gAsciiLut[readPtr[1]]);
 			readPtr += 2;
 		}
-		if (g_asciiLut[value] > ASCII_RFC_SYMBOLS || value == '%')	// Reject % fuckery
+		if (gAsciiLut[value] > ASCII_RFC_SYMBOLS || value == '%')	// Reject % fuckery
 			return SIZE_MAX;
 		*writePtr++ = value;
 	}

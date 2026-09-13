@@ -7,7 +7,7 @@
 */
 
 BUFFER_INL
-(Status::Code) dechunk(Buffer &tmp, usize &chunkSize, usize &bodySize) {
+(Status::Code) dechunk(Buffer& tmp, usize& chunkSize, usize& bodySize) {
 	while (writePos - readPos > 2) {
 // ==== Reading chunk header ==================================================
 		if (chunkSize == 0) {

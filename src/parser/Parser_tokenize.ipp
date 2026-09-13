@@ -29,21 +29,21 @@ usize s_count_tokens(const char* str) {
 }
 
 static inline
-usize s_get_next_word(char* &ostr) {
+usize s_get_next_word(char*& ostr) {
 	while (IS_SPACE(*ostr))
 		ostr++;
 	char* str = ostr;
 	while ((u8)*str > 32 && !s_is_config_delimiter(*str))
 		str++;
 
-	usize length = (usize) (str - ostr);
+	usize length = (usize)(str - ostr);
 	if (length == 0 && *str != 0)
 		PERR_EXIT(1, "Error: Invalid character");
 	return length;
 }
 
 static inline
-Parser::Token s_match_delimiter(char* ptr, usize delimPos, isize &braces) {
+Parser::Token s_match_delimiter(char* ptr, usize delimPos, isize& braces) {
 	Parser::Token token;
 	char delimiter = ptr[delimPos];
 
@@ -160,7 +160,7 @@ PARSER_INL
 		PERR_EXIT(1, "Error: Expected '}' to match previous '{'");
 	for (usize index = 0; index < tokArray.count; index++) {	// Review: This could probably be done in the loop above or inside get next word
 		if (tokArray[index].type == Token::WORD) {
-			Span &word = tokArray[index].value;
+			Span& word = tokArray[index].value;
 			word.ptr[word.size] = '\0';
 		}
 	}

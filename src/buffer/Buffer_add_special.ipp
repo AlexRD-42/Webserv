@@ -45,7 +45,7 @@ BUFFER_INL
 
 	for (usize index = 0; index < length; index++) {
 		const u8 value = (u8)ptr[index];
-		const u8 lutIndex = g_asciiLut[value] > ASCII_URL_VALID;
+		const u8 lutIndex = gAsciiLut[value] > ASCII_URL_VALID;
 		lut[0][0] = value;
 		lut[1][1] = hex[value >> 4];
 		lut[1][2] = hex[value & 15];
@@ -62,7 +62,7 @@ BUFFER_INL
 	char* optr = (char*)data + writePos;
 
 	for (usize index = 0; index < length; index++) {
-		u8 asciiLutIndex = g_asciiLut[(u8)ptr[index]] - ASCII_HTML_ESCAPE_START;
+		u8 asciiLutIndex = gAsciiLut[(u8)ptr[index]] - ASCII_HTML_ESCAPE_START;
 		u8 strLutIndex = MIN(5, asciiLutIndex);
 		strLut[5][0] = ptr[index];
 		append_inline<6>(strLut[strLutIndex], lengthLut[strLutIndex]);	// Up to 8 bytes overflow is safe
@@ -84,7 +84,7 @@ BUFFER_INL
 		return sizeof(HTTP_INDEX_PERMISSION) - 1;
 	}
 
-	usize fileSize = S_ISDIR(st.st_mode) ? 0 : (usize) st.st_size;
+	usize fileSize = S_ISDIR(st.st_mode) ? 0 : (usize)st.st_size;
 	char buf[32];
 	Clock::format_time(&st.st_mtim, buf);
 

@@ -2,7 +2,7 @@
 #include "Parser.hpp"
 
 static inline
-void s_directive_listen(Arena &arena, const Span &value, VirtualServer &server) {
+void s_directive_listen(Arena& arena, const Span& value, VirtualServer& server) {
 	if (server.port != SIZE_MAX)
 		PERR_EXIT(1, "Error: Invalid port definition");
 	char* port = value.ptr;
@@ -23,7 +23,7 @@ void s_directive_listen(Arena &arena, const Span &value, VirtualServer &server) 
 }
 
 static inline
-void s_directive_body_size(const Span &value, usize &bodySize) {
+void s_directive_body_size(const Span& value, usize& bodySize) {
 	if (bodySize != SIZE_MAX)
 		PERR_EXIT(1, "Error: Invalid max body size");
 
@@ -51,12 +51,12 @@ void s_directive_body_size(const Span &value, usize &bodySize) {
 }
 
 PARSER_INL
-(void) parse_server_directive(VirtualServer &server, Directive &dir, Span &errorPageFolder) {
-	const Span &name = dir.name;
+(void) parse_server_directive(VirtualServer& server, Directive& dir, Span& errorPageFolder) {
+	const Span& name = dir.name;
 
 	if (dir.args.count != 1 || dir.args[0].size >= MAX_PATH_SIZE)
 		PERR_EXIT(1, "Error: Invalid server directive");
-	const Span &value = dir.args[0];
+	const Span& value = dir.args[0];
 	if (name == "listen")
 		return s_directive_listen(*beta, value, server);
 	else if (name == "error_pages") {
@@ -115,7 +115,7 @@ usize s_count_locations(ArrayView<Parser::Token> tokArray) {
 }
 
 PARSER_INL
-(void) parse_server(ArrayView<Token> &tokArray, VirtualServer &server) {
+(void) parse_server(ArrayView<Token>& tokArray, VirtualServer& server) {
 	server.reset();
 	Span errorPageFolder = {};
 	tokArray.ptr++;
@@ -130,7 +130,7 @@ PARSER_INL
 			tokArray.ptr++;
 			ParsedLocation loc = parse_location(tokArray);
 			for (usize index = 0; index < locationIndex; index++) {
-				const Span &path = parsedLocations[index].uri;
+				const Span& path = parsedLocations[index].uri;
 				if (path.size == loc.uri.size && MEMCMP(path.ptr, loc.uri.ptr, path.size) == 0)
 					PERR_EXIT(1, "Error: Duplicate location");
 			}

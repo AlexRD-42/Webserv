@@ -9,7 +9,7 @@
 */
 
 CONNECTION_INL
-(isize) del_setup(Epoll &epoll) {
+(isize) del_setup(Epoll& epoll) {
 	Buffer64 pathBuffer = {};
 	append_target_path(pathBuffer);
 	if (unlink(pathBuffer) == -1)
@@ -20,7 +20,7 @@ CONNECTION_INL
 }
 
 CONNECTION_INL
-(isize) post_setup(Epoll &epoll) {
+(isize) post_setup(Epoll& epoll) {
 	Buffer64 pathBuffer = {};
 	const Span uploadStore = req.location->get_upload_store();
 	pathBuffer.append(uploadStore);
@@ -38,7 +38,7 @@ CONNECTION_INL
 }
 
 CONNECTION_INL
-(isize) redirect_setup(Epoll &epoll, Status::Code code) {
+(isize) redirect_setup(Epoll& epoll, Status::Code code) {
 	const Span statusStr = Status::s_status_str(code);
 	const Span target = req.location->get_redirect_target();
 	bodySize = 0;
@@ -53,7 +53,7 @@ CONNECTION_INL
 }
 
 CONNECTION_INL
-(isize) parse_setup(Epoll &epoll) {
+(isize) parse_setup(Epoll& epoll) {
 	activate_parsing();
 	options = 0;
 	contentType = Mime::OCTET_STREAM;
@@ -66,7 +66,7 @@ CONNECTION_INL
 }
 
 CONNECTION_INL
-(isize) flush_setup(Epoll &epoll) {
+(isize) flush_setup(Epoll& epoll) {
 	readFd = fn::close_noerr(readFd);
 	writeFd = fn::close_noerr(writeFd);
 	mode = Mode::FLUSH;
@@ -78,7 +78,7 @@ CONNECTION_INL
 
 // Flush_close only needs to know the Status
 CONNECTION_INL
-(isize) flush_setup_close(Epoll &epoll, Status::Code code) {
+(isize) flush_setup_close(Epoll& epoll, Status::Code code) {
 	readFd = fn::close_noerr(readFd);
 	writeFd = fn::close_noerr(writeFd);
 	options &= ~(u16)Options::KEEP_ALIVE;

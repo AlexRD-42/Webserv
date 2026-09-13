@@ -4,7 +4,7 @@
 // Guarantee that it doesnt overflow u16
 
 static inline
-Span16 s_store_location_span(Location &location, char* &wptr, const Span &source) {
+Span16 s_store_location_span(Location& location, char*& wptr, const Span& source) {
 	Span16 result = {(u16)(wptr - (char*)&location.uri), (u16)source.size};
 	MEMCPY(wptr, source.ptr, source.size);
 	wptr += source.size;
@@ -13,7 +13,7 @@ Span16 s_store_location_span(Location &location, char* &wptr, const Span &source
 }
 
 static inline
-Span16 s_store_upload_span(Location &location, char* &wptr, const Span &source) {
+Span16 s_store_upload_span(Location& location, char*& wptr, const Span& source) {
 	Span16 result = {(u16)(wptr - (char*)&location.uri), (u16)source.size};
 	MEMCPY(wptr, source.ptr, source.size);
 	wptr += source.size;
@@ -26,13 +26,13 @@ Span16 s_store_upload_span(Location &location, char* &wptr, const Span &source) 
 }
 
 static inline
-void s_store_cgi(char* &wptr, const Parser::ParsedCgi &cgiBlock, Location &location) {
+void s_store_cgi(char*& wptr, const Parser::ParsedCgi& cgiBlock, Location& location) {
 	location.cgiBlock.index = (u16)(wptr - (char*)&location.uri);
 	location.cgiBlock.size = (u16)cgiBlock.size;
 	for (usize index = 0; index < cgiBlock.definitions.count; index += 4) {
 		Parser::Token* definition = cgiBlock.definitions.ptr + index;
-		const Span &extension = definition[0].value;
-		const Span &interpreter = definition[2].value;
+		const Span& extension = definition[0].value;
+		const Span& interpreter = definition[2].value;
 		const u16 lengths[2] = {(u16)extension.size, (u16)interpreter.size};
 		MEMCPY_INLINE(wptr, lengths, sizeof(lengths));
 		wptr += sizeof(lengths);
@@ -45,7 +45,7 @@ void s_store_cgi(char* &wptr, const Parser::ParsedCgi &cgiBlock, Location &locat
 }
 
 static inline
-void s_store_location(char* &wptr, const Parser::ParsedLocation &ploc, Location &loc) {
+void s_store_location(char*& wptr, const Parser::ParsedLocation& ploc, Location& loc) {
 	loc.uri = s_store_location_span(loc, wptr, ploc.uri);
 	loc.root = s_store_location_span(loc, wptr, ploc.root);
 	loc.index = s_store_location_span(loc, wptr, ploc.index);
@@ -58,14 +58,14 @@ void s_store_location(char* &wptr, const Parser::ParsedLocation &ploc, Location 
 }
 
 static inline
-usize s_location_size(const Parser::ParsedLocation &loc) {
+usize s_location_size(const Parser::ParsedLocation& loc) {
 	usize packSize = 16 + loc.uri.size + loc.root.size + loc.index.size;
 	packSize += loc.uploadStore.size + loc.cgiBlock.size + loc.redirectTarget.size;
 	return packSize;
 }
 
 PARSER_INL
-(ArrayView<Location>) store_locations(ArrayView<ParsedLocation> &ploc) {
+(ArrayView<Location>) store_locations(ArrayView<ParsedLocation>& ploc) {
 	usize allocationSize = ploc.count * sizeof(Location);
 	for (usize index = 0; index < ploc.count; index++)
 		allocationSize += s_location_size(ploc[index]);
@@ -82,8 +82,8 @@ PARSER_INL
 }
 
 PARSER_INL
-(ArrayView<Location>) process_locations(ArrayView<ParsedLocation> &ploc, VirtualServer &server) {
-	Span &serverRoot = server.serverRoot;
+(ArrayView<Location>) process_locations(ArrayView<ParsedLocation>& ploc, VirtualServer& server) {
+	Span& serverRoot = server.serverRoot;
 
 	if (server.host.size == 0)
 		server.host = beta->copy_span(Span::create("localhost"));
@@ -95,7 +95,7 @@ PARSER_INL
 
 	Span defaultIndex = beta->copy_span(Span::create("index.html"));
 	for (usize index = 0; index < ploc.count; index++) {
-		ParsedLocation &src = ploc[index];
+		ParsedLocation& src = ploc[index];
 		if (src.root.size == 0)
 			src.root = serverRoot;
 		while (src.root.size != 0 && src.root.ptr[src.root.size - 1] == '/')
@@ -115,7 +115,7 @@ PARSER_INL
 }
 
 static inline
-void s_build_error_page_path(char* out, const Span &root, const Span &path) {
+void s_build_error_page_path(char* out, const Span& root, const Span& path) {
 	ASSERT(path.size != 0, "Error page path is empty");
 	ASSERT(root.size == 0 || root.ptr[root.size - 1] != '/', "Root has a trailing slash");
 	usize length = path.ptr[0] == '/' ? 0 : root.size;
@@ -128,7 +128,7 @@ void s_build_error_page_path(char* out, const Span &root, const Span &path) {
 }
 
 PARSER_INL
-(void) cache_error_pages(VirtualServer &server, const Span &folder) {
+(void) cache_error_pages(VirtualServer& server, const Span& folder) {
 	char pathBuffer[4 * MAX_PATH_SIZE];
 	Buffer64 entries = {};
 	Bitmap configured = {};

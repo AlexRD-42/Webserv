@@ -3,7 +3,7 @@
 
 CONNECTION_INL
 (Status::Code) match_location() {
-	ArrayView<Location> &locations = cfg->locations;
+	ArrayView<Location>& locations = cfg->locations;
 	usize matchLength = 0;
 
 	for (usize i = 0; i < locations.count; i++) {
@@ -57,7 +57,7 @@ CONNECTION_INL
 
 CONNECTION_INL
 (Status::Code) parse_validate(char* str, char* end) {
-	char* queryPtr = (char*) MEMCHR(str, '?', (usize)(end - str));	// /images/cats/meow.jpg?FILTER=yes,ORDER=ascending\0
+	char* queryPtr = (char*)MEMCHR(str, '?', (usize)(end - str));	// /images/cats/meow.jpg?FILTER=yes,ORDER=ascending\0
 	char* queryStart = queryPtr == NULL ? end : queryPtr + 1;
 	queryPtr = queryPtr == NULL ? end : queryPtr;
 

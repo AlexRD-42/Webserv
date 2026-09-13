@@ -2,14 +2,14 @@
 #include "Connection.hpp"
 
 CONNECTION_INL
-(isize) write_to_client(Epoll &epoll) {
+(isize) write_to_client(Epoll& epoll) {
 	if (epoll.request_write())
 		return sendBuffer.write(clientFd, ATOMIC_IOSIZE);
 	return 0;
 }
 
 CONNECTION_INL
-(isize) read_from_client(Epoll &epoll) {
+(isize) read_from_client(Epoll& epoll) {
 	if (!epoll.request_read())
 		return 0;
 	const isize bytesRead = recvBuffer.read_compact(clientFd, ATOMIC_IOSIZE);
@@ -34,7 +34,7 @@ CONNECTION_INL
 }
 
 CONNECTION_INL
-(isize) flush(Epoll &epoll) {
+(isize) flush(Epoll& epoll) {
 	isize bytesWritten = write_to_client(epoll);
 	if (sendBuffer.size() > 0)
 		return bytesWritten;
@@ -44,7 +44,7 @@ CONNECTION_INL
 }
 
 CONNECTION_INL
-(isize) download_file_fixed(Epoll &epoll) {
+(isize) download_file_fixed(Epoll& epoll) {
 	if (read_from_client(epoll) < 0)
 		return -1;
 	isize bytesWritten = 0;
@@ -62,7 +62,7 @@ CONNECTION_INL
 }
 
 CONNECTION_INL
-(isize) download_file_chunked(Epoll &epoll) {
+(isize) download_file_chunked(Epoll& epoll) {
 	if (read_from_client(epoll) < 0)
 		return -1;
 	Status::Code code = write_chunked();

@@ -6,7 +6,7 @@ SERVER_INL
 	VirtualServer* server = &servers[serverIndex];
 	sockaddr_in clientAddress;
 	socklen_t clientLength = sizeof(clientAddress);
-	int clientFd = accept4(server->listenFd, (sockaddr*) &clientAddress, &clientLength, SOCK_NONBLOCK | SOCK_CLOEXEC);
+	int clientFd = accept4(server->listenFd, (sockaddr*)&clientAddress, &clientLength, SOCK_NONBLOCK | SOCK_CLOEXEC);
 	if (clientFd == -1) {
 		if (errno == EAGAIN || errno == EWOULDBLOCK || errno == EINTR)
 			return;

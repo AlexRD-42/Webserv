@@ -25,7 +25,7 @@ CONNECTION_INL
 }
 
 CONNECTION_INL
-(char*) append_target_path(Buffer64 &buffer) {
+(char*) append_target_path(Buffer64& buffer) {
 	const Span root = req.location->get_root();
 	const Span uri = req.location->get_uri();
 

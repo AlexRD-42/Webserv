@@ -25,7 +25,7 @@ struct Location {
 	u8		methods;
 	bool	autoindex;
 
-	Span extract(const Span16 &span) {
+	Span extract(const Span16& span) {
 		Span result = {(char*)this + span.index, span.size};
 		ASSERT(result.ptr[result.size] == '\0', "Location span is not null terminated");
 		return result;
@@ -75,12 +75,12 @@ struct VirtualServer {
 
 		sockaddr_in address = {};
 		address.sin_family = AF_INET;
-		address.sin_port = htons((u16) port);
+		address.sin_port = htons((u16)port);
 		if (host == "localhost")
 			address.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
 		else if (inet_pton(AF_INET, host.ptr, &address.sin_addr) != 1)
 			PERR_EXIT(clear(), "Error: Failed to resolve virtual server host");
-		if (bind(listenFd, (sockaddr*) &address, sizeof(address)) == -1)
+		if (bind(listenFd, (sockaddr*)&address, sizeof(address)) == -1)
 			PERR_EXIT(clear(), "Error: Failed to bind listening socket");
 		if (listen(listenFd, SOMAXCONN) == -1)
 			PERR_EXIT(clear(), "Error: Failed to listen on socket");

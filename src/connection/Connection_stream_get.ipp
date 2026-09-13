@@ -3,7 +3,7 @@
 
 // Finished state means everything is read to the send buffer and it only needs flushing of the send buffer
 CONNECTION_INL
-(isize) upload_directory(Epoll &epoll) {
+(isize) upload_directory(Epoll& epoll) {
 	const usize bytesFree = sendBuffer.reserve(HTTP_DIRENT_MAX_SIZE);
 
 	if (bytesFree < HTTP_DIRENT_MAX_SIZE)
@@ -26,7 +26,7 @@ CONNECTION_INL
 
 // Finished state means everything is read to the send buffer and it only needs flushing of the send buffer
 CONNECTION_INL
-(isize) upload_file(Epoll &epoll) {
+(isize) upload_file(Epoll& epoll) {
 	isize bytesRead = sendBuffer.read_compact(readFd, MIN((usize)ATOMIC_IOSIZE, bodySize));
 	if (bytesRead == -2)
 		return write_to_client(epoll);

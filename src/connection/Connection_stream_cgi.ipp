@@ -2,7 +2,7 @@
 #include "Connection.hpp"
 
 CONNECTION_INL
-(isize) switch_to_cgi(Epoll &epoll) {
+(isize) switch_to_cgi(Epoll& epoll) {
 	writeFd = fn::close_noerr(writeFd);
 	mode = Mode::CGI;
 	if (epoll.modify(clientFd, EPOLLOUT, epollState))
@@ -11,7 +11,7 @@ CONNECTION_INL
 }
 
 CONNECTION_INL
-(isize) cgi_chunked(Epoll &epoll) {
+(isize) cgi_chunked(Epoll& epoll) {
 	if (read_from_client(epoll) < 0)
 		return -1;
 	Status::Code code = write_chunked();
@@ -25,7 +25,7 @@ CONNECTION_INL
 }
 
 CONNECTION_INL
-(isize) cgi_fixed(Epoll &epoll) {
+(isize) cgi_fixed(Epoll& epoll) {
 	if (read_from_client(epoll) < 0)
 		return -1;
 	isize bytesWritten = 0;
@@ -41,7 +41,7 @@ CONNECTION_INL
 }
 
 CONNECTION_INL
-(isize) cgi(Epoll &epoll) {
+(isize) cgi(Epoll& epoll) {
 	isize bytesRead = sendBuffer.read(readFd, ATOMIC_IOSIZE);
 	if (bytesRead == 0)
 		readFd = fn::close_noerr(readFd);
@@ -65,7 +65,7 @@ CONNECTION_INL
 }
 
 CONNECTION_INL
-(isize) cgi_parsed(Epoll &epoll) {
+(isize) cgi_parsed(Epoll& epoll) {
 	isize bytesRead = sendBuffer.read_compact(readFd, ATOMIC_IOSIZE);
 	if (bytesRead == 0)
 		return flush_setup(epoll);

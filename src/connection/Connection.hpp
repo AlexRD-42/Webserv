@@ -56,14 +56,14 @@ struct Connection {
 	// Common
 	isize init(int fd, VirtualServer* serverConfig);
 	isize clear();
-	char* append_target_path(Buffer64 &buffer);
+	char* append_target_path(Buffer64& buffer);
 	void activate_streaming(Mode nextMode);
 	void activate_parsing();
 
 	// Dispatching
-	isize dispatch(Epoll &epoll);
-	isize parse_first(Epoll &epoll);
-	isize parse(Epoll &epoll);
+	isize dispatch(Epoll& epoll);
+	isize parse_first(Epoll& epoll);
+	isize parse(Epoll& epoll);
 
 	// Parsing
 	Status::Code parse_line(Span line);
@@ -76,39 +76,39 @@ struct Connection {
 	void build_error_header(Status::Code code);
 	void build_header(Status::Code code);
 	Status::Code build_cgi_header(Status::Code code);
-	Status::Code parse_cgi_line(Buffer64 &tmpBuffer);
+	Status::Code parse_cgi_line(Buffer64& tmpBuffer);
 
 	// Streaming
-	isize cgi(Epoll &epoll);
-	isize cgi_fixed(Epoll &epoll);
-	isize cgi_parsed(Epoll &epoll);
-	isize cgi_chunked(Epoll &epoll);
-	isize switch_to_cgi(Epoll &epoll);
-	isize download_file_fixed(Epoll &epoll);
-	isize download_file_chunked(Epoll &epoll);
-	isize upload_file(Epoll &epoll);
-	isize upload_directory(Epoll &epoll);
-	isize flush(Epoll &epoll);
-	isize write_to_client(Epoll &epoll);
-	isize read_from_client(Epoll &epoll);
+	isize cgi(Epoll& epoll);
+	isize cgi_fixed(Epoll& epoll);
+	isize cgi_parsed(Epoll& epoll);
+	isize cgi_chunked(Epoll& epoll);
+	isize switch_to_cgi(Epoll& epoll);
+	isize download_file_fixed(Epoll& epoll);
+	isize download_file_chunked(Epoll& epoll);
+	isize upload_file(Epoll& epoll);
+	isize upload_directory(Epoll& epoll);
+	isize flush(Epoll& epoll);
+	isize write_to_client(Epoll& epoll);
+	isize read_from_client(Epoll& epoll);
 	Status::Code write_chunked();
 
 	// Setup
-	isize setup_dispatch(Epoll &epoll);
-	isize del_setup(Epoll &epoll);
+	isize setup_dispatch(Epoll& epoll);
+	isize del_setup(Epoll& epoll);
 
-	isize get_setup(Epoll &epoll);
-	isize get_autoindex_setup(Epoll &epoll, Buffer64 &pathBuffer);
-	isize get_directory_setup(Epoll &epoll, Buffer64 &pathBuffer);
-	isize get_redirect_setup(Epoll &epoll, Buffer64 &pathBuffer);
+	isize get_setup(Epoll& epoll);
+	isize get_autoindex_setup(Epoll& epoll, Buffer64& pathBuffer);
+	isize get_directory_setup(Epoll& epoll, Buffer64& pathBuffer);
+	isize get_redirect_setup(Epoll& epoll, Buffer64& pathBuffer);
 
-	isize post_setup(Epoll &epoll);
-	isize cgi_setup(Epoll &epoll);
-	char* append_env(Buffer64 &buffer, char* argv[3]);
-	isize flush_setup(Epoll &epoll);
-	isize flush_setup_close(Epoll &epoll, Status::Code code);
-	isize parse_setup(Epoll &epoll);
-	isize redirect_setup(Epoll &epoll, Status::Code code);
+	isize post_setup(Epoll& epoll);
+	isize cgi_setup(Epoll& epoll);
+	char* append_env(Buffer64& buffer, char* argv[3]);
+	isize flush_setup(Epoll& epoll);
+	isize flush_setup_close(Epoll& epoll, Status::Code code);
+	isize parse_setup(Epoll& epoll);
+	isize redirect_setup(Epoll& epoll, Status::Code code);
 };
 
 STATIC_ASSERT(sizeof(Connection) == 16384);

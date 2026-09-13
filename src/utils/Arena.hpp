@@ -58,7 +58,7 @@ struct Arena {
 		return result;
 	}
 
-	Span copy_span(const Span &source) {
+	Span copy_span(const Span& source) {
 		Span result = alloc_span(source.size);
 		MEMCPY(result.ptr, source.ptr, source.size);
 		return result;
@@ -66,7 +66,7 @@ struct Arena {
 };
 
 	// template <typename Type>
-	// Span32 compress_span(const Array<Type> &array, usize length) {
+	// Span32 compress_span(const Array<Type>& array, usize length) {
 	// 	const u32 offset = alloc(length, 1);
 	// 	if (offset == UINT32_MAX)
 	// 		_exit(1);
@@ -76,7 +76,7 @@ struct Arena {
 	// }
 
 	// template <typename Type>
-	// Span32 compress_span(const Array<Type> &array, const Span &source) {
+	// Span32 compress_span(const Array<Type>& array, const Span& source) {
 	// 	const Span32 result = compress_span(array, source.size);
 	// 	MEMCPY(array.extract(result).ptr, source.ptr, source.size);
 	// 	return result;

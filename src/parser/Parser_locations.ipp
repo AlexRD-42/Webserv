@@ -2,7 +2,7 @@
 #include "Parser.hpp"
 
 static inline
-void s_set_methods(const ArrayView<Span> &methods, Parser::ParsedLocation &loc) {
+void s_set_methods(const ArrayView<Span>& methods, Parser::ParsedLocation& loc) {
 	for (usize index = 0; index < methods.count; index++) {
 		u8 method;
 		if (methods[index] == "GET")
@@ -20,7 +20,7 @@ void s_set_methods(const ArrayView<Span> &methods, Parser::ParsedLocation &loc) 
 }
 
 PARSER_INL
-(void) parse_location_directive(ParsedLocation &loc, Directive &dir) {
+(void) parse_location_directive(ParsedLocation& loc, Directive& dir) {
 	usize length = 1;
 
 	if (dir.name == "root") {
@@ -75,7 +75,7 @@ PARSER_INL
 }
 
 PARSER_INL
-(Parser::ParsedCgi) parse_cgi(ArrayView<Token> &tokArray) {
+(Parser::ParsedCgi) parse_cgi(ArrayView<Token>& tokArray) {
 	if (tokArray[0].type != Token::OPEN_BRACKET)
 		PERR_EXIT(1, "Error: Invalid CGI block");
 
@@ -84,11 +84,11 @@ PARSER_INL
 	Token* definitionStart = tokArray.ptr;
 	while (tokArray[0].type != Token::CLOSE_BRACKET) {
 		Token* definition = tokArray.ptr;
-		const Span &extension = tokArray[0].value;
+		const Span& extension = tokArray[0].value;
 		if (extension.size < 2 || extension.size >= MAX_PATH_SIZE || extension.ptr[0] != '.')
 			PERR_EXIT(1, "Error: Invalid CGI extension");
 		for (Token* previousToken = definitionStart; previousToken < definition; previousToken += 4) {
-			const Span &previous = previousToken->value;
+			const Span& previous = previousToken->value;
 			if (previous.size == extension.size && MEMCMP(previous.ptr, extension.ptr, extension.size) == 0)
 				PERR_EXIT(1, "Error: Duplicate CGI extension");
 		}
@@ -98,7 +98,7 @@ PARSER_INL
 		tokArray.ptr++;
 		if (tokArray[0].type != Token::WORD)
 			PERR_EXIT(1, "Error: Invalid CGI interpreter");
-		Span &interpreter = tokArray[0].value;
+		Span& interpreter = tokArray[0].value;
 		if (interpreter.size >= MAX_PATH_SIZE)
 			PERR_EXIT(1, "Error: Path size is too large");
 		interpreter.ptr[interpreter.size++] = '\0';
@@ -115,7 +115,7 @@ PARSER_INL
 }
 
 PARSER_INL
-(Parser::ParsedLocation) parse_location(ArrayView<Token> &tokArray) {
+(Parser::ParsedLocation) parse_location(ArrayView<Token>& tokArray) {
 	ParsedLocation loc = {};
 	loc.uri = tokArray[0].value;
 	loc.redirectTarget = Span::create("");

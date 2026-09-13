@@ -7,7 +7,7 @@ CONNECTION_INL
 	usize matchLength = 0;
 
 	for (usize i = 0; i < locations.count; i++) {
-		Span srcUri = locations[i].get_uri();
+		const Span srcUri = locations[i].get_uri();
 		if (srcUri.size <= matchLength || srcUri.size > req.target.size)	// TODO: Review and write what it is suppsoed to do
 			continue;
 		if (MEMCMP(req.target.ptr, srcUri.ptr, srcUri.size) != 0)
@@ -19,8 +19,9 @@ CONNECTION_INL
 	}
 	if (req.location == NULL)
 		return Status::i404;
-	if (!((req.location->methods & (options & 7))))
+	if (!(req.location->methods & (options & 7)))
 		return Status::i405;
+	req.relativeTarget = {req.target.ptr + matchLength, req.target.size - matchLength};
 	return Status::unset;
 }
 
@@ -64,9 +65,9 @@ CONNECTION_INL
 	req.target.size = fn::canonicalize_target_inplace((u8*)str, (usize)(queryPtr - str));
 	if (req.target.size == SIZE_MAX)
 		return Status::i400;
-	req.target.ptr = str;								// /images/cats/meow.jpg
+	req.target.ptr = str;									// /images/cats/meow.jpg
 	char* targetEnd = req.target.ptr + req.target.size;
-	Status::Code code = match_location();
+	Status::Code code = match_location();					// cats/meow.jpg
 	if (code != Status::unset)
 		return code;
 	req.query = Span::create(queryStart, (usize)(end - queryStart));	// FILTER=yes,ORDER=ascending\0
@@ -79,8 +80,6 @@ CONNECTION_INL
 	req.uri = req.location->get_uri();
 	req.cgi = req.location->get_cgi_block();
 	req.root = req.location->get_root();
-	req.relativeTarget.ptr = req.target.ptr + req.uri.size;			// /images/cats/meow.jpg
-	req.relativeTarget.size = req.target.size - req.uri.size;		// cats/meow.jpg
 	req.interpreter = check_cgi();
 	return Status::unset;
 }

@@ -38,14 +38,13 @@ BUFFER_INL
 }
 
 BUFFER_INL
-(Span) append_path_resolved(Span root, Span target, Span uri) {
-	usize start = writePos;
+(Span) append_path_resolved(Span root, Span relativeTarget) {
+	const usize start = writePos;
 	append(root);
-	const Span suffix = {target.ptr + uri.size, target.size - uri.size};
-	if (suffix.size != 0) {
-		if (suffix.ptr[0] != '/')
+	if (relativeTarget.size != 0) {
+		if (relativeTarget.ptr[0] != '/')
 			append("/");
-		append(suffix);
+		append(relativeTarget);
 	}
 	else if (root.size == 0)
 		append("/");

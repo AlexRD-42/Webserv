@@ -91,7 +91,7 @@ struct Buffer {
 	Span append_url_encoded(const char* ptr, usize length);
 	Span append_html_encoded(char* ptr, usize length);
 	Span append_entry(int directoryFd, char* name);
-	Span append_path_resolved(Span root, Span target, Span uri);
+	Span append_path_resolved(Span root, Span relativeTarget);
 	Span memset(u8 byte, usize length);
 	template <usize N> Span memset_inline(u8 byte, usize length);
 };

@@ -9,7 +9,7 @@
 CONNECTION_INL
 (isize) get_setup(Epoll& epoll) {
 	Buffer64 pathBuffer = {};
-	const Span path = pathBuffer.append_path_resolved(req.root, req.target, req.uri);
+	const Span path = pathBuffer.append_path_resolved(req.root, req.relativeTarget);
 	if (epoll.modify(clientFd, EPOLLOUT, epollState))
 		return -1;
 	struct stat st;

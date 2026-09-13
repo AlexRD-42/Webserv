@@ -55,7 +55,7 @@ CONNECTION_INL
 	Environment::append((char*)requestMethod[methodIndex]);
 	Environment::append(buffer.append("SCRIPT_NAME=").ptr);		// SCRIPTNAME=
 	buffer.append(req.target.ptr, req.target.size + 1);	// SCRIPTNAME=/images/cgi/process.py
-	const Span scriptPath = buffer.append_path_resolved(req.root, req.target, req.uri);	// /home/webserv/www/images/cgi/process.py
+	const Span scriptPath = buffer.append_path_resolved(req.root, req.relativeTarget);	// /home/webserv/www/images/cgi/process.py
 	char* cwdPath = buffer.append(scriptPath.ptr, scriptPath.size + 1).ptr;			// /home/webserv/www/images/cgi
 	argv[0] = buffer.append(req.interpreter.ptr, req.interpreter.size + 1).ptr;		// /bin/python3
 	argv[1] = s_split_filename(cwdPath, scriptPath.size);							// process.py

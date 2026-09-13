@@ -17,7 +17,7 @@ struct Epoll {
 		index = 0;
 		fd = epoll_create1(EPOLL_CLOEXEC);
 		if (fd == -1)
-			return ;
+			return;
 	}
 
 	void clear() {
@@ -25,7 +25,7 @@ struct Epoll {
 		MEMSET_INLINE(eventList, 0, sizeof(eventList));
 	}
 
-	struct epoll_event* get_event(usize srcIndex) {
+	ATTR(inl) struct epoll_event* get_event(usize srcIndex) {
 		index = srcIndex;
 		return eventList + index;
 	}
@@ -55,19 +55,17 @@ struct Epoll {
 		return false;
 	}
 
-	bool request_read() {
+	ATTR(inl) bool request_read() {
 		bool canRead = !!(eventList[index].events & EPOLLIN);
 		eventList[index].events &= ~(u32)EPOLLIN;
 		return canRead;
 	}
 
-	bool request_write() {
+	ATTR(inl) bool request_write() {
 		bool canWrite = !!(eventList[index].events & EPOLLOUT);
 		eventList[index].events &= ~(u32)EPOLLOUT;
 		return canWrite;
 	}
 
-	bool is_error() {
-		return !!(eventList[index].events & (EPOLLERR | EPOLLHUP));
-	}
+	ATTR(inl, pure) bool is_error() const { return !!(eventList[index].events & (EPOLLERR | EPOLLHUP)); }
 };

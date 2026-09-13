@@ -1,7 +1,7 @@
 #pragma once
 #include "Parser.hpp"
 
-static inline
+ATTR(static_inl)
 void s_set_methods(const ArrayView<Span>& methods, Parser::ParsedLocation& loc) {
 	for (usize index = 0; index < methods.count; index++) {
 		u8 method;

@@ -27,13 +27,11 @@ struct ConnectionPool {
 		Bitmap del[blockCount];		// Connections marked for closure
 	}	map;
 
-	void reset() {
+	ATTR(inl) void reset() {
 		MEMSET_INLINE(&map, 0, sizeof(map));
 	}
 
-	Connection* get_ptr(usize linearIndex) {
-		return connections + linearIndex;
-	}
+	ATTR(inl, pure) Connection* get_ptr(usize linearIndex) { return connections + linearIndex; }
 
 	template <void (Connection::*Func)()>
 	void for_each_active() {
@@ -97,9 +95,7 @@ struct ConnectionPool {
 		map.del[blockIndex].bitset(elementIndex);
 	}
 
-	Connection& operator[](usize index) {
-		return connections[index];
-	}
+	ATTR(inl, pure) Connection& operator[](usize index) { return connections[index]; }
 };
 
 STATIC_ASSERT(ConnectionPool::blockCount > 0);

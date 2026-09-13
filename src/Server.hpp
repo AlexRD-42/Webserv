@@ -32,7 +32,7 @@ void init(int argc, char** argv, char** envp) {
 	Environment::init(envp);
 }
 
-#define SERVER_INL(ret_type) ret_type inline Server::
+#define SERVER_INL(retType) retType inline Server::
 
 struct Server {
 	ConnectionPool connections;

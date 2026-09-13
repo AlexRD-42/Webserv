@@ -10,11 +10,11 @@
 #include "Clock.hpp"
 #include <errno.h>
 
-#define BUFFER_INL(ret_type) \
-	template <usize bufferSize> inline ret_type Buffer<bufferSize>::
+#define BUFFER_INL(retType) \
+	template <usize bufferSize> inline retType Buffer<bufferSize>::
 
-#define BUFFER_INL_T(tmpl_param, ret_type) \
-	template <usize bufferSize> template <tmpl_param> inline ret_type Buffer<bufferSize>::
+#define BUFFER_INL_T(tmplParam, retType) \
+	template <usize bufferSize> template <tmplParam> inline retType Buffer<bufferSize>::
 
 template <usize bufferSize>
 struct Buffer {
@@ -23,30 +23,12 @@ struct Buffer {
 	u64 clobberPost;
 	usize writePos, readPos, scanPos;
 
-	ATTR(inl) u8* get_end() {	// rename to mptr
-		return data + sizeof(data);
-	}
-
-	ATTR(inl) Span get_span() {
-		Span result = {(char*)data + readPos, writePos - readPos};
-		return result;
-	}
-
-	ATTR(inl) const u8* get_end() const {
-		return data + sizeof(data);
-	}
-
-	ATTR(inl) usize size() const {
-		return writePos - readPos;
-	}
-
-	ATTR(inl) usize capacity() const {
-		return sizeof(data);
-	}
-
-	ATTR(inl) usize bytes_free() const {
-		return sizeof(data) - writePos;
-	}
+	ATTR(inl, pure) u8* get_end() { return data + sizeof(data); }	// rename to mptr
+	ATTR(inl, pure) Span get_span() { return {(char*)data + readPos, writePos - readPos}; }
+	ATTR(inl, pure) const u8* get_end() const { return data + sizeof(data); }
+	ATTR(inl, pure) usize size() const { return writePos - readPos; }
+	ATTR(inl, pure) usize capacity() const { return sizeof(data); }
+	ATTR(inl, pure) usize bytes_free() const { return sizeof(data) - writePos; }
 
 	ATTR(inl) usize reserve(usize bytes) {
 		usize bytesFree = bytes_free();
@@ -55,11 +37,9 @@ struct Buffer {
 		return bytesFree;
 	}
 
-	ATTR(inl) bool is_full() {
-		return writePos >= sizeof(data);
-	}
+	ATTR(inl, pure) bool is_full() const { return writePos >= sizeof(data); }
 
-	void clear() {
+	ATTR(inl) void clear() {
 		writePos = 0;
 		readPos = 0;
 		scanPos = 0;
@@ -114,7 +94,7 @@ struct Buffer {
 	char* memset(u8 byte, usize length);
 	template <usize N> char* memset_inline(u8 byte, usize length);
 
-	void bufcpy(const Buffer& other) {
+	ATTR(inl) void bufcpy(const Buffer& other) {
 		const usize bytesUsed = other.writePos - other.readPos;
 		writePos = bytesUsed;
 		readPos = 0;
@@ -122,14 +102,14 @@ struct Buffer {
 		MEMCPY(data, other.data + other.readPos, bytesUsed);
 	}
 
-	ATTR(inl) operator char*() { return (char*)(data + readPos); }
-	ATTR(inl) char* rptr() { return (char*)(data + readPos); }
-	ATTR(inl) u8& rptr(usize index) { return *(data + readPos + index); }
-	ATTR(inl) char* wptr() { return (char*)(data + writePos); }
-	ATTR(inl) u8& wptr(usize index) { return *(data + writePos + index); }
-	ATTR(inl) char* sptr() { return (char*)(data + scanPos); }
-	ATTR(inl) u8& sptr(usize index) { return *(data + scanPos + index); }
-	ATTR(inl) u8& operator*() { return data[writePos]; }
+	ATTR(inl, pure) operator char*() { return (char*)(data + readPos); }
+	ATTR(inl, pure) char* rptr() { return (char*)(data + readPos); }
+	ATTR(inl, pure) u8& rptr(usize index) { return *(data + readPos + index); }
+	ATTR(inl, pure) char* wptr() { return (char*)(data + writePos); }
+	ATTR(inl, pure) u8& wptr(usize index) { return *(data + writePos + index); }
+	ATTR(inl, pure) char* sptr() { return (char*)(data + scanPos); }
+	ATTR(inl, pure) u8& sptr(usize index) { return *(data + scanPos + index); }
+	ATTR(inl, pure) u8& operator*() { return data[writePos]; }
 };
 
 typedef Buffer<8 * 1024> Buffer8;

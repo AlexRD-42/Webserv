@@ -125,6 +125,8 @@ if {
 * Pointers and references attach close to their type
 Example: char* str, char& str, char*& str
 
+* Simple getters and methods can become one-liners to avoid using too much vertical space
+
 ## Architecture
 A single connection uses 16kb of space, of which 64 bytes is used by metadata, and the rest by buffers
 A connection pool holds 4096 connections, totalling 64MB + ~1KB of metadata

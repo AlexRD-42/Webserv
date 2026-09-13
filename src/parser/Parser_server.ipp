@@ -1,7 +1,7 @@
 #pragma once
 #include "Parser.hpp"
 
-static inline
+ATTR(static_inl)
 void s_directive_listen(Arena& arena, const Span& value, VirtualServer& server) {
 	if (server.port != SIZE_MAX)
 		PERR_EXIT(1, "Error: Invalid port definition");
@@ -22,7 +22,7 @@ void s_directive_listen(Arena& arena, const Span& value, VirtualServer& server) 
 		PERR_EXIT(1, "Error: Invalid port");
 }
 
-static inline
+ATTR(static_inl)
 void s_directive_body_size(const Span& value, usize& bodySize) {
 	if (bodySize != SIZE_MAX)
 		PERR_EXIT(1, "Error: Invalid max body size");
@@ -80,7 +80,7 @@ PARSER_INL
 		PERR_EXIT(1, "Error: Invalid server directive");
 }
 
-static inline
+ATTR(static_inl)
 usize s_count_locations(ArrayView<Parser::Token> tokArray) {
 	usize locationCount = 0;
 	while (tokArray[0].type != Parser::Token::CLOSE_BRACKET) {

@@ -17,13 +17,11 @@ struct Arena {
 	u8* ptr;
 	usize size, capacity;
 
-	usize free_space()					const { return capacity - size; }
-	u8* mptr(usize fileOffset)			const { return ptr + fileOffset; }
-	const u8* kptr(usize fileOffset)	const { return ptr + fileOffset; }
+	ATTR(inl, pure) usize free_space() const { return capacity - size; }
+	ATTR(inl, pure) u8* mptr(usize fileOffset) const { return ptr + fileOffset; }
+	ATTR(inl, pure) const u8* kptr(usize fileOffset) const { return ptr + fileOffset; }
 
-	void clear() {
-		size = 0;
-	}
+	ATTR(inl) void clear() { size = 0; }
 
 	u32 alloc(usize bytes, usize padding = 0, usize alignment = 64) {
 		ASSERT(IS_POW2(alignment), "Alignment needs to be power of two");

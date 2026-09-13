@@ -3,7 +3,7 @@
 
 // Guarantee that it doesnt overflow u16
 
-static inline
+ATTR(static_inl)
 Span16 s_store_location_span(Location& location, char*& wptr, const Span& source) {
 	Span16 result = {(u16)(wptr - (char*)&location.uri), (u16)source.size};
 	MEMCPY(wptr, source.ptr, source.size);
@@ -12,7 +12,7 @@ Span16 s_store_location_span(Location& location, char*& wptr, const Span& source
 	return result;
 }
 
-static inline
+ATTR(static_inl)
 Span16 s_store_upload_span(Location& location, char*& wptr, const Span& source) {
 	Span16 result = {(u16)(wptr - (char*)&location.uri), (u16)source.size};
 	MEMCPY(wptr, source.ptr, source.size);
@@ -25,7 +25,7 @@ Span16 s_store_upload_span(Location& location, char*& wptr, const Span& source) 
 	return result;
 }
 
-static inline
+ATTR(static_inl)
 void s_store_cgi(char*& wptr, const Parser::ParsedCgi& cgiBlock, Location& location) {
 	location.cgiBlock.index = (u16)(wptr - (char*)&location.uri);
 	location.cgiBlock.size = (u16)cgiBlock.size;
@@ -44,7 +44,7 @@ void s_store_cgi(char*& wptr, const Parser::ParsedCgi& cgiBlock, Location& locat
 	*wptr++ = '\0';
 }
 
-static inline
+ATTR(static_inl)
 void s_store_location(char*& wptr, const Parser::ParsedLocation& ploc, Location& loc) {
 	loc.uri = s_store_location_span(loc, wptr, ploc.uri);
 	loc.root = s_store_location_span(loc, wptr, ploc.root);
@@ -57,7 +57,7 @@ void s_store_location(char*& wptr, const Parser::ParsedLocation& ploc, Location&
 	loc.autoindex = ploc.autoindex;
 }
 
-static inline
+ATTR(static_inl, pure)
 usize s_location_size(const Parser::ParsedLocation& loc) {
 	usize packSize = 16 + loc.uri.size + loc.root.size + loc.index.size;
 	packSize += loc.uploadStore.size + loc.cgiBlock.size + loc.redirectTarget.size;
@@ -114,7 +114,7 @@ PARSER_INL
 	return store_locations(ploc);
 }
 
-static inline
+ATTR(static_inl)
 void s_build_error_page_path(char* out, const Span& root, const Span& path) {
 	ASSERT(path.size != 0, "Error page path is empty");
 	ASSERT(root.size == 0 || root.ptr[root.size - 1] != '/', "Root has a trailing slash");

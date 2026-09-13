@@ -28,9 +28,7 @@ struct Clock {
 	}
 
 	// Does not call update time
-	ATTR(static_inl) u32 time_elapsed() {
-		return (u32)timeElapsed;
-	}
+	ATTR(static_inl, pure) u32 time_elapsed() { return (u32)timeElapsed; }
 
 	struct TimeBuffer {
 		u32 years;
@@ -38,7 +36,7 @@ struct Clock {
 		u16 milliseconds, microseconds, nanoseconds;
 	};
 
-	static void format_time(struct timespec* tm, char* buffer) {
+	ATTR(static_inl) void format_time(struct timespec* tm, char* buffer) {
 		u64 nanoseconds = (u64)tm->tv_nsec + (u64)(tm->tv_sec) * 1000000000ul;
 		return s_format_time(nanoseconds, (u8*)buffer);
 	}

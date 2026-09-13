@@ -12,13 +12,13 @@ struct Environment {
 	static inline char** optr = envp;
 	static inline char** writePtr = envp;
 
-	static void append(char* ptr) {
+	ATTR(static_inl) void append(char* ptr) {
 		ASSERT(writePtr < envp + envSize - 1, "Environment buffer overflow");
 		*writePtr++ = ptr;
 		*writePtr = NULL;
 	}
 
-	static void reset() {
+	ATTR(static_inl) void reset() {
 		writePtr = optr;
 		*optr = NULL;
 	}

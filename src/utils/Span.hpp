@@ -8,17 +8,15 @@ struct Span {
 	char* ptr;
 	usize size;
 
-	char* end() const {
-		return ptr + size;
-	}
+	ATTR(inl, pure) char* end() const { return ptr + size; }
 
 	template <usize length>
-	bool operator==(const char (&literal)[length]) const {
+	ATTR(inl, pure) bool operator==(const char (&literal)[length]) const {
 		return size == length - 1 && LITCMP(ptr, literal) == 0;
 	}
 
 	template <usize length>
-	bool strcasecmp(const char (&string)[length]) {
+	ATTR(inl, pure) bool strcasecmp(const char (&string)[length]) const {
 		u8 buffer[length];
 		const usize strLength = length - 1;
 		if (size != strLength)	// TODO: remove this
@@ -31,19 +29,17 @@ struct Span {
 	}
 
 	template <usize length>
-	static Span create(const char (&literal)[length]) {
+	ATTR(static_inl, const) Span create(const char (&literal)[length]) {
 		Span newSpan = {(char*)literal, length - 1};
 		return newSpan;
 	}
 
-	static Span create(char* srcPtr, usize srcSize) {
+	ATTR(static_inl, const) Span create(char* srcPtr, usize srcSize) {
 		Span newSpan = {srcPtr, srcSize};
 		return newSpan;
 	}
 
-	operator char*() const {
-		return ptr;
-	}
+	ATTR(inl, pure) operator char*() const { return ptr; }
 };
 
 struct Span32 {

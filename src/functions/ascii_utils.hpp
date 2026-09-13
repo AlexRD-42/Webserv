@@ -5,6 +5,7 @@
 
 namespace fn {
 
+ATTR(static_inl, pure)
 bool strcasecmp16(const char* string, const char* ref, usize length) {
 	(void)length;
 	u128 buffer[2];

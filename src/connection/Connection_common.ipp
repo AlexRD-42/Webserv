@@ -42,7 +42,7 @@ CONNECTION_INL
 	return fullPath;
 }
 
-static inline
+ATTR(static_inl)
 Status::Code s_get_status() {
 	const int error = errno;
 	errno = 0;

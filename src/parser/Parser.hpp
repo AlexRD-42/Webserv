@@ -12,7 +12,7 @@
 #include "VirtualServer.hpp"
 #include "pure_functions.hpp"
 
-#define PARSER_INL(ret_type) ret_type inline Parser::
+#define PARSER_INL(retType) retType inline Parser::
 
 struct Parser {
 	struct Token {

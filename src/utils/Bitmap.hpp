@@ -7,15 +7,15 @@
 struct Bitmap {
 	usize value;
 
-	ATTR(static_inl) usize mask_start(usize bitStart) {
+	ATTR(static_inl, const) usize mask_start(usize bitStart) {
 		return SIZE_MAX << bitStart % WORD_BITS;
 	}
 
-	ATTR(static_inl) usize mask_end(usize bitEnd) {
+	ATTR(static_inl, const) usize mask_end(usize bitEnd) {
 		return SIZE_MAX >> ((usize)(0 - bitEnd) % WORD_BITS);
 	}
 
-	ATTR(static_inl) usize mask_range(usize bitStart, usize bitEnd) {
+	ATTR(static_inl, const) usize mask_range(usize bitStart, usize bitEnd) {
 		return mask_start(bitStart) & mask_end(bitEnd);
 	}
 
@@ -39,15 +39,15 @@ struct Bitmap {
 		value ^= (value ^ bitMask) & mask;
 	}
 
-	ATTR(inl) bool bitread(u8 index) const {
+	ATTR(inl, pure) bool bitread(u8 index) const {
 		return (value & ((usize)1 << index)) != 0;
 	}
 
-	ATTR(inl) usize bitread(usize bitStart, usize bitEnd) const {
+	ATTR(inl, pure) usize bitread(usize bitStart, usize bitEnd) const {
 		return (value & mask_range(bitStart, bitEnd)) >> bitStart;
 	}
 
-	ATTR(inl) static usize s_pop_first_set(usize& bitmap) {
+	ATTR(static_inl) usize s_pop_first_set(usize& bitmap) {
 		usize index = bitmap == 0 ? WORD_BITS : (usize)CTZ(bitmap);
 		bitmap &= bitmap - 1;
 		return index;
@@ -59,13 +59,13 @@ struct Bitmap {
 		return index;
 	}
 
-	ATTR(inl) usize find_first_clear() {
+	ATTR(inl, pure) usize find_first_clear() const {
 		if (value == SIZE_MAX)
 			return WORD_BITS;
 		return (usize)CTZ(~value);
 	}
 
-	ATTR(inl) usize find_first_set() const {
+	ATTR(inl, pure) usize find_first_set() const {
 		if (value == 0)
 			return WORD_BITS;
 		return (usize)CTZ(value);
@@ -83,7 +83,7 @@ struct Bitmap {
 	// }
 
 /* ========== Accessors and Overloads ======================== */
-	ATTR(inl) usize count() const {
+	ATTR(inl, pure) usize count() const {
 		return (usize)POPCOUNT(value);
 	}
 
@@ -95,7 +95,5 @@ struct Bitmap {
 		value = SIZE_MAX;
 	}
 
-	operator usize() {
-		return value;
-	}
+	ATTR(inl, pure) operator usize() const { return value; }
 };

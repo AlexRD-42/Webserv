@@ -25,18 +25,18 @@ struct Location {
 	u8		methods;
 	bool	autoindex;
 
-	Span extract(const Span16& span) {
+	ATTR(inl, pure) Span extract(const Span16& span) const {
 		Span result = {(char*)this + span.index, span.size};
 		ASSERT(result.ptr[result.size] == '\0', "Location span is not null terminated");
 		return result;
 	}
 
-	Span get_uri()				{ return extract(uri); }
-	Span get_root() 			{ return extract(root); }
-	Span get_index()			{ return extract(index); }
-	Span get_upload_store()		{ return extract(uploadStore); }
-	Span get_cgi_block()		{ return extract(cgiBlock); }
-	Span get_redirect_target()	{ return extract(redirectTarget); }
+	ATTR(inl, pure) Span get_uri() const { return extract(uri); }
+	ATTR(inl, pure) Span get_root() const { return extract(root); }
+	ATTR(inl, pure) Span get_index() const { return extract(index); }
+	ATTR(inl, pure) Span get_upload_store() const { return extract(uploadStore); }
+	ATTR(inl, pure) Span get_cgi_block() const { return extract(cgiBlock); }
+	ATTR(inl, pure) Span get_redirect_target() const { return extract(redirectTarget); }
 };
 
 struct VirtualServer {

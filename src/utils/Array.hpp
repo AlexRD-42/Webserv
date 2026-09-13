@@ -7,13 +7,8 @@ struct ArrayView {
 	Type* ptr;
 	usize count;
 
-	Type& operator[](usize index) {
-		return ptr[index];
-	}
-
-	const Type& operator[](usize index) const {
-		return ptr[index];
-	}
+	ATTR(inl, pure) Type& operator[](usize index) { return ptr[index]; }
+	ATTR(inl, pure) const Type& operator[](usize index) const { return ptr[index]; }
 
 };
 
@@ -21,13 +16,8 @@ template <typename Type, usize count>
 struct Array {
 	Type ptr[count];
 
-	Type& operator[](usize index) {
-		return ptr[index];
-	}
-
-	const Type& operator[](usize index) const {
-		return ptr[index];
-	}
+	ATTR(inl, pure) Type& operator[](usize index) { return ptr[index]; }
+	ATTR(inl, pure) const Type& operator[](usize index) const { return ptr[index]; }
 };
 
 // Span extract(const Span32& span) const {
@@ -69,11 +59,6 @@ template <typename Type, usize rows, usize cols>
 struct Matrix {
 	Type array[rows][cols];
 
-	Type (&operator[](usize index))[cols] {
-		return array[index];
-	}
-
-	const Type (&operator[](usize index) const)[cols] {
-		return array[index];
-	}
+	ATTR(inl, pure) Type (&operator[](usize index))[cols] { return array[index]; }
+	ATTR(inl, pure) const Type (&operator[](usize index) const)[cols] { return array[index]; }
 };

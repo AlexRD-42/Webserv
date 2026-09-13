@@ -16,7 +16,7 @@
 
 #include "pure_functions.hpp"
 
-#define CONNECTION_INL(ret_type) inline ret_type Connection::
+#define CONNECTION_INL(retType) inline retType Connection::
 
 struct Connection {
 	struct Request {
@@ -27,7 +27,7 @@ struct Connection {
 		Span uri, cgi;
 		u8 padding[56];
 
-		void clear() {
+		ATTR(inl) void clear() {
 			MEMSET_INLINE(this, 0, sizeof(*this));
 		}
 	};

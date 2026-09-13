@@ -1,7 +1,7 @@
 #pragma once
 #include "Connection.hpp"
 
-static inline
+ATTR(static_inl)
 void s_exec_script(char* const argv[3], char** envp, int fdIn[2], int fdOut[2], char* cwdPath) {
 	bool fail = dup2(fdOut[1], STDOUT_FILENO) == -1;
 	fail = fail || dup2(fdIn[0], STDIN_FILENO) == -1;
@@ -19,7 +19,7 @@ void s_exec_script(char* const argv[3], char** envp, int fdIn[2], int fdOut[2], 
 	_exit(127);
 }
 
-static inline
+ATTR(static_inl)
 char* s_split_filename(char* cwdPath, usize length) {
 	char* slashPtr = NULL;
 	char* end = cwdPath + length;

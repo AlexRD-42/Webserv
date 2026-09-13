@@ -1,12 +1,12 @@
 #pragma once
 #include "Parser.hpp"
 
-static inline
+ATTR(static_inl, const)
 bool s_is_config_delimiter(char value) {
 	return value == '{' || value == '}' || value == ';';
 }
 
-static inline
+ATTR(static_inl, pure)
 usize s_count_tokens(const char* str) {
 	usize tokenCount = 0;
 	while (true) {
@@ -28,7 +28,7 @@ usize s_count_tokens(const char* str) {
 	return tokenCount;
 }
 
-static inline
+ATTR(static_inl)
 usize s_get_next_word(char*& ostr) {
 	while (IS_SPACE(*ostr))
 		ostr++;
@@ -42,7 +42,7 @@ usize s_get_next_word(char*& ostr) {
 	return length;
 }
 
-static inline
+ATTR(static_inl)
 Parser::Token s_match_delimiter(char* ptr, usize delimPos, isize& braces) {
 	Parser::Token token;
 	char delimiter = ptr[delimPos];
@@ -70,7 +70,7 @@ Parser::Token s_match_delimiter(char* ptr, usize delimPos, isize& braces) {
 	return token;
 }
 
-static inline
+ATTR(static_inl, pure)
 usize s_count_servers(const char* str, usize length) {
 	const char* ostr;
 	const char* end = str + length;
@@ -106,7 +106,7 @@ usize s_count_servers(const char* str, usize length) {
 	return serverCount;
 }
 
-static inline
+ATTR(static_inl)
 void s_strip_comments(char* ptr, usize fileSize) {
 	static const char sentinels[] = "\0{};localhost";	// Also appends sentinels to the string
 

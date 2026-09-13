@@ -2,7 +2,7 @@
 #include "Buffer.hpp"
 
 BUFFER_INL
-(char*) append_mime(Mime mimeIndex) {
+(Span) append_mime(Mime mimeIndex) {
 	static const u8 mimeStrings[][32] = MIME_STRINGS;
 
 	const u8* str = mimeStrings[(usize)mimeIndex];
@@ -10,11 +10,11 @@ BUFFER_INL
 	char* optr = (char*)data + writePos;
 	MEMCPY_INLINE(optr, str + 1, 24);
 	writePos += length;
-	return optr;
+	return {optr, length};
 }
 
 BUFFER_INL
-(char*) append_digit10(usize number) {
+(Span) append_digit10(usize number) {
 	const usize maxLength = 24;
 	char buffer[maxLength * 2];
 	Span digit = fn::itoa10(number, buffer, maxLength);
@@ -22,11 +22,11 @@ BUFFER_INL
 	char* optr = (char*)data + writePos;
 	MEMCPY_INLINE(optr, digit.ptr, maxLength);
 	writePos += digit.size;
-	return optr;
+	return {optr, digit.size};
 }
 
 BUFFER_INL
-(char*) append_digit16(usize number) {
+(Span) append_digit16(usize number) {
 	const usize maxLength = 16;
 	char buffer[maxLength * 2];
 	Span digit = fn::itoa16(number, buffer, maxLength);
@@ -34,11 +34,28 @@ BUFFER_INL
 	char* optr = (char*)data + writePos;
 	MEMCPY_INLINE(optr, digit.ptr, maxLength);
 	writePos += digit.size;
-	return optr;
+	return {optr, digit.size};
 }
 
 BUFFER_INL
-(char*) append_url_encoded(const char* ptr, usize length) {
+(Span) append_path_resolved(Span root, Span target, Span uri) {
+	usize start = writePos;
+	append(root);
+	const Span suffix = {target.ptr + uri.size, target.size - uri.size};
+	if (suffix.size != 0) {
+		if (suffix.ptr[0] != '/')
+			append("/");
+		append(suffix);
+	}
+	else if (root.size == 0)
+		append("/");
+	Span fullPath = {(char*)data + start, writePos - start};
+	data[writePos++] = 0;
+	return fullPath;
+}
+
+BUFFER_INL
+(Span) append_url_encoded(const char* ptr, usize length) {
 	static const u8 hex[] = "0123456789ABCDEF";
 	char* optr = (char*)data + writePos;
 
@@ -48,11 +65,11 @@ BUFFER_INL
 		u8 buffer[4] = {value, '%', hex[value >> 4], hex[value & 15]};
 		append_inline<3>((char*)buffer + encode, 1 + 2 * encode);
 	}
-	return optr;
+	return {optr, (usize)((char*)data + writePos - optr)};
 }
 
 BUFFER_INL
-(char*) append_html_encoded(char* ptr, usize length) {
+(Span) append_html_encoded(char* ptr, usize length) {
 	static const u8 lengthLut[6] = {5, 5, 6, 4, 4, 1};
 	static const char strLut[5][8] = {"&amp;", "&#39;", "&quot;", "&lt;", "&gt;"};
 	char* optr = (char*)data + writePos;
@@ -63,28 +80,26 @@ BUFFER_INL
 		const char* src = (strLutIndex == 5) ? ptr + index : strLut[strLutIndex];
 		append_inline<6>(src, lengthLut[strLutIndex]);	// Up to 8 bytes overflow is safe
 	}
-	return optr;
+	return {optr, (usize)((char*)data + writePos - optr)};
 }
 
 // <a href="filename[256]">filename[64]</a>    02-Dec-2004 18:46    241476
 BUFFER_INL
-(usize) append_entry(int directoryFd, char* name) {
+(Span) append_entry(int directoryFd, char* name) {
+	char* optr = (char*)data + writePos;
 	Span entry = {name, STRLEN(name)};
 
 	struct stat st;
 	if (LITCMP(entry.ptr, ".\0") == 0 || LITCMP(entry.ptr, "..\0") == 0)
-		return 0;
-	if (fstatat(directoryFd, name, &st, 0)) {
-		append(HTTP_INDEX_PERMISSION);
-		return sizeof(HTTP_INDEX_PERMISSION) - 1;
-	}
+		return {optr, 0};
+	if (fstatat(directoryFd, name, &st, 0))
+		return append(HTTP_INDEX_PERMISSION);
 
 	usize fileSize = S_ISDIR(st.st_mode) ? 0 : (usize)st.st_size;
 	char buf[32];
 	Clock::format_time(&st.st_mtim, buf);
 
 	// 0 visible, 776 bytes (11 + 3 * 255)
-	const usize start = writePos;
 	append("<a href=\"");
 	append_url_encoded(entry.ptr, entry.size);
 	append("\">");
@@ -106,5 +121,5 @@ BUFFER_INL
 	memset(' ', 4);
 	append_digit10(fileSize);
 	append("\n");
-	return (usize)(writePos - start);
+	return {optr, (usize)((char*)data + writePos - optr)};
 }

@@ -74,25 +74,26 @@ struct Buffer {
 	Span get_field_value(usize readEnd);
 
 	// Appends and Prepends
-	template <usize N> char* append(const char (&string)[N]);				// Implicit
-	template <usize N> char* append_inline(const char* ptr, usize length);	// Explicit
-	char* append(const char* ptr, usize length);
-	char* append(const Span& span);	// TODO: Is it better to have const ref or normal
+	template <usize N> Span append(const char (&string)[N]);				// Implicit
+	template <usize N> Span append_inline(const char* ptr, usize length);	// Explicit
+	Span append(const char* ptr, usize length);
+	Span append(const Span& span);
 
-	template <usize N> char* prepend(const char (&string)[N]);
-	template <usize N> char* prepend_inline(const char* ptr, usize length);
-	char* prepend(const char* ptr, usize length);
-	char* prepend(const Span& span);
+	template <usize N> Span prepend(const char (&string)[N]);
+	template <usize N> Span prepend_inline(const char* ptr, usize length);
+	Span prepend(const char* ptr, usize length);
+	Span prepend(const Span& span);
 
 	// Append Special
-	char* append_mime(Mime mimeIndex);
-	char* append_digit10(usize number);
-	char* append_digit16(usize number);
-	char* append_url_encoded(const char* ptr, usize length);
-	char* append_html_encoded(char* ptr, usize length);
-	usize append_entry(int directoryFd, char* name);
-	char* memset(u8 byte, usize length);
-	template <usize N> char* memset_inline(u8 byte, usize length);
+	Span append_mime(Mime mimeIndex);
+	Span append_digit10(usize number);
+	Span append_digit16(usize number);
+	Span append_url_encoded(const char* ptr, usize length);
+	Span append_html_encoded(char* ptr, usize length);
+	Span append_entry(int directoryFd, char* name);
+	Span append_path_resolved(Span root, Span target, Span uri);
+	Span memset(u8 byte, usize length);
+	template <usize N> Span memset_inline(u8 byte, usize length);
 };
 
 typedef Buffer<8 * 1024ul> Buffer8;

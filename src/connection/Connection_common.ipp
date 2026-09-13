@@ -24,25 +24,6 @@ CONNECTION_INL
 	req.clear();
 }
 
-// TODO: This is not necessary for openat
-CONNECTION_INL
-(char*) append_target_path(Buffer64& buffer) {
-	const Span root = req.location->get_root();
-	const Span uri = req.location->get_uri();
-
-	char* fullPath = buffer.append(root);
-	const Span suffix = {req.target.ptr + uri.size, req.target.size - uri.size};
-	if (suffix.size != 0) {
-		if (suffix.ptr[0] != '/')
-			buffer.append("/");
-		buffer.append(suffix);
-	}
-	else if (root.size == 0)
-		buffer.append("/");
-	*buffer = 0;
-	return fullPath;
-}
-
 ATTR(static_inl)
 Status::Code s_get_status() {
 	const int error = errno;

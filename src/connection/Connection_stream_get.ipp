@@ -19,7 +19,7 @@ CONNECTION_INL
 			sendBuffer.append("</pre></body></html>");
 			return flush_setup(epoll);
 		}
-		bytesTotal += sendBuffer.append_entry(readFd, entry);
+		bytesTotal += sendBuffer.append_entry(readFd, entry).size;
 	}
 	return write_to_client(epoll);
 }

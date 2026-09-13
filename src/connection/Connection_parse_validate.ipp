@@ -78,6 +78,7 @@ CONNECTION_INL
 	*end = '\0';
 	req.uri = req.location->get_uri();
 	req.cgi = req.location->get_cgi_block();
+	req.root = req.location->get_root();
 	req.relativeTarget.ptr = req.target.ptr + req.uri.size;			// /images/cats/meow.jpg
 	req.relativeTarget.size = req.target.size - req.uri.size;		// cats/meow.jpg
 	req.interpreter = check_cgi();

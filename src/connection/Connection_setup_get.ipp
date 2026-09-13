@@ -9,11 +9,11 @@
 CONNECTION_INL
 (isize) get_setup(Epoll& epoll) {
 	Buffer64 pathBuffer = {};
-	append_target_path(pathBuffer);
+	const Span path = pathBuffer.append_path_resolved(req.root, req.target, req.uri);
 	if (epoll.modify(clientFd, EPOLLOUT, epollState))
 		return -1;
 	struct stat st;
-	readFd = fn::open_with_info(AT_FDCWD, &st, pathBuffer, O_RDONLY | O_NONBLOCK | O_CLOEXEC);
+	readFd = fn::open_with_info(AT_FDCWD, &st, path.ptr, O_RDONLY | O_NONBLOCK | O_CLOEXEC);
 	if (readFd == -1)
 		return flush_setup_close(epoll, s_get_status());
 	if (S_ISDIR(st.st_mode))
@@ -21,7 +21,7 @@ CONNECTION_INL
 	if (fn::validate_file(readFd, &st) == -1)
 		return flush_setup_close(epoll, Status::i500);
 	bodySize = (usize)st.st_size;
-	contentType = fn::match_mime(pathBuffer.get_span());
+	contentType = fn::match_mime(path);
 	activate_streaming(Mode::GET);
 	build_header(Status::i200);
 	return upload_file(epoll);
@@ -30,16 +30,16 @@ CONNECTION_INL
 CONNECTION_INL
 (isize) get_redirect_setup(Epoll& epoll) {
 	Buffer8 buffer = {};	// TODO: The tmp append can go away once unified buffer is working
-	buffer.append(req.target);
-	buffer.append("/");
+	Span target = buffer.append(req.target);
+	target.size += buffer.append("/").size;
 	if (req.query.size != 0) {
-		buffer.append("?");
-		buffer.append(req.query);
+		target.size += buffer.append("?").size;
+		target.size += buffer.append(req.query).size;
 	}
 	options &= ~(u16)Options::KEEP_ALIVE;
 	activate_streaming(Mode::FLUSH);
 	sendBuffer.append("HTTP/1.1 301 Moved Permanently\r\nLocation: ");
-	sendBuffer.append(buffer.get_span());
+	sendBuffer.append(target);
 	sendBuffer.append("\r\nContent-Length: 0\r\nConnection: close\r\n\r\n");
 	return flush_setup(epoll);
 }
@@ -76,8 +76,7 @@ CONNECTION_INL
 	options &= ~(u16)Options::KEEP_ALIVE;
 	// Its unfortunate that we have to append then copy again, but compaction might destroy target
 	// TODO: Might not be needed if autoindex doesn't transform buffers
-	buffer.append_html_encoded(req.target.ptr, req.target.size);
-	Span targetEncoded = buffer.get_span();
+	Span targetEncoded = buffer.append_html_encoded(req.target.ptr, req.target.size);
 
 	const usize fixedSize = sizeof(HTTP_INDEX_HEADER HTTP_INDEX_MIDDLE HTTP_INDEX_TAIL);
 	if (fixedSize + targetEncoded.size * 2 > sizeof(sendBuffer.data))

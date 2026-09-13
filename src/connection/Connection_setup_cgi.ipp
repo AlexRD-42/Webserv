@@ -52,34 +52,29 @@ CONNECTION_INL
 	const usize methodIndex = (options & 7) / 2;
 
 	Environment::reset();
-	char* scriptName = buffer.append("SCRIPT_NAME=");	// SCRIPTNAME=
+	Environment::append((char*)requestMethod[methodIndex]);
+	Environment::append(buffer.append("SCRIPT_NAME=").ptr);		// SCRIPTNAME=
 	buffer.append(req.target.ptr, req.target.size + 1);	// SCRIPTNAME=/images/cgi/process.py
-	char* scriptPath = append_target_path(buffer);		// /home/webserv/www/images/cgi/process.py
-	const usize scriptPathLength = (usize)(buffer.wptr() - scriptPath);
-	buffer.writePos++;
-	char* cwdPath = buffer.append(scriptPath, scriptPathLength + 1);			// /home/webserv/www/images/cgi
-	argv[0] = buffer.append(req.interpreter.ptr, req.interpreter.size + 1);		// /bin/python3
-	argv[1] = s_split_filename(cwdPath, scriptPathLength);						// process.py
+	const Span scriptPath = buffer.append_path_resolved(req.root, req.target, req.uri);	// /home/webserv/www/images/cgi/process.py
+	char* cwdPath = buffer.append(scriptPath.ptr, scriptPath.size + 1).ptr;			// /home/webserv/www/images/cgi
+	argv[0] = buffer.append(req.interpreter.ptr, req.interpreter.size + 1).ptr;		// /bin/python3
+	argv[1] = s_split_filename(cwdPath, scriptPath.size);							// process.py
 	argv[2] = NULL;
-	Environment::append(buffer.append("HTTP_HOST="));
-	buffer.append(req.host.ptr, req.host.size + 1);
-	Environment::append(LITPREP(req.query.ptr, "QUERY_STRING="));
+	if (options & Options::FIXED_LENGTH) {
+		Environment::append(buffer.append("CONTENT_LENGTH=").ptr);
+		buffer.append_digit10(bodySize);	// Review: if null terminator doesnt exist
+		buffer.append("\0");
+	}
 	if (req.contentTypeHeader.size != 0) {
-		char* contentTypeHeader = buffer.append("CONTENT_TYPE=");
+		Environment::append(buffer.append("CONTENT_TYPE=").ptr);
 		buffer.append(req.contentTypeHeader);
 		buffer.append("\0");
-		Environment::append(contentTypeHeader);
 	}
+	Environment::append(buffer.append("HTTP_HOST=").ptr);
+	buffer.append(req.host.ptr, req.host.size + 1);
+	Environment::append(LITPREP(req.query.ptr, "QUERY_STRING="));
 	if (req.cookies.size != 0)
 		Environment::append(LITPREP(req.cookies.ptr, "HTTP_COOKIE="));
-	if (options & Options::FIXED_LENGTH) {
-		char* lengthStr = buffer.append("CONTENT_LENGTH=");
-		buffer.append_digit10(bodySize);
-		buffer.append("\0");
-		Environment::append(lengthStr);
-	}
-	Environment::append((char*)requestMethod[methodIndex]);
-	Environment::append(scriptName);
 	return cwdPath;
 }
 
@@ -94,8 +89,6 @@ CONNECTION_INL
 		nextMode = (options & Options::FIXED_LENGTH) ? Mode::CGI_FIXED : Mode::CGI_CHUNKED;
 
 	chdirPath = append_env(pathBuffer, argv);
-	if (chdirPath == NULL)
-		goto Error;
 	if (pipe2(fdIn, O_CLOEXEC) == -1)
 		goto Error;
 	if (pipe2(fdOut, O_CLOEXEC) == -1)

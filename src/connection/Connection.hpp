@@ -24,8 +24,8 @@ struct Connection {
 		Span contentTypeHeader, contentSize;
 		Location* location;
 		Span relativeTarget, targetName, targetExt;
-		Span uri, cgi;
-		u8 padding[56];
+		Span uri, cgi, root;
+		u8 padding[40];
 
 		ATTR(inl) void clear() {
 			MEMSET_INLINE(this, 0, sizeof(*this));
@@ -56,7 +56,6 @@ struct Connection {
 	// Common
 	isize init(int fd, VirtualServer* serverConfig);
 	isize clear();
-	char* append_target_path(Buffer64& buffer);
 	void activate_streaming(Mode nextMode);
 	void activate_parsing();
 

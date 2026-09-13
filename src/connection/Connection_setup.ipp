@@ -11,8 +11,8 @@
 CONNECTION_INL
 (isize) del_setup(Epoll& epoll) {
 	Buffer64 pathBuffer = {};
-	append_target_path(pathBuffer);
-	if (unlink(pathBuffer) == -1)
+	char* path = pathBuffer.append_path_resolved(req.root, req.target, req.uri).ptr;
+	if (unlink(path) == -1)
 		return flush_setup_close(epoll, s_get_status());
 	activate_streaming(Mode::FLUSH);
 	build_header(Status::i204);

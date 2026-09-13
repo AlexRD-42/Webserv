@@ -46,10 +46,9 @@ struct Connection {
 			Mode mode;
 			u32 startTime;
 			u8 epollState;
-			usize bodySize;
-			i32 clientFd, readFd;
+			i32 clientFd, readFd, writeFd;
 			pid_t processId;
-			i32 writeFd;
+			usize bodySize;
 			usize chunkSize;
 		};
 	};
@@ -99,6 +98,7 @@ struct Connection {
 	isize setup_dispatch(Epoll &epoll);
 	isize del_setup(Epoll &epoll);
 	isize get_setup(Epoll &epoll);
+	isize get_autoindex_setup(Epoll &epoll, Buffer64 &pathBuffer);
 	isize get_directory_setup(Epoll &epoll, Buffer64 &pathBuffer);
 	isize post_setup(Epoll &epoll);
 	isize cgi_setup(Epoll &epoll);

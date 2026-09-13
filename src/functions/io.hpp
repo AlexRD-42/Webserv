@@ -37,23 +37,6 @@ namespace fn {
 // }
 
 ATTR(static_inl, flatten)
-int open_with_info(struct stat* st, char* filePath, int flags, int accessFlags = 0, usize minSize = 0, usize maxSize = MAX_FILE_SIZE) {
-	flags |= O_CLOEXEC | O_NONBLOCK;
-	int fd = open(filePath, flags, accessFlags);
-	if (fd == -1)
-		return -1;
-	if (fstat(fd, st) == -1) {
-		close(fd);
-		return -1;
-	}
-	if (!S_ISREG(st->st_mode) || (usize)st->st_size < minSize || (usize)st->st_size > maxSize) {
-		close(fd);
-		return -1;
-	}
-	return fd;
-}
-
-ATTR(static_inl, flatten)
 int close_noerr(int fd) {
 	if (fd < 0)
 		return -1;
@@ -61,6 +44,23 @@ int close_noerr(int fd) {
 	close(fd);
 	errno = error;
 	return -1;
+}
+
+ATTR(static_inl, flatten)
+int validate_file(int fd, struct stat* st, usize minSize = 0, usize maxSize = MAX_FILE_SIZE) {
+	if (!S_ISREG(st->st_mode) || (usize)st->st_size < minSize || (usize)st->st_size > maxSize)
+		return close_noerr(fd);
+	return fd;
+}
+
+ATTR(static_inl, flatten)
+int open_with_info(int dirFd, struct stat* st, const char* filePath, int flags, int accessFlags = 0) {
+	int fd = openat(dirFd, filePath, flags, accessFlags);
+	if (fd == -1)
+		return -1;
+	if (fstat(fd, st) == -1)
+		return fn::close_noerr(fd);
+	return fd;
 }
 
 ATTR(static_inl, flatten)

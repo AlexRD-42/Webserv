@@ -15,15 +15,9 @@ struct Epoll {
 
 	void init() {
 		index = 0;
-		fd = epoll_create(1);
+		fd = epoll_create1(EPOLL_CLOEXEC);
 		if (fd == -1)
 			return ;
-
-		const int flags = fcntl(fd, F_GETFD, 0);
-		if (flags == -1 || fcntl(fd, F_SETFD, flags | FD_CLOEXEC) == -1) {
-			clear();
-			return ;
-		}
 	}
 
 	void clear() {

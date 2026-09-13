@@ -96,15 +96,15 @@ BUFFER_INL
 	// 52 visible, 297 bytes (3 + (52 - 3) * 6 bytes) (52 = HTTP_INDEX_NAME_LENGTH)
 	if (entry.size >= HTTP_INDEX_NAME_LENGTH) {
 		append_html(entry.ptr, HTTP_INDEX_NAME_LENGTH - 3);
-		append("...");
+		append("...</a>");
 	}
 	else {
 		append_html(entry.ptr, entry.size);
+		append("</a>");
 		memset(' ', HTTP_INDEX_NAME_LENGTH - entry.size);
 	}
 
 	// 48 visible, 53 bytes
-	append("</a>");
 	memset(' ', 8);
 	append_inline<17>(buf, 17);
 	memset(' ', 4);

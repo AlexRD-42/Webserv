@@ -23,21 +23,22 @@ struct Buffer {
 	u64 clobberPost;
 	usize writePos, readPos, scanPos;
 
-	ATTR(inl, pure) u8* get_end() { return data + sizeof(data); }	// rename to mptr
 	ATTR(inl, pure) Span get_span() { return {(char*)data + readPos, writePos - readPos}; }
-	ATTR(inl, pure) const u8* get_end() const { return data + sizeof(data); }
 	ATTR(inl, pure) usize size() const { return writePos - readPos; }
 	ATTR(inl, pure) usize capacity() const { return sizeof(data); }
-	ATTR(inl, pure) usize bytes_free() const { return sizeof(data) - writePos; }
+	ATTR(inl, pure) char* rptr() { return (char*)(data + readPos); }
+	ATTR(inl, pure) char* wptr() { return (char*)(data + writePos); }
+	ATTR(inl, pure) char* sptr() { return (char*)(data + scanPos); }
+	ATTR(inl, pure) char* eptr() { return (char*)(data + sizeof(data)); }
+	ATTR(inl, pure) operator char*() { return (char*)(data); }
+	ATTR(inl, pure) u8& operator*() { return data[writePos]; }
 
 	ATTR(inl) usize reserve(usize bytes) {
-		usize bytesFree = bytes_free();
+		usize bytesFree = sizeof(data) - writePos;
 		if (bytes >= bytesFree)
 			bytesFree = compact();
 		return bytesFree;
 	}
-
-	ATTR(inl, pure) bool is_full() const { return writePos >= sizeof(data); }
 
 	ATTR(inl) void clear() {
 		writePos = 0;
@@ -73,7 +74,6 @@ struct Buffer {
 	Span get_field_value(usize readEnd);
 
 	// Appends and Prepends
-	char* append_char(char c);
 	template <usize N> char* append(const char (&string)[N]);				// Implicit
 	template <usize N> char* append_inline(const char* ptr, usize length);	// Explicit
 	char* append(const char* ptr, usize length);
@@ -93,29 +93,12 @@ struct Buffer {
 	usize append_entry(int directoryFd, char* name);
 	char* memset(u8 byte, usize length);
 	template <usize N> char* memset_inline(u8 byte, usize length);
-
-	ATTR(inl) void bufcpy(const Buffer& other) {
-		const usize bytesUsed = other.writePos - other.readPos;
-		writePos = bytesUsed;
-		readPos = 0;
-		scanPos = 0;
-		MEMCPY(data, other.data + other.readPos, bytesUsed);
-	}
-
-	ATTR(inl, pure) operator char*() { return (char*)(data + readPos); }
-	ATTR(inl, pure) char* rptr() { return (char*)(data + readPos); }
-	ATTR(inl, pure) u8& rptr(usize index) { return *(data + readPos + index); }
-	ATTR(inl, pure) char* wptr() { return (char*)(data + writePos); }
-	ATTR(inl, pure) u8& wptr(usize index) { return *(data + writePos + index); }
-	ATTR(inl, pure) char* sptr() { return (char*)(data + scanPos); }
-	ATTR(inl, pure) u8& sptr(usize index) { return *(data + scanPos + index); }
-	ATTR(inl, pure) u8& operator*() { return data[writePos]; }
 };
 
-typedef Buffer<8 * 1024> Buffer8;
-typedef Buffer<16 * 1024> Buffer16;
-typedef Buffer<32 * 1024> Buffer32;
-typedef Buffer<64 * 1024> Buffer64;
+typedef Buffer<8 * 1024ul> Buffer8;
+typedef Buffer<16 * 1024ul> Buffer16;
+typedef Buffer<32 * 1024ul> Buffer32;
+typedef Buffer<64 * 1024ul> Buffer64;
 typedef Buffer<HTTP_BUFFERSIZE> HTTP_Buffer;
 typedef Buffer<2 * HTTP_BUFFERSIZE - 256> HTTP_PBuffer;
 

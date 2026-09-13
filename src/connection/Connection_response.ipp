@@ -61,14 +61,14 @@ CONNECTION_INL
 	Span statusStr = Status::s_status_str(code);
 
 	tmpBuffer.append("Connection: close\r\n\r\n");
-	tmpBuffer.append(sendBuffer.rptr(), sendBuffer.size());
+	tmpBuffer.append(sendBuffer.get_span());
 	tmpBuffer.prepend("\r\n");
 	tmpBuffer.prepend(statusStr);
 	tmpBuffer.prepend("HTTP/1.1 ");
 	if (tmpBuffer.size() > sendBuffer.capacity())
 		return Status::ixxx;
 	sendBuffer.clear();
-	sendBuffer.append(tmpBuffer.rptr(), tmpBuffer.size());
+	sendBuffer.append(tmpBuffer.get_span());
 	options &= ~(u16)Options::KEEP_ALIVE;
 	return code;
 }

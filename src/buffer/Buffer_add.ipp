@@ -30,13 +30,6 @@ BUFFER_INL_T
 }
 
 BUFFER_INL
-(char*) append_char(char c) {
-	char* optr = (char*)data + writePos;
-	data[writePos++] = (u8)c;
-	return optr;
-}
-
-BUFFER_INL
 (char*) append(const char* ptr, usize length) {
 	char* optr = (char*)data + writePos;
 	MEMCPY(optr, ptr, length);

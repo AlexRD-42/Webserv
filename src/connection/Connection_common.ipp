@@ -24,6 +24,7 @@ CONNECTION_INL
 	req.clear();
 }
 
+// TODO: This is not necessary for openat
 CONNECTION_INL
 (char*) append_target_path(Buffer64& buffer) {
 	const Span root = req.location->get_root();

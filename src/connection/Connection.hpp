@@ -98,9 +98,9 @@ struct Connection {
 	isize del_setup(Epoll& epoll);
 
 	isize get_setup(Epoll& epoll);
-	isize get_autoindex_setup(Epoll& epoll, Buffer64& pathBuffer);
-	isize get_directory_setup(Epoll& epoll, Buffer64& pathBuffer);
-	isize get_redirect_setup(Epoll& epoll, Buffer64& pathBuffer);
+	isize get_autoindex_setup(Epoll& epoll);
+	isize get_directory_setup(Epoll& epoll);
+	isize get_redirect_setup(Epoll& epoll);
 
 	isize post_setup(Epoll& epoll);
 	isize cgi_setup(Epoll& epoll);

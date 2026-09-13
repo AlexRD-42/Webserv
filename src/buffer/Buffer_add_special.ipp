@@ -89,7 +89,8 @@ BUFFER_INL
 	Clock::format_time(&st.st_mtim, buf);
 
 	// 0 visible, 776 bytes (11 + 3 * 255)
-	char* start = append("<a href=\"");
+	const usize start = writePos;
+	append("<a href=\"");
 	append_url_component(entry.ptr, entry.size);
 	append("\">");
 
@@ -110,5 +111,5 @@ BUFFER_INL
 	memset(' ', 4);
 	append_digit10(fileSize);
 	append("\n");
-	return (usize)(wptr() - start);
+	return (usize)(writePos - start);
 }

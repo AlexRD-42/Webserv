@@ -102,7 +102,7 @@ Buffer has 8 clobberable bytes before data and 8 after it. The three size counte
 * A server root span always exists
 * A server root and a location root never end with a "/"
 * An upload store always ends with a "/"
-* An index always starts with "/"
+* An index never starts with a "/"
 * A URI always starts with a "/"
 
 #### Defaults

@@ -2,7 +2,7 @@
 #include "Parser.hpp"
 
 static inline
-void s_set_methods(const ArrayView<Span> &methods, Parser::ParsedLocation &location) {
+void s_set_methods(const ArrayView<Span> &methods, Parser::ParsedLocation &loc) {
 	for (usize index = 0; index < methods.count; index++) {
 		u8 method;
 		if (methods[index] == "GET")
@@ -13,57 +13,59 @@ void s_set_methods(const ArrayView<Span> &methods, Parser::ParsedLocation &locat
 			method = Options::DELETE;
 		else
 			PERR_EXIT(1, "Error: Invalid method");
-		if ((location.methods & method) != 0)
+		if ((loc.methods & method) != 0)
 			PERR_EXIT(1, "Error: Duplicate method");
-		location.methods |= method;
+		loc.methods |= method;
 	}
 }
 
 PARSER_INL
-(void) parse_location_directive(ParsedLocation &location, Directive &dir) {
+(void) parse_location_directive(ParsedLocation &loc, Directive &dir) {
 	usize length = 1;
 
 	if (dir.name == "root") {
-		if (dir.args.count != 1 || location.root.size != 0)
+		if (dir.args.count != 1 || loc.root.size != 0)
 			PERR_EXIT(1, "Error: Invalid root");
-		location.root = dir.args[0];
+		loc.root = dir.args[0];
 		length = dir.args[0].size;
 	}
 	else if (dir.name == "autoindex") {
-		if (dir.args.count != 1 || location.autoindexSet == true)
+		if (dir.args.count != 1 || loc.autoindexSet == true)
 			PERR_EXIT(1, "Error: Invalid autoindex");
 		if ((!(dir.args[0] == "on") && !(dir.args[0] == "off")))
 			PERR_EXIT(1, "Error: Invalid autoindex");
-		location.autoindex = dir.args[0] == "on";
-		location.autoindexSet = true;
+		loc.autoindex = dir.args[0] == "on";
+		loc.autoindexSet = true;
 	}
 	else if (dir.name == "allowed_methods") {
 		if (dir.args.count == 0)
 			PERR_EXIT(1, "Error: No allowed methods defined");
-		if (location.methods != 0)
+		if (loc.methods != 0)
 			PERR_EXIT(1, "Error: Duplicate methods");
-		s_set_methods(dir.args, location);
+		s_set_methods(dir.args, loc);
 	}
 	else if (dir.name == "index") {
-		if (dir.args.count != 1 || location.index.size != 0)
+		if (dir.args.count != 1 || loc.index.size != 0)
 			PERR_EXIT(1, "Error: Invalid index");
-		location.index = dir.args[0];
+		loc.index = dir.args[0];
+		if (loc.index.size == 1 && *loc.index.ptr == '/')
+			PERR_EXIT(1, "Error: Invalid index");
 		length = dir.args[0].size;
 	}
 	else if (dir.name == "upload_store") {
-		if (dir.args.count != 1 || location.uploadStore.size != 0)
+		if (dir.args.count != 1 || loc.uploadStore.size != 0)
 			PERR_EXIT(1, "Error: Invalid upload store");
-		location.uploadStore = dir.args[0];
+		loc.uploadStore = dir.args[0];
 		length = dir.args[0].size;
 	}
 	else if (dir.name == "return") {
-		if (dir.args.count != 2 || dir.args[0].size != 3 || location.redirectTarget.size != 0)
+		if (dir.args.count != 2 || dir.args[0].size != 3 || loc.redirectTarget.size != 0)
 			PERR_EXIT(1, "Error: Invalid redirect");
 		const usize status = fn::qstrtol10(dir.args[0].ptr);
-		location.redirectStatus.index = Status::s_num_to_code(status);
-		if (status < 300 || status > 399 || !location.redirectStatus.is_valid())
+		loc.redirectStatus.index = Status::s_num_to_code(status);
+		if (status < 300 || status > 399 || !loc.redirectStatus.is_valid())
 			PERR_EXIT(1, "Error: Invalid redirect status");
-		location.redirectTarget = dir.args[1];
+		loc.redirectTarget = dir.args[1];
 		length = dir.args[1].size;
 	}
 	else

@@ -91,7 +91,7 @@ PARSER_INL
 		serverRoot.size--;
 	serverRoot.ptr[serverRoot.size] = '\0';
 	
-	Span defaultIndex = beta->copy_span(Span::create("/index.html"));
+	Span defaultIndex = beta->copy_span(Span::create("index.html"));
 	for (usize index = 0; index < ploc.count; index++) {
 		ParsedLocation &src = ploc[index];
 		if (src.root.size == 0)
@@ -102,9 +102,9 @@ PARSER_INL
 			src.uploadStore = src.root;
 		if (src.index.size == 0)
 			src.index = defaultIndex;
-		else if (*src.index.ptr != '/') {
-			*(--src.index.ptr) = '/';
-			src.index.size++;
+		else if (*src.index.ptr == '/') {
+			src.index.ptr++;
+			src.index.size--;
 		}
 		if (src.methods == 0)
 			src.methods = Options::GET;

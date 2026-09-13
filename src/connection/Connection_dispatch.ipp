@@ -39,8 +39,11 @@ CONNECTION_INL
 		return -1;	// REVIEW
 
 	Span line = parseBuffer.find_line_end();
-	if (line == NULL)
+	if (line == NULL) {
+		if (parseBuffer.size() > 8000)
+			return flush_setup_close(epoll, Status::i431);
 		return 0;
+	}
 
 	Status::Code code = parse_first_line(line);
 	if (code != Status::unset)

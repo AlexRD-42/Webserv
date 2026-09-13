@@ -97,9 +97,12 @@ struct Connection {
 	// Setup
 	isize setup_dispatch(Epoll &epoll);
 	isize del_setup(Epoll &epoll);
+
 	isize get_setup(Epoll &epoll);
 	isize get_autoindex_setup(Epoll &epoll, Buffer64 &pathBuffer);
 	isize get_directory_setup(Epoll &epoll, Buffer64 &pathBuffer);
+	isize get_redirect_setup(Epoll &epoll, Buffer64 &pathBuffer);
+	
 	isize post_setup(Epoll &epoll);
 	isize cgi_setup(Epoll &epoll);
 	char* append_env(Buffer64 &buffer, char* argv[3]);

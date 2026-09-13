@@ -76,7 +76,7 @@ struct VirtualServer {
 		sockaddr_in address = {};
 		address.sin_family = AF_INET;
 		address.sin_port = htons((u16) port);
-		if (LITCMP(host.ptr, "localhost") == 0)
+		if (host == "localhost")
 			address.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
 		else if (inet_pton(AF_INET, host.ptr, &address.sin_addr) != 1)
 			PERR_EXIT(clear(), "Error: Failed to resolve virtual server host");

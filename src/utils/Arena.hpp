@@ -29,7 +29,7 @@ struct Arena {
 		ASSERT(IS_POW2(alignment), "Alignment needs to be power of two");
 		bytes = ALIGN_UP(bytes + padding, alignment);
 		usize newSize = ALIGN_UP(size, alignment);
-		if (bytes > capacity - newSize) {
+		if (bytes + newSize > capacity) {
 			PRINT_LN(2, "Error: Out of memory");
 			return UINT32_MAX;
 		}

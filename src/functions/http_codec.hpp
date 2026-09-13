@@ -6,7 +6,7 @@
 
 namespace fn {
 
-ATTR(static_inl, pure)
+ATTR(static_inl)
 usize decode_percent_inplace(u8* str, usize length) {
 	u8* end = str + length;
 	u8* readPtr = str;
@@ -30,7 +30,7 @@ usize decode_percent_inplace(u8* str, usize length) {
 	return (usize)(writePtr - str);
 }
 
-ATTR(static_inl, pure)
+ATTR(static_inl)
 usize decode_nop_inplace(u8* str, usize length) {
 	u8* end = str + length;
 	u8* readPtr = str;
@@ -47,7 +47,7 @@ usize decode_nop_inplace(u8* str, usize length) {
 	return (usize)(writePtr - str);
 }
 
-ATTR(static_inl, pure)
+ATTR(static_inl)
 usize decode_escdot_inplace(u8* str, usize length) {
 	u8* end = str + length;
 	u8* readPtr = str;
@@ -65,7 +65,7 @@ usize decode_escdot_inplace(u8* str, usize length) {
 }
 
 // /path/to/something/../this
-ATTR(static_inl, pure)
+ATTR(static_inl)
 usize canonicalize_target_inplace(u8* str, usize length) {
 	usize newLength = decode_percent_inplace(str, length);
 	if (newLength == SIZE_MAX || *str != '/')

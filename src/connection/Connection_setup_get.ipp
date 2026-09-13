@@ -27,8 +27,28 @@ CONNECTION_INL
 	return upload_file(epoll);
 }
 
+// TODO: The pathbuffer append can go away once unified buffer for get is working
+CONNECTION_INL
+(isize) get_redirect_setup(Epoll &epoll, Buffer64 &pathBuffer) {
+	char* target = pathBuffer.append(req.target);
+	pathBuffer.append("/");
+	if (req.query.size != 0) {
+		pathBuffer.append("?");
+		pathBuffer.append(req.query);
+	}
+	const usize targetSize = (usize)(pathBuffer.wptr() - target);
+	options &= ~(u16)Options::KEEP_ALIVE;
+	activate_streaming(Mode::FLUSH);
+	sendBuffer.append("HTTP/1.1 301 Moved Permanently\r\nLocation: ");
+	sendBuffer.append(target, targetSize);
+	sendBuffer.append("\r\nContent-Length: 0\r\nConnection: close\r\n\r\n");
+	return flush_setup(epoll);
+}
+
 CONNECTION_INL
 (isize) get_directory_setup(Epoll &epoll, Buffer64 &pathBuffer) {
+	if (req.target.ptr[req.target.size - 1] != '/')
+		return get_redirect_setup(epoll, pathBuffer);
 	const Span index = req.location->get_index();	// Index span will either be index.html or the one supplied by the config
 	struct stat st;
 	int indexFd = fn::open_with_info(readFd, &st, index.ptr, O_RDONLY | O_NONBLOCK | O_CLOEXEC);

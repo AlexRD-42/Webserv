@@ -15,62 +15,60 @@ Examples:
 	./run valgrind, then in another terminal ./run test
 
 ### Configuration
-* CGI blocks are defined per location.
-Example:
-	server {
-		listen 8081;
-		host 127.0.0.1;							## Only localhost is recognized as a loopback
-		client_max_body_size 10M;				## Can define K, M or G for KB, MB or GB respectively
-		root /path_to_root;
-		error_pages /path_to_error_folder;		## All files inside directory are prefix matched against error codes
+```nginx
+server {
+	listen 8081;
+	host 127.0.0.1;							## Only localhost is recognized as a loopback
+	client_max_body_size 10M;				## Can define K, M or G for KiB, MiB or GiB respectively
+											## Defaults to MAX_FILE_SIZE (generally 256 TiB)
+	root /path_to_root;						## Defaults to empty
+	error_pages /path_to_error_folder;		## All files inside directory are prefix matched against error codes
 
-		location /custom_index/ {
-			root /path_to_root;
-			allowed_methods GET POST;
-			upload_store /path_to_upload_store;
-			index index_file_name;
-			autoindex on;
-			cgi {
-				.extension = /absolute_path_to_interpreter;
-				.py = /bin/python3;
-			}
-		}
-
-		location /old {
-			allowed_methods GET;
-			return 301 /new/;
+	location /custom_index/ {
+		root /path_to_root;					## Defaults to server root
+		allowed_methods GET POST;			## Defaults to GET
+		upload_store /path_to_upload_store;	## Defaults to root + /
+		index index_file_name;				## Defaults to index.html
+		autoindex on;						## Default to off
+		cgi {								## Defined per location block
+			.extension = /absolute_path_to_interpreter;
+			.py = /bin/python3;
 		}
 	}
 
+	location /old {
+		allowed_methods GET;
+		return 301 /new/;
+	}
+}
+```
 ## Glossary
-SIMD: Single Input Multiple Data
-
+### SIMD (Single Input Multiple Data)
 	Refers to instructions that process multiple data at once. 
 	For example, to clear an 8 byte string, instead of setting each byte to 0, you access it as a 64 bit integer and set that to 0 once
 
-OOB: Out of bounds
-
+### OOB (Out of bounds)
 	Refers to an access that goes beyond the bounds of something
 	For example, I have a 6 byte string, but I access it as an 8 byte integer, and it goes 2 bytes beyond its bounds
 
-Padding:
-
+### Padding
 	Something to protect against OOB, you deliberately allocate more than you need so you can guarantee that a SIMD access is safe
 	For example, instead of allocating a 6 byte string, you allocate 6 + 8, so that way you never spill for an 8 byte access. This sounds wasteful until you get into Arenas
 
-Clobberable Padding:
+### POD (Plain Old Data)
+	Refers to classes that don't have user defined constructors, destructors or assignment and are trivially initializable. This makes them suitable for unions and to be interpretable as raw memory
 
+### Clobberable Padding
 	Essentially, padding where you don't care that it gets overwritten. Read access padding can essentially be free if you just guarantee that the memory address being spilled to exists within your program.
 	You can even write to it, as long as you save the values being written to and restore them after your execution. Clobberable padding is padding that exists explicitly for padding's sake, so you don't care about overwriting
 
-Arenas:
-
+### Arenas
 	In simple terms, a big allocation to contain other smaller allocations inside it. This is amazing for several reasons:
 	1) You can pad per arena instead of per allocation
 	2) You guarantee that the memory region you got is contiguous
 	3) Less memory fragmentation, more predictable runtime, better performance
 
-### Padding
+## Padding
 POST/PRE refer to the location of the padding. [PRE] [DATA] [POST]
 
 1) Prepending QUERY_STRING= in cgi setup depends on the buffer being pre-clobberable-padded with 8 bytes. QUERY_STRING= is 13 bytes
@@ -82,17 +80,17 @@ POST/PRE refer to the location of the padding. [PRE] [DATA] [POST]
 
 Buffer has 8 clobberable bytes before data and 8 after it. The three size counters provide another 24 readable bytes after data, for 32 bytes of physical trailing storage. Sentinel writes use only the first 8 bytes and restore them; the counters must never be clobbered
 
-#### General
+## Parsing Invariants
 * Comments are stripped from parsing
 * The config file read is allocated with at least 64 bytes padding
 
-#### Limits
+### Limits
 * Each server block is at maximum MAX_SERVER_BLOCK_SIZE (64KB)
 * Each location block is at maximum MAX_LOCATION_BLOCK_SIZE (32KB)
 * Number of locations is at maximum MAX_LOCATION_COUNT (32767 locations)
 * Each error page cached is at maximum MAX_ERROR_PAGE_SIZE (HTTP_BUFFERSIZE - 512B)
 
-#### Location Invariants
+### Location Invariants
 * All stored location strings are null terminated and 0 <= length <= MAX_PATH_SIZE
 * 0 length strings still point to empty data
 * There are no duplicates of any kind
@@ -105,28 +103,26 @@ Buffer has 8 clobberable bytes before data and 8 after it. The three size counte
 * An index never starts with a "/"
 * A URI always starts with a "/"
 
-#### Defaults
-* If server root does not exist, it becomes ""
-* If location root does not exist, it becomes server root
-* If upload store does not exist, upload store becomes root with a trailing "/" (or "/" when root is empty)
-* If index does not exist, it becomes "/index.html"
-* If no methods are specified, it becomes GET only
-* If no client_max_body_size is specified, it becomes LONG_MAX
+## Conventions
+### Sizes
+Will always take a maximum size of LONG_MAX, even for unsigned types. This is done to avoid overflows and always have error sentinels. LONG_MAX is a ridiculously large number anyhow, any real constraint should realistically be much smaller
 
-## Conventions adopted
-1) Size type variables will always take a maximum size of LONG_MAX, even for unsigned types. 
-This is done to avoid overflows and always have error sentinels.
-LONG_MAX is a ridiculously large number anyhow, any real constraint should realistically be much smaller
-
-2) POD Methods
-init() prepares the class to be used
-reset() resets the class to a starting position, but still reusable
-clear() effectively destroys the class (deallocates, closes all fds, etc), requiring an init again
+### Classes
+All classes are POD types
+* init() prepares the class to be used
+* reset() resets the class to a starting position, but still reusable
+* clear() effectively destroys the class (deallocates, closes all fds, etc), requiring an init again
 
 When reset() and clear() would effectively mean same thing, clear() is used
 
-3) Pointers and References (Style)
-Pointers attach close to their type, references to their variable
+### Style
+* Class names are UpperCase, functions are snake_case, variables are camelCase
+* Brace styles are K&R, one liners don't get braces, and end braces are always solo, because
+if {
+	do..whatever
+} else is ugly as shit. Notable exception being do while
+
+* Pointers attach close to their type, references to their variable
 Example: char* str, char &str, char* &str
 
 ## Architecture

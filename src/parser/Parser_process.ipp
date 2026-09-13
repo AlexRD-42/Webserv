@@ -69,6 +69,8 @@ PARSER_INL
 	usize allocationSize = ploc.count * sizeof(Location);
 	for (usize index = 0; index < ploc.count; index++)
 		allocationSize += s_location_size(ploc[index]);
+	if (allocationSize > MAX_SERVER_BLOCK_SIZE)	// Review: This assumes adversarial input for server controlled config
+		PERR_EXIT(1, "Error: Stored locations exceed the maximum server block size");
 	const u32 allocation = beta->alloc(allocationSize, 0, alignof(Location));
 	if (allocation == UINT32_MAX)
 		_exit(1);

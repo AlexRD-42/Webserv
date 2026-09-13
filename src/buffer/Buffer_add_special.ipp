@@ -38,40 +38,35 @@ BUFFER_INL
 }
 
 BUFFER_INL
-(char*) append_url_component(const char* ptr, usize length) {
+(char*) append_url_encoded(const char* ptr, usize length) {
 	static const u8 hex[] = "0123456789ABCDEF";
-	static u8 lut[2][4] = {{0, 0, 0, 1}, {'%', 0, 0, 3}};
 	char* optr = (char*)data + writePos;
 
 	for (usize index = 0; index < length; index++) {
 		const u8 value = (u8)ptr[index];
-		const u8 lutIndex = gAsciiLut[value] > ASCII_URL_VALID;
-		lut[0][0] = value;
-		lut[1][1] = hex[value >> 4];
-		lut[1][2] = hex[value & 15];
-		append_inline<3>((char*)lut[lutIndex], lut[lutIndex][3]);	// there has to be a better way to index the length,
-															// given that it is only two possible states
+		const bool encode = gAsciiLut[value] > ASCII_URL_VALID;
+		u8 buffer[4] = {value, '%', hex[value >> 4], hex[value & 15]};
+		append_inline<3>((char*)buffer + encode, 1 + 2 * encode);
 	}
 	return optr;
 }
 
 BUFFER_INL
-(char*) append_html(char* ptr, usize length) {
-	u8 lengthLut[6] = {5, 5, 6, 4, 4, 1};
-	static char strLut[6][8] = {"&amp;", "&#39;", "&quot;", "&lt;", "&gt;", "\0"};
+(char*) append_html_encoded(char* ptr, usize length) {
+	static const u8 lengthLut[6] = {5, 5, 6, 4, 4, 1};
+	static const char strLut[5][8] = {"&amp;", "&#39;", "&quot;", "&lt;", "&gt;"};
 	char* optr = (char*)data + writePos;
 
 	for (usize index = 0; index < length; index++) {
 		u8 asciiLutIndex = gAsciiLut[(u8)ptr[index]] - ASCII_HTML_ESCAPE_START;
 		u8 strLutIndex = MIN(5, asciiLutIndex);
-		strLut[5][0] = ptr[index];
-		append_inline<6>(strLut[strLutIndex], lengthLut[strLutIndex]);	// Up to 8 bytes overflow is safe
+		const char* src = (strLutIndex == 5) ? ptr + index : strLut[strLutIndex];
+		append_inline<6>(src, lengthLut[strLutIndex]);	// Up to 8 bytes overflow is safe
 	}
 	return optr;
 }
 
 // <a href="filename[256]">filename[64]</a>    02-Dec-2004 18:46    241476
-
 BUFFER_INL
 (usize) append_entry(int directoryFd, char* name) {
 	Span entry = {name, STRLEN(name)};
@@ -91,16 +86,16 @@ BUFFER_INL
 	// 0 visible, 776 bytes (11 + 3 * 255)
 	const usize start = writePos;
 	append("<a href=\"");
-	append_url_component(entry.ptr, entry.size);
+	append_url_encoded(entry.ptr, entry.size);
 	append("\">");
 
 	// 52 visible, 297 bytes (3 + (52 - 3) * 6 bytes) (52 = HTTP_INDEX_NAME_LENGTH)
 	if (entry.size >= HTTP_INDEX_NAME_LENGTH) {
-		append_html(entry.ptr, HTTP_INDEX_NAME_LENGTH - 3);
+		append_html_encoded(entry.ptr, HTTP_INDEX_NAME_LENGTH - 3);
 		append("...</a>");
 	}
 	else {
-		append_html(entry.ptr, entry.size);
+		append_html_encoded(entry.ptr, entry.size);
 		append("</a>");
 		memset(' ', HTTP_INDEX_NAME_LENGTH - entry.size);
 	}

@@ -76,7 +76,7 @@ CONNECTION_INL
 	options &= ~(u16)Options::KEEP_ALIVE;
 	// Its unfortunate that we have to append then copy again, but compaction might destroy target
 	// TODO: Might not be needed if autoindex doesn't transform buffers
-	buffer.append_html(req.target.ptr, req.target.size);
+	buffer.append_html_encoded(req.target.ptr, req.target.size);
 	Span targetEncoded = buffer.get_span();
 
 	const usize fixedSize = sizeof(HTTP_INDEX_HEADER HTTP_INDEX_MIDDLE HTTP_INDEX_TAIL);

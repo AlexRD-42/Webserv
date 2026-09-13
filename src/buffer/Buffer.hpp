@@ -88,8 +88,8 @@ struct Buffer {
 	char* append_mime(Mime mimeIndex);
 	char* append_digit10(usize number);
 	char* append_digit16(usize number);
-	char* append_url_component(const char* ptr, usize length);
-	char* append_html(char* ptr, usize length);
+	char* append_url_encoded(const char* ptr, usize length);
+	char* append_html_encoded(char* ptr, usize length);
 	usize append_entry(int directoryFd, char* name);
 	char* memset(u8 byte, usize length);
 	template <usize N> char* memset_inline(u8 byte, usize length);

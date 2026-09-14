@@ -11,6 +11,10 @@
 	sizeof_digits:	number of digits to represent the max size of the type
 */
 
+constexpr unsigned long long operator""_G(unsigned long long x) {
+	return x * 1000000000ULL;
+}
+
 template <typename Type>
 static constexpr usize sizeof_bits(const Type&) {
 	return sizeof(Type) * CHAR_BIT;

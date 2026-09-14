@@ -1,21 +1,22 @@
 #pragma once
+#include <emmintrin.h>
+
 #include "core.hpp"
 #include "webserv.hpp"
 #include "Span.hpp"
-
 namespace fn {
 
 ATTR(static_inl, pure)
-bool strcasecmp16(const char* string, const char* ref, usize length) {
-	(void)length;
-	u128 buffer[2];
-	u8* bufPtr = (u8*)buffer;
-	const u128 tmp = (u128) 0x2020202020202020UL;
-	const u128 orMask = (tmp << 64) | (tmp);
+bool q16strcasecmp(const char* str, const char* ref, usize length) {
+	ENFORCE(length <= 16, "q16strcasecmp length higher than 16");
 
-	MEMCPY_INLINE(bufPtr, string, 16);
-	buffer[0] |= orMask;
-	return MEMCMP(bufPtr, ref, 16) == 0;
+	const __m128i caseMask = _mm_set1_epi8(0x20);
+	__m128i lowerStr = _mm_or_si128(_mm_loadu_si128((const __m128i*)str) , caseMask);
+	__m128i lowerRef = _mm_loadu_si128((const __m128i*)ref);
+	__m128i eq = _mm_cmpeq_epi8(lowerRef, lowerStr);
+	usize mask = ~((usize)_mm_movemask_epi8(eq));
+	usize matchIndex = (usize)CTZ(mask);
+	return matchIndex >= length;
 }
 
 }

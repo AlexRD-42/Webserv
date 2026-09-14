@@ -58,7 +58,7 @@ CONNECTION_INL
 
 CONNECTION_INL
 (Status::Code) parse_validate(char* str, char* end) {
-	char* queryPtr = (char*)MEMCHR(str, '?', (usize)(end - str));	// /images/cats/meow.jpg?FILTER=yes,ORDER=ascending\0
+	char* queryPtr = (char*)QMEMCHR(str, '?', (usize)(end - str));	// /images/cats/meow.jpg?FILTER=yes,ORDER=ascending\0
 	char* queryStart = queryPtr == NULL ? end : queryPtr + 1;
 	queryPtr = queryPtr == NULL ? end : queryPtr;
 

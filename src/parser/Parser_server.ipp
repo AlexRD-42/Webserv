@@ -7,7 +7,7 @@ void s_directive_listen(Arena& arena, const Span& value, VirtualServer& server) 
 		PERR_EXIT(1, "Error: Invalid port definition");
 	char* port = value.ptr;
 	usize portLength = value.size;
-	char* separator = (char*)MEMCHR(port, ':', portLength);
+	char* separator = (char*)QMEMCHR(port, ':', portLength);
 	if (separator != NULL) {
 		usize hostLength = (usize)(separator - port);
 		if (hostLength == 0 || hostLength == value.size - 1 || server.host.size != 0)

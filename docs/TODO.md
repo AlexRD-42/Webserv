@@ -32,3 +32,13 @@
 11. Change the design of the LUT functions that alter static memory
 
 12. Make const variables gold colored white
+
+13. Museum of insanity concept (like for old status)
+
+14. A profiler should take variance into account
+
+A test should ideally be XY where X is variance and Y is range magnitude
+
+Cold and Hot, something that clears the cache, and something that requires load (to simulate real scenarios where the algorithm isn't being run solo)
+
+Investigate Clang Vectors

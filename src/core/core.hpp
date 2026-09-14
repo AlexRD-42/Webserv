@@ -83,6 +83,8 @@ typedef unsigned long		ulong;
 	#define ASSERT(x, str) ((void)0)
 #endif
 
+#define ENFORCE(x, str) (ASSERT(x, str), ASSUME(x))
+
 #include "core_builtins.ipp"
 #include "core_macros.ipp"
 #include "core_info.ipp"

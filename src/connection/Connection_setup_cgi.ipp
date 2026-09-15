@@ -72,9 +72,9 @@ CONNECTION_INL
 	}
 	Environment::append(buffer.append("HTTP_HOST=").ptr);
 	buffer.append(req.host.ptr, req.host.size + 1);
-	Environment::append(LITPREP(req.query.ptr, "QUERY_STRING="));
+	Environment::append(LITPREPEND(req.query.ptr, "QUERY_STRING="));
 	if (req.cookies.size != 0)
-		Environment::append(LITPREP(req.cookies.ptr, "HTTP_COOKIE="));
+		Environment::append(LITPREPEND(req.cookies.ptr, "HTTP_COOKIE="));
 	return cwdPath;
 }
 

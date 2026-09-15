@@ -1,8 +1,8 @@
 # Configuration ------------------------------- #
 NAME = webserv
-VPATH := $(shell find src -type d)
-VPATH += test
-SRC = test.cpp
+VPATH := $(shell find src -type d) test
+SRC = main.cpp
+SRC_TEST = test.cpp
 LDLIBS =
 ARG = assets/configs/default.conf
 
@@ -45,6 +45,10 @@ run:
 	clear
 	./$(BIN) $(ARG)
 
+test:
+	$(MAKE) clean
+	$(MAKE) SRC="$(SRC_TEST)" asan
+
 vrun:
 	clear
 	valgrind ./$(BIN) $(ARG)
@@ -76,4 +80,4 @@ fast: CXXFLAGS += $(FAST)
 #fast: LDFLAGS += -flto
 fast: clean $(BIN)
 
-.PHONY: all run vrun compdb clean fclean re debug asan tsan fast
+.PHONY: all run vrun compdb clean fclean re debug asan tsan fast test

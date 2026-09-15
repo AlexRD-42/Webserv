@@ -35,8 +35,8 @@
 // === Builtin extensions =====================================
 #define LITCMP(s1, s2)		__builtin_memcmp(s1, s2, sizeof(s2) - 1)
 #define LITCPY(dst, src)	__builtin_memcpy(dst, src, sizeof(src) - 1)
-#define LITPREP(s1, s2)		((char*)__builtin_memcpy(s1 - (sizeof(s2) - 1), s2, (sizeof(s2) - 1)))
-#define LITAPP(s1, s2)		((char*)((sizeof(s2) - 1) + __builtin_memcpy(s1, s2, (sizeof(s2) - 1))))
+#define LITPREPEND(s1, s2)		((char*)__builtin_memcpy(s1 - (sizeof(s2) - 1), s2, (sizeof(s2) - 1)))
+#define LITAPPEND(s1, s2)		(char*)__builtin_memcpy(s1, s2, (sizeof(s2) - 1)) + ((sizeof(s2) - 1))
 
 #define MEMFIND(dst, str, dstSize) \
 ({ \

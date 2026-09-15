@@ -15,6 +15,14 @@ constexpr unsigned long long operator""_G(unsigned long long x) {
 	return x * 1000000000ULL;
 }
 
+constexpr unsigned long long operator""_M(unsigned long long x) {
+	return x * 1000000ULL;
+}
+
+constexpr unsigned long long operator""_K(unsigned long long x) {
+	return x * 1000ULL;
+}
+
 template <typename Type>
 static constexpr usize sizeof_bits(const Type&) {
 	return sizeof(Type) * CHAR_BIT;
